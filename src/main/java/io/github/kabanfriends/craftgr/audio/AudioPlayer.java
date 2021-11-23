@@ -57,6 +57,7 @@ public class AudioPlayer {
 
         AL10.alSourcei(this.source.get(0), AL10.AL_LOOPING, AL10.AL_FALSE);
         AL10.alSourcef(this.source.get(0), AL10.AL_PITCH, 1.0f);
+        AL10.alSourcef(this.source.get(0), AL10.AL_GAIN, this.volume * (GRConfig.getConfig().volume/100f) * MinecraftClient.getInstance().options.getSoundVolume(SoundCategory.MASTER));
 
         if (alError()) {
             close();
@@ -84,7 +85,7 @@ public class AudioPlayer {
         return ret;
     }
 
-    private void close() throws BitstreamException {
+    public void close() throws BitstreamException {
         this.playing = false;
 
         if (this.source != null) {

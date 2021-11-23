@@ -39,7 +39,7 @@ public class MixinTitleScreen {
                 }
 
                 float value = doBackgroundFade ? (float)(Util.getMeasuringTimeMs() - musicFadeStart) / 2000.0F : 0.0F;
-                handler.player.setVolume(MathHelper.clamp(value, 0.0f, ((float)GRConfig.getConfig().volume) / 100f));
+                handler.player.setVolume(MathHelper.clamp(value, 0.0f, 1.0f));
             }
         }
     }

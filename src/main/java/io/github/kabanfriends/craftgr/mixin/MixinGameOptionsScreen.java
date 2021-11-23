@@ -16,6 +16,6 @@ public class MixinGameOptionsScreen extends Screen {
     }
 
     @Inject(method = "removed()V", at = @At("RETURN"))
-    public void removed(CallbackInfo ci) {}
+    public void saveConfig(CallbackInfo ci) {}
 
 }

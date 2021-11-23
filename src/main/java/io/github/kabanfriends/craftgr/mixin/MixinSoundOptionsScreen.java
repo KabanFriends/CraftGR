@@ -15,18 +15,18 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(SoundOptionsScreen.class)
-public class MixinSoundOptionsGameOptionsScreen extends MixinGameOptionsScreen {
+public class MixinSoundOptionsScreen extends MixinGameOptionsScreen {
 
     private static final DoubleOption PLAYBACK_VOLUME = new DoubleOption("none", 0, 100, 1, (gameOptions) -> {
         return (double) GRConfig.getConfig().volume;
     }, (gameOptions, volume) -> {
         GRConfig.getConfig().volume = volume.intValue();
-        AudioPlayerHandler.getInstance().player.setVolume(volume.intValue()/100f);
+        AudioPlayerHandler.getInstance().player.setVolume(1.0f);
     }, (gameOptions, option) -> {
         return new TranslatableText("options.percent_value", new TranslatableText("text.craftgr.gui.options.volume"), GRConfig.getConfig().volume);
     });
 
-    public MixinSoundOptionsGameOptionsScreen(LiteralText literalText) {
+    public MixinSoundOptionsScreen(LiteralText literalText) {
         super(literalText);
     }
 
@@ -36,7 +36,7 @@ public class MixinSoundOptionsGameOptionsScreen extends MixinGameOptionsScreen {
     }
 
     @Override
-    public void removed(CallbackInfo ci) {
+    public void saveConfig(CallbackInfo ci) {
         AutoConfig.getConfigHolder(GRConfig.class).save();
     }
 }

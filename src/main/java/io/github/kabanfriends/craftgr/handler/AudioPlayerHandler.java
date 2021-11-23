@@ -3,6 +3,7 @@ package io.github.kabanfriends.craftgr.handler;
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.audio.AudioPlayer;
 import io.github.kabanfriends.craftgr.config.GRConfig;
+import javazoom.jl.decoder.BitstreamException;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -17,6 +18,7 @@ public class AudioPlayerHandler {
 
     public AudioPlayer player;
     public boolean playing = false;
+    public boolean loaded = false;
 
     public AudioPlayerHandler(AudioPlayer audioPlayer) {
         INSTANCE = this;
@@ -36,6 +38,7 @@ public class AudioPlayerHandler {
             if (INSTANCE == null) {
                 new AudioPlayerHandler(audioPlayer);
             }else {
+                audioPlayer.setVolume(1.0f);
                 getInstance().player = audioPlayer;
             }
         }catch (Exception err) {
@@ -56,11 +59,19 @@ public class AudioPlayerHandler {
                         CraftGR.log(Level.INFO, "Starting playback...");
                         this.player.play();
                     } catch (Exception err) {
-                        CraftGR.log(Level.ERROR, "Error during audio playback! Restarting in 5 seconds...");
+                        CraftGR.log(Level.ERROR, "Error during audio playback!");
                         err.printStackTrace();
+                    }finally {
+                        CraftGR.log(Level.INFO, "Playback has stopped! Restarting in 4 seconds...");
 
                         try {
-                            Thread.sleep(5L * 1000L);
+                            this.player.close();
+                        } catch (BitstreamException e) {
+                            e.printStackTrace();
+                        }
+
+                        try {
+                            Thread.sleep(4L * 1000L);
                         } catch (InterruptedException interruptedException) {
                             interruptedException.printStackTrace();
                         }
