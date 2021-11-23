@@ -1,0 +1,19 @@
+{
+  "text.autoconfig.craftgr.title": "CraftGR Config",
+
+  "text.autoconfig.craftgr.option.streamURL": "Streaming URL",
+  "text.autoconfig.craftgr.option.streamURL.@Tooltip": "URL to stream audio from. Works only with MP3 streams.",
+  "text.autoconfig.craftgr.option.songInfoURL": "Song Info URL",
+  "text.autoconfig.craftgr.option.songInfoURL.@Tooltip": "URL to get song info from.",
+  "text.autoconfig.craftgr.option.volume": "Playback Volume",
+  "text.autoconfig.craftgr.option.volume.@Tooltip": "Playback Volume of the Gensokyo Radio music.",
+
+  "text.craftgr.gui.options.volume": "Gensokyo Radio",
+
+  "text.craftgr.command.info.error": "§cError while trying to fetch the song information!",
+  "text.craftgr.command.info.header": "§6♫§d Current Song:",
+  "text.craftgr.command.info.album": "Album: %s",
+  "text.craftgr.command.info.album.tooltip": "Click to view",
+  "text.craftgr.command.info.circle": "Circle: %s",
+  "text.craftgr.command.info.rating": "Rating: %s"
+}

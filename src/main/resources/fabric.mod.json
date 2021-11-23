@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "id": "craftgr",
+  "version": "${version}",
+  "name": "CraftGR",
+  "description": "Plays Gensokyo Radio in Minecraft",
+  "authors": [
+    "KabanFriends"
+  ],
+  "contributors": [],
+  "contact": {
+    "sources": "https://github.com/KabanFriends/CraftGR",
+    "issues": "https://github.com/KabanFriends/CraftGR/issues"
+  },
+  "environment": "client",
+  "license": "MIT",
+  "icon": "assets/craftgr/icon.png",
+  "entrypoints": {
+    "main": [
+      "io.github.kabanfriends.craftgr.CraftGR"
+    ],
+    "modmenu": [
+      "io.github.kabanfriends.craftgr.config.GRModMenu"
+    ],
+    "client": [],
+    "server": []
+  },
+  "mixins": [
+    "craftgr.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.7.4",
+    "fabric": "*",
+    "minecraft": "1.16.x"
+  },
+  "custom": {
+    "modmenu:clientsideOnly": true
+  }
+}
