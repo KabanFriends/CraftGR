@@ -38,26 +38,21 @@ dependencies {
 	modImplementation "com.squareup.okhttp3:okhttp:4.9.0"
 	modImplementation "com.googlecode.soundlibs:tritonus-share:0.3.7-2"
 	modImplementation "com.googlecode.soundlibs:mp3spi:1.9.5-1"
+	include("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}") { exclude(group: "net.fabricmc.fabric-api") }
+	include "com.squareup.okio:okio:2.4.0"
 	include "javazoom:jlayer:1.0.1"
 	include "com.squareup.okhttp3:okhttp:4.9.0"
 	include "com.googlecode.soundlibs:tritonus-share:0.3.7-2"
 	include "com.googlecode.soundlibs:mp3spi:1.9.5-1"
-	include("me.shedaniel.cloth:cloth-config-fabric:4.12.41") {
-		exclude(group: "net.fabricmc.fabric-api")
-	}
 
 	modApi "io.github.prospector:modmenu:1.16.9"
-	modApi("me.shedaniel.cloth:cloth-config-fabric:4.12.41") {
-		exclude(group: "net.fabricmc.fabric-api")
-	}
+	modApi("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}") { exclude(group: "net.fabricmc.fabric-api") }
 
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 
 	//runtime stuff i guess
 	modRuntime "io.github.prospector:modmenu:1.16.9"
-	modRuntime("me.shedaniel.cloth:cloth-config-fabric:4.12.41") {
-		exclude(group: "net.fabricmc.fabric-api")
-	}
+	modRuntime("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}") { exclude(group: "net.fabricmc.fabric-api") }
 	modRuntime("com.github.SuperCoder7979:databreaker:0.2.6") {
 		exclude module: "fabric-loader"
 	}
