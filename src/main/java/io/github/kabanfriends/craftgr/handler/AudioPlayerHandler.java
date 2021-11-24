@@ -25,12 +25,46 @@ public class AudioPlayerHandler {
         this.player = audioPlayer;
     }
 
+    public void startPlayback() {
+        this.playing = true;
+
+        CraftGR.EXECUTOR.submit(() -> {
+            while (true) {
+                if (!INIT_FAILED) {
+                    try {
+                        CraftGR.log(Level.INFO, "Starting playback...");
+                        this.player.play();
+                    } catch (Exception err) {
+                        CraftGR.log(Level.ERROR, "Error during audio playback!");
+                        err.printStackTrace();
+                    }finally {
+                        CraftGR.log(Level.INFO, "Playback has stopped! Restarting in 5 seconds...");
+
+                        try {
+                            this.player.close();
+                        } catch (BitstreamException e) {
+                            e.printStackTrace();
+                        }
+
+                        try {
+                            Thread.sleep(5L * 1000L);
+                        } catch (InterruptedException e) {}
+
+                        initialize();
+                    }
+                }else {
+                    CraftGR.log(Level.ERROR, "Cannot start audio playback due to an initialization failure! Fix your config and restart the game.");
+                    return;
+                }
+            }
+        });
+    }
+
     public static void initialize() {
         try {
-            OkHttpClient client = new OkHttpClient();
             Request request = new Request.Builder().url(GRConfig.getConfig().streamURL).build();
 
-            Response response = client.newCall(request).execute();
+            Response response = CraftGR.HTTP_CLIENT.newCall(request).execute();
             InputStream stream = response.body().byteStream();
 
             AudioPlayer audioPlayer = new AudioPlayer(stream);
@@ -47,43 +81,6 @@ public class AudioPlayerHandler {
 
             INIT_FAILED = true;
         }
-    }
-
-    public void startPlayback() {
-        this.playing = true;
-
-        CraftGR.EXECUTOR.submit(() -> {
-            while (true) {
-                if (!INIT_FAILED) {
-                    try {
-                        CraftGR.log(Level.INFO, "Starting playback...");
-                        this.player.play();
-                    } catch (Exception err) {
-                        CraftGR.log(Level.ERROR, "Error during audio playback!");
-                        err.printStackTrace();
-                    }finally {
-                        CraftGR.log(Level.INFO, "Playback has stopped! Restarting in 4 seconds...");
-
-                        try {
-                            this.player.close();
-                        } catch (BitstreamException e) {
-                            e.printStackTrace();
-                        }
-
-                        try {
-                            Thread.sleep(4L * 1000L);
-                        } catch (InterruptedException interruptedException) {
-                            interruptedException.printStackTrace();
-                        }
-
-                        initialize();
-                    }
-                }else {
-                    CraftGR.log(Level.ERROR, "Cannot start audio playback due to an initialization failure! Fix your config and restart the game.");
-                    return;
-                }
-            }
-        });
     }
 
     public static AudioPlayerHandler getInstance() {

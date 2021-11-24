@@ -1,0 +1,167 @@
+package io.github.kabanfriends.craftgr.render.impl;
+
+import io.github.kabanfriends.craftgr.CraftGR;
+import io.github.kabanfriends.craftgr.config.GRConfig;
+import io.github.kabanfriends.craftgr.handler.SongHandler;
+import io.github.kabanfriends.craftgr.render.Overlay;
+import io.github.kabanfriends.craftgr.song.Song;
+import io.github.kabanfriends.craftgr.util.RenderUtil;
+import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.texture.NativeImage;
+import net.minecraft.client.texture.NativeImageBackedTexture;
+import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.util.Identifier;
+import okhttp3.Request;
+import okhttp3.Response;
+import org.apache.logging.log4j.Level;
+
+import java.awt.*;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
+
+public class SongInfoOverlay extends Overlay {
+
+    private static final float BASE_SCALE = 1.0f;
+    private static final int ALBUM_ART_SIZE = 105;
+
+    private static SongInfoOverlay INSTANCE;
+
+    private Map<String, Identifier> albumArts;
+
+    public SongInfoOverlay() {
+        INSTANCE = this;
+
+        this.albumArts = new HashMap<>();
+    }
+
+    @Override
+    public void render(MatrixStack matrix, int mouseX, int mouseY) {
+        Song currentSong = SongHandler.getInstance().song;
+
+        if (currentSong != null) {
+            float scale = GRConfig.getConfig().overlayScale;
+            matrix.scale(getUIScale(scale), getUIScale(scale), getUIScale(scale));
+
+            TextRenderer font = CraftGR.MC.textRenderer;
+
+            String[] strings = {currentSong.title, currentSong.artist, currentSong.album, currentSong.circle};
+            int maxWidth = 0;
+            for (String string : strings) {
+                int width = font.getWidth(string);
+                if (width > maxWidth) maxWidth = width;
+            }
+
+            int albumArtWidth;
+            if (GRConfig.getConfig().hideAlbumArt) albumArtWidth = -6;
+            else albumArtWidth = ALBUM_ART_SIZE;
+
+            float width = 12 + 7 + albumArtWidth + (maxWidth * 2) + 10;
+            float height = ALBUM_ART_SIZE + 6 + 20;
+
+            int[] coord = getOverlayCoordinate(GRConfig.getConfig().overlayPosition, width);
+            int x = coord[0];
+            int y = coord[0];
+
+            if (currentSong.intermission) height = ALBUM_ART_SIZE + 6;
+            RenderUtil.fill(matrix, x, y, x + width,  y + ALBUM_ART_SIZE + 10 + 10, GRConfig.getConfig().overlayBgColor + 0xFF000000, 100);
+
+            if (albumArts.containsKey(currentSong.albumArt) && !GRConfig.getConfig().hideAlbumArt) {
+                Identifier albumArt = albumArts.get(currentSong.albumArt);
+
+                if (albumArt != null) {
+                    RenderUtil.bindTexture(albumArt);
+                    DrawableHelper.drawTexture(matrix, x + 6, y + 6, 0f, 0f, ALBUM_ART_SIZE, ALBUM_ART_SIZE, ALBUM_ART_SIZE, ALBUM_ART_SIZE);
+                }
+            }
+
+            matrix.push();
+            matrix.scale(2, 2, 2);
+            DrawableHelper.drawStringWithShadow(matrix, CraftGR.MC.textRenderer, currentSong.title, (x + 12 + 8 + albumArtWidth) / 2, (y + 8) / 2, Color.WHITE.getRGB());
+            DrawableHelper.drawStringWithShadow(matrix, CraftGR.MC.textRenderer, "(" + currentSong.year + ")", (x + 12 + 10 + albumArtWidth) / 2, (y + 8 + 20) / 2, Color.LIGHT_GRAY.getRGB());
+            DrawableHelper.drawStringWithShadow(matrix, CraftGR.MC.textRenderer, currentSong.artist, (x + 12 + 8 + albumArtWidth) / 2, (y + 8 + 7 + 20 * 2) / 2, Color.LIGHT_GRAY.getRGB());
+            DrawableHelper.drawStringWithShadow(matrix, CraftGR.MC.textRenderer, currentSong.album, (x + 12 + 8 + albumArtWidth) / 2, (y + 8 + 7 + 20 * 3) / 2, Color.LIGHT_GRAY.getRGB());
+            DrawableHelper.drawStringWithShadow(matrix, CraftGR.MC.textRenderer, currentSong.circle, (x + 12 + 8 + albumArtWidth) / 2, (y + 8 + 7 + 20 * 4) / 2, Color.LIGHT_GRAY.getRGB());
+
+            matrix.pop();
+
+            if (!currentSong.intermission) {
+                long duration = currentSong.songEnd - currentSong.songStart;
+                long played = System.currentTimeMillis() / 1000L - currentSong.songStart;
+
+                DrawableHelper.drawStringWithShadow(matrix, CraftGR.MC.textRenderer, getTimer((int) played), x + 6, y + ALBUM_ART_SIZE + 10, Color.WHITE.getRGB());
+
+                int timerWidth = font.getWidth(getTimer((int) duration));
+                DrawableHelper.drawStringWithShadow(matrix, CraftGR.MC.textRenderer, getTimer((int) duration), x + 12 + 13 + albumArtWidth + (maxWidth * 2) - timerWidth - 6, y + ALBUM_ART_SIZE + 10, Color.WHITE.getRGB());
+
+                RenderUtil.fill(matrix, x, y + ALBUM_ART_SIZE + 10 + 10, x + (float)played / duration * width, y + height, GRConfig.getConfig().overlayBarColor + 0xFF000000, 100);
+                RenderUtil.fill(matrix, x + (float)played / duration * width, y + ALBUM_ART_SIZE + 10 + 10, x + width, y + height, GRConfig.getConfig().overlayBgColor + 0xFF000000, 100);
+            }
+        }
+    }
+
+    private int[] getOverlayCoordinate(OverlayPosition position, float width) {
+        switch (position) {
+            case TOP_LEFT:
+                return new int[] {10, 10};
+            case TOP_RIGHT:
+                
+        }
+    }
+
+    public void createAlbumArtTexture(Song song) {
+        if (!albumArts.containsKey(song.albumArt)) {
+            if (song.albumArt.isEmpty()) {
+                albumArts.put(song.albumArt, null);
+                return;
+            }
+
+            CraftGR.EXECUTOR.submit(() -> {
+                Identifier albumArt = null;
+                try {
+                    Request request = new Request.Builder().url(GRConfig.getConfig().albumArtURL + song.albumArt).build();
+
+                    Response response = CraftGR.HTTP_CLIENT.newCall(request).execute();
+                    InputStream stream = response.body().byteStream();
+
+                    //Wait for texture manager to get initialized
+                    while (CraftGR.MC.getTextureManager() == null) {
+                        Thread.sleep(1);
+                    }
+
+                    albumArt = CraftGR.MC.getTextureManager().registerDynamicTexture("craftgr_album", new NativeImageBackedTexture(NativeImage.read(stream)));
+                }catch (Exception e) {
+                    CraftGR.log(Level.ERROR, "Error while creating album art texture!");
+                    e.printStackTrace();
+                }finally {
+                    albumArts.put(song.albumArt, albumArt);
+                }
+            });
+        }
+    }
+
+    public enum OverlayPosition {
+        TOP_LEFT,
+        TOP_RIGHT,
+        BOTTOM_LEFT,
+        BOTTOM_RIGHT,
+    }
+
+    private static String getTimer(int time) {
+        int minutes = time / 60;
+        int seconds = time % 60;
+
+        return (minutes < 10 ? "0" + minutes : minutes) + ":" + (seconds < 10 ? "0" + seconds : seconds);
+    }
+
+    private static float getUIScale(float uiScale) {
+        double mcScale = CraftGR.MC.getWindow().getScaleFactor();
+
+        return (float) ((((double)BASE_SCALE) * (((double)BASE_SCALE) / mcScale)) * uiScale);
+    }
+
+    public static SongInfoOverlay getInstance() {
+        return INSTANCE;
+    }
+}

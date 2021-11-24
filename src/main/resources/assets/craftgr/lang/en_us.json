@@ -7,6 +7,10 @@
   "text.autoconfig.craftgr.option.songInfoURL.@Tooltip": "URL to get song info from.",
   "text.autoconfig.craftgr.option.volume": "Playback Volume",
   "text.autoconfig.craftgr.option.volume.@Tooltip": "Playback Volume of the Gensokyo Radio music.",
+  "text.autoconfig.craftgr.option.albumArtURL": "Album Image URL",
+  "text.autoconfig.craftgr.option.overlayBgColor": "Overlay Background Color",
+  "text.autoconfig.craftgr.option.overlayBgColor": "Overlay Background Color",
+  "text.autoconfig.craftgr.option.overlayBarColor": "Overlay Bar Color",
 
   "text.craftgr.gui.options.volume": "Gensokyo Radio",
 
