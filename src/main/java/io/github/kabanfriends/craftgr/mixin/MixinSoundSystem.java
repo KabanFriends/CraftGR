@@ -13,11 +13,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(SoundSystem.class)
 public class MixinSoundSystem {
 
+    private static boolean LOADED = false;
+
     @Inject(method = "reloadSounds()V", at = @At("HEAD"))
     public void stopPlayback(CallbackInfo ci) {
-        AudioPlayerHandler handler = AudioPlayerHandler.getInstance();
+        if (AudioPlayerHandler.isInitialized()) {
+            AudioPlayerHandler handler = AudioPlayerHandler.getInstance();
 
-        if (handler.loaded) {
             try {
                 CraftGR.log(Level.INFO, "Closing the audio player");
                 AudioPlayerHandler.getInstance().player.close();
@@ -25,8 +27,6 @@ public class MixinSoundSystem {
                 CraftGR.log(Level.ERROR, "Error when closing the audio player!");
                 e.printStackTrace();
             }
-        }else {
-            handler.loaded = true;
         }
     }
 }

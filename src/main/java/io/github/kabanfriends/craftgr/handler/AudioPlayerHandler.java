@@ -14,15 +14,15 @@ import java.io.InputStream;
 public class AudioPlayerHandler {
 
     private static AudioPlayerHandler INSTANCE;
-    private static boolean INIT_FAILED;
+    private static int INIT_STATE;
 
     public AudioPlayer player;
     public Response response;
     public boolean playing = false;
-    public boolean loaded = false;
 
     public AudioPlayerHandler() {
         INSTANCE = this;
+        INIT_STATE = 0;
         initialize();
     }
 
@@ -31,7 +31,7 @@ public class AudioPlayerHandler {
 
         CraftGR.EXECUTOR.submit(() -> {
             while (true) {
-                if (!INIT_FAILED) {
+                if (INIT_STATE == 1) {
                     ProcessResult result = this.player.play();
 
                     if (result == ProcessResult.AL_ERROR || result == ProcessResult.EXCEPTION) {
@@ -71,12 +71,18 @@ public class AudioPlayerHandler {
             }
 
             this.player = audioPlayer;
+
+            INIT_STATE = 1;
         }catch (Exception err) {
             CraftGR.log(Level.ERROR, "Error when initializing the audio player:");
             err.printStackTrace();
 
-            INIT_FAILED = true;
+            INIT_STATE = -1;
         }
+    }
+
+    public static boolean isInitialized() {
+        return INIT_STATE == 1;
     }
 
     public static AudioPlayerHandler getInstance() {

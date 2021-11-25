@@ -3,7 +3,6 @@ package io.github.kabanfriends.craftgr.handler;
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.commands.Command;
 import io.github.kabanfriends.craftgr.commands.impl.InfoCommand;
-import io.github.kabanfriends.craftgr.commands.impl.ReconnectCommand;
 import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
 
 import java.util.ArrayList;
@@ -19,8 +18,7 @@ public class CommandHandler {
 
     public CommandHandler() {
         register(
-                new InfoCommand(),
-                new ReconnectCommand()
+                new InfoCommand()
         );
     }
 

@@ -46,11 +46,6 @@ public class CraftGR implements ModInitializer {
 
         new SongHandler();
         new CommandHandler();
-        new Thread(() -> {
-            log(Level.INFO, "CraftGR is starting up!");
-            new AudioPlayerHandler();
-            log(Level.INFO, "Audio player is ready!");
-        }).run();
     }
 
     public static void log(Level level, String message){
