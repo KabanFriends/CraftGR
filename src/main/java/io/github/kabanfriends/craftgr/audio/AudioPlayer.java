@@ -24,6 +24,8 @@ import javazoom.jl.decoder.SampleBuffer;
 //Code based on: https://github.com/PC-Logix/OpenFM/blob/1.12.2/src/main/java/pcl/OpenFM/player/MP3Player.java
 public class AudioPlayer {
 
+    private static boolean FORCE_STOP;
+
     private InputStream stream;
     private Bitstream bitstream;
     private Decoder decoder;

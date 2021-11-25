@@ -22,11 +22,11 @@
   "text.autoconfig.craftgr.option.overlayScale": "Overlay Scale",
   "text.autoconfig.craftgr.option.overlayScale.@Tooltip": "How large the song info overlay should be displayed.",
 
-
   "text.craftgr.gui.options.volume": "Gensokyo Radio",
 
   "text.craftgr.message.muted": "[CraftGR] §cAudio playback is now muted!",
   "text.craftgr.message.unmuted": "[CraftGR] §aAudio playback is now unmuted!",
+  "text.craftgr.message.reconnect": "[CraftGR] §eReconnecting to the audio server...",
 
   "text.craftgr.command.info.error": "§cError while trying to fetch the song information!",
   "text.craftgr.command.info.header": "§6♫§d Current Song:",
