@@ -69,7 +69,7 @@ public class SongInfoOverlay extends Overlay {
             int x = (int)coord[0];
             int y = (int)coord[1];
 
-            RenderUtil.fill(matrix, x, y, x + width,  y + ALBUM_ART_SIZE + 10 + 10, GRConfig.getConfig().overlayBgColor + 0xFF000000, 100);
+            RenderUtil.fill(matrix, x, y, x + width,  y + ALBUM_ART_SIZE + 10 + 10, GRConfig.getConfig().overlayBgColor + 0xFF000000, 0.6f);
 
             if (albumArts.containsKey(currentSong.albumArt) && !GRConfig.getConfig().hideAlbumArt) {
                 Identifier albumArt = albumArts.get(currentSong.albumArt);
@@ -96,7 +96,7 @@ public class SongInfoOverlay extends Overlay {
             matrix.pop();
 
             if (currentSong.intermission) {
-                RenderUtil.fill(matrix, x, y + ALBUM_ART_SIZE + 10 + 10, x + width, y + height, GRConfig.getConfig().overlayBgColor + 0xFF000000, 100);
+                RenderUtil.fill(matrix, x, y + ALBUM_ART_SIZE + 10 + 10, x + width, y + height, GRConfig.getConfig().overlayBgColor + 0xFF000000, 0.6f);
             }else {
                 long duration = currentSong.songEnd - currentSong.songStart;
                 long played = System.currentTimeMillis() / 1000L - SongHandler.getInstance().songStart;
@@ -107,8 +107,8 @@ public class SongInfoOverlay extends Overlay {
                 int timerWidth = font.getWidth(getTimer((int) duration));
                 DrawableHelper.drawStringWithShadow(matrix, CraftGR.MC.textRenderer, getTimer((int) duration), x + 12 + 13 + albumArtWidth + (maxWidth * 2) - timerWidth - 6 + 4, y + ALBUM_ART_SIZE + 10, Color.WHITE.getRGB());
 
-                RenderUtil.fill(matrix, x, y + ALBUM_ART_SIZE + 10 + 10, x + (float)played / duration * width, y + height, GRConfig.getConfig().overlayBarColor + 0xFF000000, 100);
-                RenderUtil.fill(matrix, x + (float)played / duration * width, y + ALBUM_ART_SIZE + 10 + 10, x + width, y + height, GRConfig.getConfig().overlayBgColor + 0xFF000000, 100);
+                RenderUtil.fill(matrix, x, y + ALBUM_ART_SIZE + 10 + 10, x + (float)played / duration * width, y + height, GRConfig.getConfig().overlayBarColor + 0xFF000000, 0.6f);
+                RenderUtil.fill(matrix, x + (float)played / duration * width, y + ALBUM_ART_SIZE + 10 + 10, x + width, y + height, GRConfig.getConfig().overlayBgColor + 0xFF000000, 0.6f);
             }
         }
     }
