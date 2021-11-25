@@ -126,14 +126,17 @@ public class SongHandler {
                 }
             }
 
+            long duration = song.songEnd - song.songStart;
+
             if (song.intermission) {
                 song.albumArt = "";
                 song.title = "Intermission";
-            }
 
-            long songDuration = song.songEnd - song.songStart;
-            this.songStart = System.currentTimeMillis()/1000L - song.played;
-            this.songEnd = this.songStart + songDuration;
+                this.songEnd += duration;
+            }else {
+                this.songStart = System.currentTimeMillis()/1000L - song.played;
+                this.songEnd = this.songStart + duration;
+            }
 
             response.close();
 
