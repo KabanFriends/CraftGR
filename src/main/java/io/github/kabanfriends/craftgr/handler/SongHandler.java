@@ -46,7 +46,6 @@ public class SongHandler {
     }
 
     private void prepareNewSong() {
-        this.song = null;
         this.song = getSongFromInfoXML(GRConfig.getConfig().songInfoURL);
 
         SongInfoOverlay.getInstance().createAlbumArtTexture(song);
