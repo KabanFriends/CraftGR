@@ -66,7 +66,7 @@ public class AudioPlayerHandler {
 
             AudioPlayer audioPlayer = new AudioPlayer(stream);
 
-            if (INSTANCE != null) {
+            if (INIT_STATE == 1) {
                 audioPlayer.setVolume(1.0f);
             }
 
