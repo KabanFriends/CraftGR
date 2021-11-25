@@ -15,7 +15,6 @@ public class AudioPlayerHandler {
 
     private static AudioPlayerHandler INSTANCE;
     private static boolean INIT_FAILED;
-    public static boolean INSTANT_RESTART;
 
     public AudioPlayer player;
     public Response response;

@@ -13,14 +13,14 @@ public class ReconnectCommand extends Command {
 
     private static int run(CommandContext<FabricClientCommandSource> ctx) {
         MessageUtil.sendTranslatableMessage("text.craftgr.message.reconnect");
-        AudioPlayerHandler.getInstance().player.stop();
+        AudioPlayerHandler.getInstance().player.stopNext();
 
         return 1;
     }
 
     @Override
     public void register(MinecraftClient mc, CommandDispatcher<FabricClientCommandSource> cd) {
-        cd.register(ArgBuilder.literal("info")
+        cd.register(ArgBuilder.literal("reconnect")
                 .executes(ReconnectCommand::run)
         );
     }
