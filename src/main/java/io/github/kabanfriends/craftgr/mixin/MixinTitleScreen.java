@@ -24,9 +24,15 @@ public class MixinTitleScreen {
     @Final
     private boolean doBackgroundFade;
 
-    @Inject(at = @At("HEAD"), method = "init()V")
-    private void init(CallbackInfo info) {
+    @Inject(method = "removed", at = @At("HEAD"))
+    private void onClose(CallbackInfo info) {
+        if (AudioPlayerHandler.isInitialized()) {
+            AudioPlayerHandler handler = AudioPlayerHandler.getInstance();
 
+            if (handler.player.isPlaying()) {
+                handler.player.setVolume(1.0f);
+            }
+        }
     }
 
     @Inject(method = "render", at = @At("HEAD"))
