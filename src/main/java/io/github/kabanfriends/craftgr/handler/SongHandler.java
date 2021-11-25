@@ -17,8 +17,6 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
-import java.net.URL;
-import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
@@ -108,7 +106,6 @@ public class SongHandler {
                 else if (c1.getNodeName().equals("SONGTIMES")) {
                     for(Node c2 = c1.getFirstChild(); c2 != null; c2 = c2.getNextSibling()) {
                         if (c2.getNodeName().equals("DURATION") && c2.getTextContent().equals("0")) song.intermission = true;
-                        else if (c2.getNodeName().equals("PLAYED")) song.played = Integer.parseInt(c2.getTextContent());
                         else if (c2.getNodeName().equals("SONGSTART")) song.songStart = Long.parseLong(c2.getTextContent());
                         else if (c2.getNodeName().equals("SONGEND")) song.songEnd = Long.parseLong(c2.getTextContent());
                     }
@@ -122,21 +119,21 @@ public class SongHandler {
                 else if (c1.getNodeName().equals("MISC")) {
                     for(Node c2 = c1.getFirstChild(); c2 != null; c2 = c2.getNextSibling()) {
                         if (c2.getNodeName().equals("ALBUMART")) song.albumArt = c2.getTextContent();
+                        else if (c2.getNodeName().equals("OFFSETTIME")) song.offsetTime = Long.parseLong(c2.getTextContent());
                     }
                 }
             }
 
-            long duration = song.songEnd - song.songStart;
 
             if (song.intermission) {
                 song.albumArt = "";
                 song.title = "Intermission";
-
-                this.songEnd += duration;
-            }else {
-                this.songStart = System.currentTimeMillis()/1000L - song.played;
-                this.songEnd = this.songStart + duration;
             }
+
+            long played = song.offsetTime - song.songStart;
+            long duration = song.songEnd - song.songStart;
+            this.songStart = System.currentTimeMillis()/1000L - played;
+            this.songEnd = this.songStart + duration;
 
             response.close();
 

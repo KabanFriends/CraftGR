@@ -14,7 +14,6 @@ public class Song {
     //SONGTIMES
     public long songStart;
     public long songEnd;
-    public int played;
 
     //SONGDATA
     public int albumId;
@@ -22,6 +21,7 @@ public class Song {
 
     //MISC
     public String albumArt;
+    public long offsetTime;
 
     public Song() {
         this.intermission = false;
@@ -34,11 +34,11 @@ public class Song {
 
         this.songStart = 0L;
         this.songEnd = 0L;
-        this.played = 0;
 
         this.albumId = 0;
         this.rating = 0f;
 
         this.albumArt = "";
+        this.offsetTime = 0;
     }
 }
