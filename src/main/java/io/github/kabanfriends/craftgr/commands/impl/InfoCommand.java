@@ -68,8 +68,6 @@ public class InfoCommand extends Command {
         CraftGR.MC.player.sendMessage(circle, false);
         CraftGR.MC.player.sendMessage(rating, false);
 
-        MessageUtil.sendMessage(song.albumArt);
-
         return 1;
     }
 
