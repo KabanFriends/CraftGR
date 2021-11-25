@@ -8,9 +8,20 @@
   "text.autoconfig.craftgr.option.volume": "Playback Volume",
   "text.autoconfig.craftgr.option.volume.@Tooltip": "Playback Volume of the Gensokyo Radio music.",
   "text.autoconfig.craftgr.option.albumArtURL": "Album Image URL",
+  "text.autoconfig.craftgr.option.albumArtURL.@Tooltip": "URL to get album cover images from.",
+  "text.autoconfig.craftgr.option.overlayVisibility": "Overlay Visibility",
+  "text.autoconfig.craftgr.option.overlayVisibility.@Tooltip": "Option for when the song overlay is visible.",
+  "text.autoconfig.craftgr.option.overlayPosition": "Overlay Position",
+  "text.autoconfig.craftgr.option.overlayPosition.@Tooltip": "Option for where to display the song info overlay at.",
+  "text.autoconfig.craftgr.option.hideAlbumArt": "Hide Album Cover",
+  "text.autoconfig.craftgr.option.hideAlbumArt.@Tooltip": "Whether to hide the album cover image or not in the song info overlay.",
   "text.autoconfig.craftgr.option.overlayBgColor": "Overlay Background Color",
-  "text.autoconfig.craftgr.option.overlayBgColor": "Overlay Background Color",
+  "text.autoconfig.craftgr.option.overlayBgColor.@Tooltip": "Background color of the song info overlay.",
   "text.autoconfig.craftgr.option.overlayBarColor": "Overlay Bar Color",
+  "text.autoconfig.craftgr.option.overlayBarColor.@Tooltip": "Progress bar color of the song info overlay.",
+  "text.autoconfig.craftgr.option.overlayScale": "Overlay Scale",
+  "text.autoconfig.craftgr.option.overlayScale.@Tooltip": "How large the song info overlay should be displayed.",
+
 
   "text.craftgr.gui.options.volume": "Gensokyo Radio",
 

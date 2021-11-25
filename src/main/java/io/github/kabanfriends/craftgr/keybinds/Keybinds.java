@@ -1,5 +1,6 @@
 package io.github.kabanfriends.craftgr.keybinds;
 
+import io.github.kabanfriends.craftgr.audio.AudioPlayer;
 import io.github.kabanfriends.craftgr.handler.AudioPlayerHandler;
 import io.github.kabanfriends.craftgr.util.MessageUtil;
 import net.fabricmc.api.ClientModInitializer;

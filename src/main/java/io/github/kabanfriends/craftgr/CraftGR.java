@@ -18,6 +18,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class CraftGR implements ModInitializer {
 
@@ -28,11 +29,18 @@ public class CraftGR implements ModInitializer {
 
     public static final MinecraftClient MC = MinecraftClient.getInstance();
     public static final ExecutorService EXECUTOR = Executors.newCachedThreadPool();
-    public static final OkHttpClient HTTP_CLIENT = new OkHttpClient();
+
+    public static OkHttpClient HTTP_CLIENT;
 
     @Override
     public void onInitialize() {
         AutoConfig.register(GRConfig.class, GsonConfigSerializer::new);
+
+        HTTP_CLIENT = new OkHttpClient.Builder()
+                .connectTimeout(20, TimeUnit.SECONDS)
+                .writeTimeout(40, TimeUnit.SECONDS)
+                .readTimeout(20, TimeUnit.SECONDS)
+                .build();
 
         OverlayHandler.addOverlay(new SongInfoOverlay());
 
@@ -40,7 +48,7 @@ public class CraftGR implements ModInitializer {
         new CommandHandler();
         new Thread(() -> {
             log(Level.INFO, "CraftGR is starting up!");
-            AudioPlayerHandler.initialize();
+            new AudioPlayerHandler();
             log(Level.INFO, "Audio player is ready!");
         }).run();
     }

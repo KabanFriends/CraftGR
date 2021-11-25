@@ -7,8 +7,6 @@ import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.autoconfig.annotation.ConfigEntry;
 
-import java.awt.*;
-
 @Config(name = CraftGR.MOD_ID)
 public class GRConfig implements ConfigData {
 
@@ -26,6 +24,11 @@ public class GRConfig implements ConfigData {
     public String albumArtURL = "https://gensokyoradio.net/images/albums/500/";
 
     @ConfigEntry.Gui.Tooltip
+    @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
+    public SongInfoOverlay.OverlayVisibility overlayVisibility = SongInfoOverlay.OverlayVisibility.MENU;
+
+    @ConfigEntry.Gui.Tooltip
+    @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
     public SongInfoOverlay.OverlayPosition overlayPosition = SongInfoOverlay.OverlayPosition.TOP_RIGHT;
 
     @ConfigEntry.Gui.Tooltip

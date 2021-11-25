@@ -25,6 +25,7 @@ public class SongInfoOverlay extends Overlay {
 
     private static final float BASE_SCALE = 1.0f;
     private static final int ALBUM_ART_SIZE = 105;
+    private static final Identifier ALBUM_ART_PLACEHOLDER = new Identifier(CraftGR.MOD_ID, "textures/album/placeholder.png");
 
     private static SongInfoOverlay INSTANCE;
 
@@ -46,11 +47,15 @@ public class SongInfoOverlay extends Overlay {
 
             TextRenderer font = CraftGR.MC.textRenderer;
 
-            String[] strings = {currentSong.title, currentSong.artist, currentSong.album, currentSong.circle};
             int maxWidth = 0;
-            for (String string : strings) {
-                int width = font.getWidth(string);
-                if (width > maxWidth) maxWidth = width;
+            if (currentSong.intermission) {
+                maxWidth = font.getWidth(currentSong.title);
+            }else {
+                String[] strings = {currentSong.title, currentSong.artist, currentSong.album, currentSong.circle};
+                for (String string : strings) {
+                    int width = font.getWidth(string);
+                    if (width > maxWidth) maxWidth = width;
+                }
             }
 
             int albumArtWidth;
@@ -60,40 +65,47 @@ public class SongInfoOverlay extends Overlay {
             float width = 12 + 7 + albumArtWidth + (maxWidth * 2) + 10;
             float height = ALBUM_ART_SIZE + 6 + 20;
 
-            int[] coord = getOverlayCoordinate(GRConfig.getConfig().overlayPosition, width);
-            int x = coord[0];
-            int y = coord[0];
+            float[] coord = getOverlayCoordinate(GRConfig.getConfig().overlayPosition, width, height);
+            int x = (int)coord[0];
+            int y = (int)coord[1];
 
-            if (currentSong.intermission) height = ALBUM_ART_SIZE + 6;
             RenderUtil.fill(matrix, x, y, x + width,  y + ALBUM_ART_SIZE + 10 + 10, GRConfig.getConfig().overlayBgColor + 0xFF000000, 100);
 
             if (albumArts.containsKey(currentSong.albumArt) && !GRConfig.getConfig().hideAlbumArt) {
                 Identifier albumArt = albumArts.get(currentSong.albumArt);
 
-                if (albumArt != null) {
+                if (albumArt == null) {
+                    RenderUtil.bindTexture(ALBUM_ART_PLACEHOLDER);
+                }else {
                     RenderUtil.bindTexture(albumArt);
-                    DrawableHelper.drawTexture(matrix, x + 6, y + 6, 0f, 0f, ALBUM_ART_SIZE, ALBUM_ART_SIZE, ALBUM_ART_SIZE, ALBUM_ART_SIZE);
                 }
+                DrawableHelper.drawTexture(matrix, x + 6, y + 6, 0f, 0f, ALBUM_ART_SIZE, ALBUM_ART_SIZE, ALBUM_ART_SIZE, ALBUM_ART_SIZE);
             }
 
             matrix.push();
             matrix.scale(2, 2, 2);
             DrawableHelper.drawStringWithShadow(matrix, CraftGR.MC.textRenderer, currentSong.title, (x + 12 + 8 + albumArtWidth) / 2, (y + 8) / 2, Color.WHITE.getRGB());
-            DrawableHelper.drawStringWithShadow(matrix, CraftGR.MC.textRenderer, "(" + currentSong.year + ")", (x + 12 + 10 + albumArtWidth) / 2, (y + 8 + 20) / 2, Color.LIGHT_GRAY.getRGB());
-            DrawableHelper.drawStringWithShadow(matrix, CraftGR.MC.textRenderer, currentSong.artist, (x + 12 + 8 + albumArtWidth) / 2, (y + 8 + 7 + 20 * 2) / 2, Color.LIGHT_GRAY.getRGB());
-            DrawableHelper.drawStringWithShadow(matrix, CraftGR.MC.textRenderer, currentSong.album, (x + 12 + 8 + albumArtWidth) / 2, (y + 8 + 7 + 20 * 3) / 2, Color.LIGHT_GRAY.getRGB());
-            DrawableHelper.drawStringWithShadow(matrix, CraftGR.MC.textRenderer, currentSong.circle, (x + 12 + 8 + albumArtWidth) / 2, (y + 8 + 7 + 20 * 4) / 2, Color.LIGHT_GRAY.getRGB());
+
+            if (!currentSong.intermission) {
+                DrawableHelper.drawStringWithShadow(matrix, CraftGR.MC.textRenderer, "(" + currentSong.year + ")", (x + 12 + 10 + albumArtWidth) / 2, (y + 8 + 20) / 2, Color.LIGHT_GRAY.getRGB());
+                DrawableHelper.drawStringWithShadow(matrix, CraftGR.MC.textRenderer, currentSong.artist, (x + 12 + 8 + albumArtWidth) / 2, (y + 8 + 7 + 20 * 2) / 2, Color.LIGHT_GRAY.getRGB());
+                DrawableHelper.drawStringWithShadow(matrix, CraftGR.MC.textRenderer, currentSong.album, (x + 12 + 8 + albumArtWidth) / 2, (y + 8 + 7 + 20 * 3) / 2, Color.LIGHT_GRAY.getRGB());
+                DrawableHelper.drawStringWithShadow(matrix, CraftGR.MC.textRenderer, currentSong.circle, (x + 12 + 8 + albumArtWidth) / 2, (y + 8 + 7 + 20 * 4) / 2, Color.LIGHT_GRAY.getRGB());
+            }
 
             matrix.pop();
 
-            if (!currentSong.intermission) {
+            if (currentSong.intermission) {
+                RenderUtil.fill(matrix, x, y + ALBUM_ART_SIZE + 10 + 10, x + width, y + height, GRConfig.getConfig().overlayBgColor + 0xFF000000, 100);
+            }else {
                 long duration = currentSong.songEnd - currentSong.songStart;
-                long played = System.currentTimeMillis() / 1000L - currentSong.songStart;
+                long played = System.currentTimeMillis() / 1000L - SongHandler.getInstance().songStart;
+                if (played > duration) played = duration;
 
                 DrawableHelper.drawStringWithShadow(matrix, CraftGR.MC.textRenderer, getTimer((int) played), x + 6, y + ALBUM_ART_SIZE + 10, Color.WHITE.getRGB());
 
                 int timerWidth = font.getWidth(getTimer((int) duration));
-                DrawableHelper.drawStringWithShadow(matrix, CraftGR.MC.textRenderer, getTimer((int) duration), x + 12 + 13 + albumArtWidth + (maxWidth * 2) - timerWidth - 6, y + ALBUM_ART_SIZE + 10, Color.WHITE.getRGB());
+                DrawableHelper.drawStringWithShadow(matrix, CraftGR.MC.textRenderer, getTimer((int) duration), x + 12 + 13 + albumArtWidth + (maxWidth * 2) - timerWidth - 6 + 4, y + ALBUM_ART_SIZE + 10, Color.WHITE.getRGB());
 
                 RenderUtil.fill(matrix, x, y + ALBUM_ART_SIZE + 10 + 10, x + (float)played / duration * width, y + height, GRConfig.getConfig().overlayBarColor + 0xFF000000, 100);
                 RenderUtil.fill(matrix, x + (float)played / duration * width, y + ALBUM_ART_SIZE + 10 + 10, x + width, y + height, GRConfig.getConfig().overlayBgColor + 0xFF000000, 100);
@@ -101,12 +113,20 @@ public class SongInfoOverlay extends Overlay {
         }
     }
 
-    private int[] getOverlayCoordinate(OverlayPosition position, float width) {
+    private float[] getOverlayCoordinate(OverlayPosition position, float width, float height) {
+        float offset = 10 / GRConfig.getConfig().overlayScale;
+        float x = CraftGR.MC.getWindow().getWidth() / GRConfig.getConfig().overlayScale - width - offset;
+        float y = CraftGR.MC.getWindow().getHeight() / GRConfig.getConfig().overlayScale - height - offset;
+
         switch (position) {
-            case TOP_LEFT:
-                return new int[] {10, 10};
             case TOP_RIGHT:
-                
+                return new float[] {x, offset};
+            case BOTTOM_LEFT:
+                return new float[] {offset, y};
+            case BOTTOM_RIGHT:
+                return new float[] {x, y};
+            default:
+                return new float[] {offset, offset};
         }
     }
 
@@ -125,7 +145,7 @@ public class SongInfoOverlay extends Overlay {
                     Response response = CraftGR.HTTP_CLIENT.newCall(request).execute();
                     InputStream stream = response.body().byteStream();
 
-                    //Wait for texture manager to get initialized
+                    //Wait for texture manager to be initialized
                     while (CraftGR.MC.getTextureManager() == null) {
                         Thread.sleep(1);
                     }
@@ -145,14 +165,21 @@ public class SongInfoOverlay extends Overlay {
         TOP_LEFT,
         TOP_RIGHT,
         BOTTOM_LEFT,
-        BOTTOM_RIGHT,
+        BOTTOM_RIGHT
+    }
+
+    public enum OverlayVisibility {
+        NONE,
+        ALWAYS,
+        MENU,
+        CHAT
     }
 
     private static String getTimer(int time) {
         int minutes = time / 60;
         int seconds = time % 60;
 
-        return (minutes < 10 ? "0" + minutes : minutes) + ":" + (seconds < 10 ? "0" + seconds : seconds);
+        return minutes + ":" + (seconds < 10 ? "0" + seconds : seconds);
     }
 
     private static float getUIScale(float uiScale) {
