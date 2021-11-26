@@ -13,7 +13,7 @@
   "text.autoconfig.craftgr.option.overlayVisibility.@Tooltip": "Option for when the song overlay is visible.",
   "text.autoconfig.craftgr.option.overlayPosition": "Overlay Position",
   "text.autoconfig.craftgr.option.overlayPosition.@Tooltip": "Option for where to display the song info overlay at.",
-  "text.autoconfig.craftgr.option.openAlbum": "Click to Open Album Info",
+  "text.autoconfig.craftgr.option.openAlbum": "Click Overlay to Open Album Info",
   "text.autoconfig.craftgr.option.openAlbum.@Tooltip": "Whether to open the album info webpage or not when clicking the song overlay.",
   "text.autoconfig.craftgr.option.hideAlbumArt": "Hide Album Cover",
   "text.autoconfig.craftgr.option.hideAlbumArt.@Tooltip": "Whether to hide the album cover image or not in the song info overlay.",
