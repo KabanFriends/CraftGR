@@ -35,13 +35,13 @@ dependencies {
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 	
 	modImplementation "javazoom:jlayer:1.0.1"
-	modImplementation "com.squareup.okhttp3:okhttp:4.9.0"
+	modImplementation "com.squareup.okhttp3:okhttp:3.14.9"
 	modImplementation "com.googlecode.soundlibs:tritonus-share:0.3.7-2"
 	modImplementation "com.googlecode.soundlibs:mp3spi:1.9.5-1"
 	include("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}") { exclude(group: "net.fabricmc.fabric-api") }
 	include "com.squareup.okio:okio:2.4.0"
 	include "javazoom:jlayer:1.0.1"
-	include "com.squareup.okhttp3:okhttp:4.9.0"
+	include "com.squareup.okhttp3:okhttp:3.14.9"
 	include "com.googlecode.soundlibs:tritonus-share:0.3.7-2"
 	include "com.googlecode.soundlibs:mp3spi:1.9.5-1"
 
