@@ -2,19 +2,24 @@ package io.github.kabanfriends.craftgr.render.impl;
 
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.config.GRConfig;
+import io.github.kabanfriends.craftgr.config.GRModMenu;
 import io.github.kabanfriends.craftgr.handler.SongHandler;
 import io.github.kabanfriends.craftgr.render.Overlay;
 import io.github.kabanfriends.craftgr.song.Song;
 import io.github.kabanfriends.craftgr.util.RenderUtil;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.gui.screen.*;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.NativeImageBackedTexture;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Util;
 import okhttp3.Request;
 import okhttp3.Response;
 import org.apache.logging.log4j.Level;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.awt.*;
 import java.io.InputStream;
@@ -42,28 +47,18 @@ public class SongInfoOverlay extends Overlay {
         Song currentSong = SongHandler.getInstance().song;
 
         if (currentSong != null) {
-            float scale = GRConfig.getConfig().overlayScale;
-            matrix.scale(getUIScale(scale), getUIScale(scale), getUIScale(scale));
-
             TextRenderer font = CraftGR.MC.textRenderer;
 
-            int maxWidth = 0;
-            if (currentSong.intermission) {
-                maxWidth = font.getWidth(currentSong.title);
-            }else {
-                String[] strings = {currentSong.title, currentSong.artist, currentSong.album, currentSong.circle};
-                for (String string : strings) {
-                    int width = font.getWidth(string);
-                    if (width > maxWidth) maxWidth = width;
-                }
-            }
+            float scale = GRConfig.getConfig().overlayScale;
+            matrix.scale(getUIScale(scale), getUIScale(scale), getUIScale(scale));
 
             int albumArtWidth;
             if (GRConfig.getConfig().hideAlbumArt) albumArtWidth = -6;
             else albumArtWidth = ALBUM_ART_SIZE;
 
-            float width = 12 + 7 + albumArtWidth + (maxWidth * 2) + 10;
-            float height = ALBUM_ART_SIZE + 6 + 20;
+            float[] size = getOverlaySize();
+            float width = size[0];
+            float height = size[1];
 
             float[] coord = getOverlayCoordinate(GRConfig.getConfig().overlayPosition, width, height);
             int x = (int)coord[0];
@@ -105,10 +100,58 @@ public class SongInfoOverlay extends Overlay {
                 DrawableHelper.drawStringWithShadow(matrix, CraftGR.MC.textRenderer, getTimer((int) played), x + 6, y + ALBUM_ART_SIZE + 10, Color.WHITE.getRGB());
 
                 int timerWidth = font.getWidth(getTimer((int) duration));
-                DrawableHelper.drawStringWithShadow(matrix, CraftGR.MC.textRenderer, getTimer((int) duration), x + 12 + 13 + albumArtWidth + (maxWidth * 2) - timerWidth - 6 + 4, y + ALBUM_ART_SIZE + 10, Color.WHITE.getRGB());
+                DrawableHelper.drawStringWithShadow(matrix, CraftGR.MC.textRenderer, getTimer((int) duration), x + (int)width - timerWidth - 6, y + ALBUM_ART_SIZE + 10, Color.WHITE.getRGB());
 
                 RenderUtil.fill(matrix, x, y + ALBUM_ART_SIZE + 10 + 10, x + (float)played / duration * width, y + height, GRConfig.getConfig().overlayBarColor + 0xFF000000, 0.6f);
                 RenderUtil.fill(matrix, x + (float)played / duration * width, y + ALBUM_ART_SIZE + 10 + 10, x + width, y + height, GRConfig.getConfig().overlayBgColor + 0xFF000000, 0.6f);
+            }
+        }
+    }
+
+    @Override
+    public void onMouseClick(int mouseX, int mouseY, CallbackInfo info) {
+        Song currentSong = SongHandler.getInstance().song;
+
+        if (currentSong != null && GRConfig.getConfig().openAlbum) {
+            float scale = GRConfig.getConfig().overlayScale;
+
+            float scaledX = mouseX / getUIScale(scale);
+            float scaledY = mouseY / getUIScale(scale);
+
+            float[] size = getOverlaySize();
+            float width = size[0];
+            float height = size[1];
+
+            float[] coord = getOverlayCoordinate(GRConfig.getConfig().overlayPosition, width, height);
+            int x = (int)coord[0];
+            int y = (int)coord[1];
+
+            if (scaledX >= x && scaledX <= x + width && scaledY >= y && scaledY <= y + height) {
+                boolean openScreen = true;
+                if (CraftGR.MC.currentScreen instanceof ConfirmChatLinkScreen) openScreen = false;
+                else if (CraftGR.MC.currentScreen instanceof LevelLoadingScreen) openScreen = false;
+                else if (CraftGR.MC.currentScreen instanceof DownloadingTerrainScreen) openScreen = false;
+                else if (CraftGR.MC.currentScreen instanceof ConnectScreen) openScreen = false;
+                else if (CraftGR.MC.currentScreen instanceof SaveLevelScreen) openScreen = false;
+
+                if (FabricLoader.getInstance().isModLoaded("modmenu")) {
+                    if (GRModMenu.isInModMenu()) openScreen = false;
+                }
+                if (FabricLoader.getInstance().isModLoaded("cloth-config2")) {
+                    if (GRConfig.isInConfig()) openScreen = false;
+                }
+
+                if (openScreen) {
+                    String link = "https://gensokyoradio.net/music/album/" + currentSong.albumId;
+                    Screen oldScreen = CraftGR.MC.currentScreen;
+
+                    CraftGR.MC.openScreen(new ConfirmChatLinkScreen((result) -> {
+                        if (result) Util.getOperatingSystem().open(link);
+                        CraftGR.MC.openScreen(oldScreen);
+                    }, link, true));
+
+                    info.cancel();
+                }
             }
         }
     }
@@ -128,6 +171,32 @@ public class SongInfoOverlay extends Overlay {
             default:
                 return new float[] {offset, offset};
         }
+    }
+
+    private float[] getOverlaySize() {
+        Song currentSong = SongHandler.getInstance().song;
+
+        TextRenderer font = CraftGR.MC.textRenderer;
+
+        int maxWidth = 0;
+        if (currentSong.intermission) {
+            maxWidth = font.getWidth(currentSong.title);
+        }else {
+            String[] strings = {currentSong.title, currentSong.artist, currentSong.album, currentSong.circle};
+            for (String string : strings) {
+                int width = font.getWidth(string);
+                if (width > maxWidth) maxWidth = width;
+            }
+        }
+
+        int albumArtWidth;
+        if (GRConfig.getConfig().hideAlbumArt) albumArtWidth = -6;
+        else albumArtWidth = ALBUM_ART_SIZE;
+
+        float width = 12 + 7 + albumArtWidth + (maxWidth * 2) + 10;
+        float height = ALBUM_ART_SIZE + 6 + 20;
+
+        return new float[] {width, height};
     }
 
     public void createAlbumArtTexture(Song song) {

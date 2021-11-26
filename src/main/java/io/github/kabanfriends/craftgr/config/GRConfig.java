@@ -6,13 +6,10 @@ import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.autoconfig.annotation.ConfigEntry;
+import me.shedaniel.clothconfig2.api.ConfigScreen;
 
 @Config(name = CraftGR.MOD_ID)
 public class GRConfig implements ConfigData {
-
-    public static GRConfig getConfig() {
-        return AutoConfig.getConfigHolder(GRConfig.class).getConfig();
-    }
 
     @ConfigEntry.Gui.Tooltip
     public String streamURL = "https://stream.gensokyoradio.net/1/";
@@ -35,6 +32,9 @@ public class GRConfig implements ConfigData {
     public boolean hideAlbumArt = false;
 
     @ConfigEntry.Gui.Tooltip
+    public boolean openAlbum = true;
+
+    @ConfigEntry.Gui.Tooltip
     @ConfigEntry.ColorPicker
     public int overlayBgColor = 0x632279;
 
@@ -48,4 +48,13 @@ public class GRConfig implements ConfigData {
     @ConfigEntry.Gui.Tooltip
     @ConfigEntry.BoundedDiscrete(min = 0, max = 100)
     public int volume = 50;
+
+    public static GRConfig getConfig() {
+        return AutoConfig.getConfigHolder(GRConfig.class).getConfig();
+    }
+
+    public static boolean isInConfig() {
+        return CraftGR.MC.currentScreen instanceof ConfigScreen;
+    }
+
 }

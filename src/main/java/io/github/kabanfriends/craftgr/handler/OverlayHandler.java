@@ -2,6 +2,7 @@ package io.github.kabanfriends.craftgr.handler;
 
 import io.github.kabanfriends.craftgr.render.Overlay;
 import net.minecraft.client.util.math.MatrixStack;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +21,17 @@ public class OverlayHandler {
 
     public static void renderAll(MatrixStack matrix, int mouseX, int mouseY) {
         for (Overlay overlay : overlayList) {
-            overlay.render(matrix, mouseX, mouseY);
+            render(matrix, mouseX, mouseY, overlay);
+        }
+    }
+
+    public static void clickPress(int mouseX, int mouseY, Overlay overlay, CallbackInfo info) {
+        overlay.onMouseClick(mouseX, mouseY, info);
+    }
+
+    public static void clickPressAll(int mouseX, int mouseY, CallbackInfo info) {
+        for (Overlay overlay : overlayList) {
+            clickPress(mouseX, mouseY, overlay, info);
         }
     }
 }
