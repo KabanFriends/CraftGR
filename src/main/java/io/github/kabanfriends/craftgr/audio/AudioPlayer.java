@@ -57,8 +57,7 @@ public class AudioPlayer {
             AL10.alSourcei(this.source.get(0), AL10.AL_LOOPING, AL10.AL_FALSE);
             AL10.alSourcef(this.source.get(0), AL10.AL_PITCH, 1.0f);
 
-            float volume = this.muted ? 0F : this.volume * (GRConfig.getConfig().volume / 100f) * MinecraftClient.getInstance().options.getSoundVolume(SoundCategory.MASTER);
-            AL10.alSourcef(this.source.get(0), AL10.AL_GAIN, volume);
+            AL10.alSourcef(this.source.get(0), AL10.AL_GAIN, this.muted ? 0F : this.volume * (GRConfig.getConfig().volume / 100f) * MinecraftClient.getInstance().options.getSoundVolume(SoundCategory.MASTER));
             
             if (alError()) {
                 close();
@@ -69,8 +68,7 @@ public class AudioPlayer {
             ProcessResult result = ProcessResult.SUCCESS;
 
             while (this.playing && result == ProcessResult.SUCCESS) {
-                float volume = this.muted ? 0F : this.volume * (GRConfig.getConfig().volume / 100f) * MinecraftClient.getInstance().options.getSoundVolume(SoundCategory.MASTER);
-                AL10.alSourcef(this.source.get(0), AL10.AL_GAIN, volume);
+                AL10.alSourcef(this.source.get(0), AL10.AL_GAIN, this.muted ? 0F : this.volume * (GRConfig.getConfig().volume / 100f) * MinecraftClient.getInstance().options.getSoundVolume(SoundCategory.MASTER));
                 result = decodeFrame();
             }
 
