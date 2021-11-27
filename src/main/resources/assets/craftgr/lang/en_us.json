@@ -1,7 +1,7 @@
 {
   "text.autoconfig.craftgr.title": "CraftGR Config",
 
-  "text.autoconfig.craftgr.option.volume": "Playback Volume",
+  "text.autoconfig.craftgr.option.volume": "Playback Volume (%)",
   "text.autoconfig.craftgr.option.volume.@Tooltip": "Playback Volume of the Gensokyo Radio music.",
   "text.autoconfig.craftgr.option.overlayVisibility": "Overlay Visibility",
   "text.autoconfig.craftgr.option.overlayVisibility.@Tooltip": "Option for when the song overlay is visible.",
