@@ -122,6 +122,19 @@ public class SongInfoOverlay extends Overlay {
 
     @Override
     public void onMouseClick(int mouseX, int mouseY, CallbackInfo info) {
+        if (CraftGR.MC.currentScreen instanceof ConfirmChatLinkScreen) return;
+        else if (CraftGR.MC.currentScreen instanceof LevelLoadingScreen) return;
+        else if (CraftGR.MC.currentScreen instanceof DownloadingTerrainScreen) return;
+        else if (CraftGR.MC.currentScreen instanceof ConnectScreen) return;
+        else if (CraftGR.MC.currentScreen instanceof SaveLevelScreen) return;
+
+        if (FabricLoader.getInstance().isModLoaded("modmenu")) {
+            if (GRModMenu.isInModMenu()) return;
+        }
+        if (FabricLoader.getInstance().isModLoaded("cloth-config2")) {
+            if (GRConfig.isInConfig()) return;
+        }
+
         OverlayVisibility visibility = GRConfig.getConfig().overlayVisibility;
 
         if (visibility == OverlayVisibility.NONE) return;
@@ -130,6 +143,8 @@ public class SongInfoOverlay extends Overlay {
         Song currentSong = SongHandler.getInstance().song;
 
         if (currentSong != null && GRConfig.getConfig().openAlbum) {
+            if (currentSong.intermission) return;
+
             float scale = GRConfig.getConfig().overlayScale;
 
             float scaledX = mouseX / getUIScale(scale);
@@ -144,31 +159,15 @@ public class SongInfoOverlay extends Overlay {
             int y = (int) coord[1];
 
             if (scaledX >= x && scaledX <= x + width && scaledY >= y && scaledY <= y + height) {
-                boolean openScreen = true;
-                if (CraftGR.MC.currentScreen instanceof ConfirmChatLinkScreen) openScreen = false;
-                else if (CraftGR.MC.currentScreen instanceof LevelLoadingScreen) openScreen = false;
-                else if (CraftGR.MC.currentScreen instanceof DownloadingTerrainScreen) openScreen = false;
-                else if (CraftGR.MC.currentScreen instanceof ConnectScreen) openScreen = false;
-                else if (CraftGR.MC.currentScreen instanceof SaveLevelScreen) openScreen = false;
+                String link = "https://gensokyoradio.net/music/album/" + currentSong.albumId;
+                Screen oldScreen = CraftGR.MC.currentScreen;
 
-                if (FabricLoader.getInstance().isModLoaded("modmenu")) {
-                    if (GRModMenu.isInModMenu()) openScreen = false;
-                }
-                if (FabricLoader.getInstance().isModLoaded("cloth-config2")) {
-                    if (GRConfig.isInConfig()) openScreen = false;
-                }
+                CraftGR.MC.openScreen(new ConfirmChatLinkScreen((result) -> {
+                    if (result) Util.getOperatingSystem().open(link);
+                    CraftGR.MC.openScreen(oldScreen);
+                }, link, true));
 
-                if (openScreen) {
-                    String link = "https://gensokyoradio.net/music/album/" + currentSong.albumId;
-                    Screen oldScreen = CraftGR.MC.currentScreen;
-
-                    CraftGR.MC.openScreen(new ConfirmChatLinkScreen((result) -> {
-                        if (result) Util.getOperatingSystem().open(link);
-                        CraftGR.MC.openScreen(oldScreen);
-                    }, link, true));
-
-                    info.cancel();
-                }
+                info.cancel();
             }
         }
     }
