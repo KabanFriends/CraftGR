@@ -30,7 +30,7 @@ public class SongInfoOverlay extends Overlay {
 
     private static final float BASE_SCALE = 1.0f;
     private static final int ALBUM_ART_SIZE = 105;
-    private static final Identifier ALBUM_ART_PLACEHOLDER = new Identifier(CraftGR.MOD_ID, "textures/album/placeholder.png");
+    private static final Identifier ALBUM_ART_PLACEHOLDER = new Identifier(CraftGR.MOD_ID, "textures/album_placeholder.png");
 
     private static SongInfoOverlay INSTANCE;
 
@@ -110,6 +110,11 @@ public class SongInfoOverlay extends Overlay {
 
     @Override
     public void onMouseClick(int mouseX, int mouseY, CallbackInfo info) {
+        OverlayVisibility visibility = GRConfig.getConfig().overlayVisibility;
+
+        if (visibility == OverlayVisibility.NONE) return;
+        if (visibility == OverlayVisibility.CHAT && !(CraftGR.MC.currentScreen instanceof ChatScreen)) return;
+
         Song currentSong = SongHandler.getInstance().song;
 
         if (currentSong != null && GRConfig.getConfig().openAlbum) {
