@@ -26,7 +26,6 @@
   "text.autoconfig.craftgr.option.url.albumArtURL": "Album Image URL",
   "text.autoconfig.craftgr.option.url.albumArtURL.@Tooltip": "URL to get album cover images from.",
 
-
   "text.craftgr.gui.options.volume": "Gensokyo Radio",
 
   "text.craftgr.message.muted": "[CraftGR] §cAudio playback is now muted!",
