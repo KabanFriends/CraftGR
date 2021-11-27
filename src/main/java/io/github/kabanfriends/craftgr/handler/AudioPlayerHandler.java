@@ -59,7 +59,7 @@ public class AudioPlayerHandler {
 
     public void initialize() {
         try {
-            Request request = new Request.Builder().url(GRConfig.getConfig().streamURL).build();
+            Request request = new Request.Builder().url(GRConfig.getConfig().url.streamURL).build();
 
             this.response = CraftGR.HTTP_CLIENT.newCall(request).execute();
             InputStream stream = response.body().byteStream();

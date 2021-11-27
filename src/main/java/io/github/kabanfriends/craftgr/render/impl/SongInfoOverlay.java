@@ -230,7 +230,7 @@ public class SongInfoOverlay extends Overlay {
             CraftGR.EXECUTOR.submit(() -> {
                 Identifier albumArt = null;
                 try {
-                    Request request = new Request.Builder().url(GRConfig.getConfig().albumArtURL + song.albumArt).build();
+                    Request request = new Request.Builder().url(GRConfig.getConfig().url.albumArtURL + song.albumArt).build();
 
                     Response response = CraftGR.HTTP_CLIENT.newCall(request).execute();
                     InputStream stream = response.body().byteStream();

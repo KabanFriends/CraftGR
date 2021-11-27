@@ -12,13 +12,8 @@ import me.shedaniel.clothconfig2.api.ConfigScreen;
 public class GRConfig implements ConfigData {
 
     @ConfigEntry.Gui.Tooltip
-    public String streamURL = "https://stream.gensokyoradio.net/1/";
-
-    @ConfigEntry.Gui.Tooltip
-    public String songInfoURL = "https://gensokyoradio.net/xml/";
-
-    @ConfigEntry.Gui.Tooltip
-    public String albumArtURL = "https://gensokyoradio.net/images/albums/500/";
+    @ConfigEntry.BoundedDiscrete(min = 0, max = 100)
+    public int volume = 50;
 
     @ConfigEntry.Gui.Tooltip
     @ConfigEntry.Gui.EnumHandler(option = ConfigEntry.Gui.EnumHandler.EnumDisplayOption.BUTTON)
@@ -45,9 +40,22 @@ public class GRConfig implements ConfigData {
     @ConfigEntry.Gui.Tooltip
     public float overlayScale = 1.0f;
 
-    @ConfigEntry.Gui.Tooltip
-    @ConfigEntry.BoundedDiscrete(min = 0, max = 100)
-    public int volume = 50;
+    @ConfigEntry.Gui.CollapsibleObject
+    public URLConfig url = new URLConfig();
+
+    @Config(name = "advanced")
+    public static class URLConfig implements ConfigData {
+
+        @ConfigEntry.Gui.Tooltip
+        public String streamURL = "https://stream.gensokyoradio.net/1/";
+
+        @ConfigEntry.Gui.Tooltip
+        public String songInfoURL = "https://gensokyoradio.net/xml/";
+
+        @ConfigEntry.Gui.Tooltip
+        public String albumArtURL = "https://gensokyoradio.net/images/albums/500/";
+
+    }
 
     public static GRConfig getConfig() {
         return AutoConfig.getConfigHolder(GRConfig.class).getConfig();

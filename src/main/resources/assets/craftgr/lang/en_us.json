@@ -1,14 +1,8 @@
 {
   "text.autoconfig.craftgr.title": "CraftGR Config",
 
-  "text.autoconfig.craftgr.option.streamURL": "Streaming URL",
-  "text.autoconfig.craftgr.option.streamURL.@Tooltip": "URL to stream audio from. Works only with MP3 streams.",
-  "text.autoconfig.craftgr.option.songInfoURL": "Song Info URL",
-  "text.autoconfig.craftgr.option.songInfoURL.@Tooltip": "URL to get song info from.",
   "text.autoconfig.craftgr.option.volume": "Playback Volume",
   "text.autoconfig.craftgr.option.volume.@Tooltip": "Playback Volume of the Gensokyo Radio music.",
-  "text.autoconfig.craftgr.option.albumArtURL": "Album Image URL",
-  "text.autoconfig.craftgr.option.albumArtURL.@Tooltip": "URL to get album cover images from.",
   "text.autoconfig.craftgr.option.overlayVisibility": "Overlay Visibility",
   "text.autoconfig.craftgr.option.overlayVisibility.@Tooltip": "Option for when the song overlay is visible.",
   "text.autoconfig.craftgr.option.overlayPosition": "Overlay Position",
@@ -23,6 +17,15 @@
   "text.autoconfig.craftgr.option.overlayBarColor.@Tooltip": "Progress bar color of the song info overlay.",
   "text.autoconfig.craftgr.option.overlayScale": "Overlay Scale",
   "text.autoconfig.craftgr.option.overlayScale.@Tooltip": "How large the song info overlay should be displayed.",
+
+  "text.autoconfig.craftgr.option.url": "Advanced Settings",
+  "text.autoconfig.craftgr.option.url.streamURL": "Streaming URL",
+  "text.autoconfig.craftgr.option.url.streamURL.@Tooltip": "URL to stream audio from. Only works with MP3 streams.",
+  "text.autoconfig.craftgr.option.url.songInfoURL": "Song Info URL",
+  "text.autoconfig.craftgr.option.url.songInfoURL.@Tooltip": "URL to get song info from.",
+  "text.autoconfig.craftgr.option.url.albumArtURL": "Album Image URL",
+  "text.autoconfig.craftgr.option.url.albumArtURL.@Tooltip": "URL to get album cover images from.",
+
 
   "text.craftgr.gui.options.volume": "Gensokyo Radio",
 
