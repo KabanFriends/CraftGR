@@ -1,5 +1,6 @@
 package io.github.kabanfriends.craftgr.render.impl;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.config.GRConfig;
 import io.github.kabanfriends.craftgr.config.GRModMenu;
@@ -84,6 +85,7 @@ public class SongInfoOverlay extends Overlay {
                 } else {
                     RenderUtil.bindTexture(albumArt);
                 }
+                RenderSystem.color4f(255f, 255f, 255f, 255f);
                 DrawableHelper.drawTexture(matrix, x + 6, y + 6, 0f, 0f, ALBUM_ART_SIZE, ALBUM_ART_SIZE, ALBUM_ART_SIZE, ALBUM_ART_SIZE);
             }
 
