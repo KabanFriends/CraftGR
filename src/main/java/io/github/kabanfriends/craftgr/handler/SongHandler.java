@@ -4,6 +4,7 @@ import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.config.GRConfig;
 import io.github.kabanfriends.craftgr.render.impl.SongInfoOverlay;
 import io.github.kabanfriends.craftgr.song.Song;
+import io.github.kabanfriends.craftgr.util.TitleFixer;
 import okhttp3.Request;
 import okhttp3.Response;
 import org.apache.commons.io.input.ReaderInputStream;
@@ -96,11 +97,11 @@ public class SongHandler {
             for (Node c1 = node.getFirstChild(); c1 != null; c1 = c1.getNextSibling()) {
                 if (c1.getNodeName().equals("SONGINFO")) {
                     for (Node c2 = c1.getFirstChild(); c2 != null; c2 = c2.getNextSibling()) {
-                        if (c2.getNodeName().equals("TITLE")) song.title = c2.getTextContent();
-                        else if (c2.getNodeName().equals("ARTIST")) song.artist = c2.getTextContent();
-                        else if (c2.getNodeName().equals("ALBUM")) song.album = c2.getTextContent();
+                        if (c2.getNodeName().equals("TITLE")) song.title = TitleFixer.fixJapaneseString(c2.getTextContent());
+                        else if (c2.getNodeName().equals("ARTIST")) song.artist = TitleFixer.fixJapaneseString(c2.getTextContent());
+                        else if (c2.getNodeName().equals("ALBUM")) song.album = TitleFixer.fixJapaneseString(c2.getTextContent());
                         else if (c2.getNodeName().equals("YEAR")) song.year = c2.getTextContent();
-                        else if (c2.getNodeName().equals("CIRCLE")) song.circle = c2.getTextContent();
+                        else if (c2.getNodeName().equals("CIRCLE")) song.circle = TitleFixer.fixJapaneseString(c2.getTextContent());
                     }
                 } else if (c1.getNodeName().equals("SONGTIMES")) {
                     for (Node c2 = c1.getFirstChild(); c2 != null; c2 = c2.getNextSibling()) {
@@ -124,16 +125,17 @@ public class SongHandler {
                 }
             }
 
-
-            if (song.intermission) {
-                song.albumArt = "";
-                song.title = "Intermission";
-            }
-
             long played = song.offsetTime - song.songStart;
             long duration = song.songEnd - song.songStart;
             this.songStart = System.currentTimeMillis() / 1000L - played;
             this.songEnd = this.songStart + duration;
+
+            if (song.intermission) {
+                song.albumArt = "";
+                song.title = "";
+
+                this.songEnd = System.currentTimeMillis() / 1000L + 4L;
+            }
 
             response.close();
 
