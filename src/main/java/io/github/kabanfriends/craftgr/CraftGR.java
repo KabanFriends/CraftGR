@@ -1,7 +1,6 @@
 package io.github.kabanfriends.craftgr;
 
 import io.github.kabanfriends.craftgr.config.GRConfig;
-import io.github.kabanfriends.craftgr.handler.CommandHandler;
 import io.github.kabanfriends.craftgr.handler.OverlayHandler;
 import io.github.kabanfriends.craftgr.handler.SongHandler;
 import io.github.kabanfriends.craftgr.render.impl.SongInfoOverlay;
@@ -43,7 +42,6 @@ public class CraftGR implements ModInitializer {
         OverlayHandler.addOverlay(new SongInfoOverlay());
 
         new SongHandler();
-        new CommandHandler();
     }
 
     public static void log(Level level, String message) {
