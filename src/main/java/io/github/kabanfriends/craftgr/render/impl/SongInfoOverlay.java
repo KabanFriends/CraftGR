@@ -14,6 +14,7 @@ import net.minecraft.client.gui.screen.*;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.NativeImageBackedTexture;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 import okhttp3.Request;
@@ -79,9 +80,11 @@ public class SongInfoOverlay extends Overlay {
 
             matrix.push();
             matrix.scale(2, 2, 2);
-            DrawableHelper.drawStringWithShadow(matrix, CraftGR.MC.textRenderer, currentSong.title, (x + 12 + 8 + albumArtWidth) / 2, (y + 8) / 2, Color.WHITE.getRGB());
 
-            if (!currentSong.intermission) {
+            if (currentSong.intermission) {
+                DrawableHelper.drawTextWithShadow(matrix, CraftGR.MC.textRenderer, new TranslatableText("text.craftgr.song.intermission"), (x + 12 + 8 + albumArtWidth) / 2, (y + 8) / 2, Color.WHITE.getRGB());
+            } else {
+                DrawableHelper.drawStringWithShadow(matrix, CraftGR.MC.textRenderer, currentSong.title, (x + 12 + 8 + albumArtWidth) / 2, (y + 8) / 2, Color.WHITE.getRGB());
                 DrawableHelper.drawStringWithShadow(matrix, CraftGR.MC.textRenderer, "(" + currentSong.year + ")", (x + 12 + 10 + albumArtWidth) / 2, (y + 8 + 20) / 2, Color.LIGHT_GRAY.getRGB());
                 DrawableHelper.drawStringWithShadow(matrix, CraftGR.MC.textRenderer, currentSong.artist, (x + 12 + 8 + albumArtWidth) / 2, (y + 8 + 7 + 20 * 2) / 2, Color.LIGHT_GRAY.getRGB());
                 DrawableHelper.drawStringWithShadow(matrix, CraftGR.MC.textRenderer, currentSong.album, (x + 12 + 8 + albumArtWidth) / 2, (y + 8 + 7 + 20 * 3) / 2, Color.LIGHT_GRAY.getRGB());
