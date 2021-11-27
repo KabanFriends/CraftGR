@@ -15,23 +15,23 @@ public class OverlayHandler {
         overlayList.add(overlay);
     }
 
-    public static void render(MatrixStack matrix, int mouseX, int mouseY, Overlay overlay) {
+    public static void render(Overlay overlay, MatrixStack matrix, int mouseX, int mouseY) {
         overlay.render(matrix, mouseX, mouseY);
     }
 
     public static void renderAll(MatrixStack matrix, int mouseX, int mouseY) {
         for (Overlay overlay : overlayList) {
-            render(matrix, mouseX, mouseY, overlay);
+            render(overlay, matrix, mouseX, mouseY);
         }
     }
 
-    public static void clickPress(int mouseX, int mouseY, Overlay overlay, CallbackInfo info) {
+    public static void clickPress(Overlay overlay, int mouseX, int mouseY, CallbackInfo info) {
         overlay.onMouseClick(mouseX, mouseY, info);
     }
 
     public static void clickPressAll(int mouseX, int mouseY, CallbackInfo info) {
         for (Overlay overlay : overlayList) {
-            clickPress(mouseX, mouseY, overlay, info);
+            clickPress(overlay, mouseX, mouseY, info);
         }
     }
 }
