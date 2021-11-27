@@ -45,11 +45,13 @@ public class SongInfoOverlay extends Overlay {
 
     @Override
     public void render(MatrixStack matrix, int mouseX, int mouseY) {
+        OverlayVisibility visibility = GRConfig.getConfig().overlayVisibility;
+
         if (CraftGR.MC.currentScreen == null) {
-            if (GRConfig.getConfig().overlayVisibility != SongInfoOverlay.OverlayVisibility.ALWAYS) return;
+            if (visibility != SongInfoOverlay.OverlayVisibility.ALWAYS) return;
         }else {
-            if (GRConfig.getConfig().overlayVisibility == SongInfoOverlay.OverlayVisibility.NONE) return;
-            if (GRConfig.getConfig().overlayVisibility == SongInfoOverlay.OverlayVisibility.CHAT && !(CraftGR.MC.currentScreen instanceof ChatScreen)) return;
+            if (visibility == SongInfoOverlay.OverlayVisibility.NONE) return;
+            if (visibility == SongInfoOverlay.OverlayVisibility.CHAT && !(CraftGR.MC.currentScreen instanceof ChatScreen)) return;
         }
 
         Song currentSong = SongHandler.getInstance().song;
