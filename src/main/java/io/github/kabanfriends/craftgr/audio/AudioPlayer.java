@@ -75,6 +75,7 @@ public class AudioPlayer {
 
             while (this.playing && result == ProcessResult.SUCCESS)
             {
+                AL10.alSourcef(this.source.get(0), AL10.AL_GAIN, this.volume * (GRConfig.getConfig().volume/100f) * MinecraftClient.getInstance().options.getSoundVolume(SoundCategory.MASTER));
                 result = decodeFrame();
             }
 
