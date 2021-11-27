@@ -1,10 +1,7 @@
 package io.github.kabanfriends.craftgr.mixin;
 
 import io.github.kabanfriends.craftgr.CraftGR;
-import io.github.kabanfriends.craftgr.config.GRConfig;
 import io.github.kabanfriends.craftgr.handler.OverlayHandler;
-import io.github.kabanfriends.craftgr.render.impl.SongInfoOverlay;
-import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import org.spongepowered.asm.mixin.Mixin;
