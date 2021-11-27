@@ -1,25 +1,18 @@
 package io.github.kabanfriends.craftgr.audio;
 
-import java.io.InputStream;
-import java.nio.Buffer;
-import java.nio.IntBuffer;
-import java.nio.ShortBuffer;
-
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.config.GRConfig;
-import io.github.kabanfriends.craftgr.handler.AudioPlayerHandler;
+import javazoom.jl.decoder.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.sound.SoundCategory;
 import org.apache.logging.log4j.Level;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.openal.AL10;
 
-import javazoom.jl.decoder.Bitstream;
-import javazoom.jl.decoder.BitstreamException;
-import javazoom.jl.decoder.Decoder;
-import javazoom.jl.decoder.Header;
-import javazoom.jl.decoder.JavaLayerException;
-import javazoom.jl.decoder.SampleBuffer;
+import java.io.InputStream;
+import java.nio.Buffer;
+import java.nio.IntBuffer;
+import java.nio.ShortBuffer;
 
 //Code based on: https://github.com/PC-Logix/OpenFM/blob/1.12.2/src/main/java/pcl/OpenFM/player/MP3Player.java
 public class AudioPlayer {
@@ -63,7 +56,7 @@ public class AudioPlayer {
 
             AL10.alSourcei(this.source.get(0), AL10.AL_LOOPING, AL10.AL_FALSE);
             AL10.alSourcef(this.source.get(0), AL10.AL_PITCH, 1.0f);
-            AL10.alSourcef(this.source.get(0), AL10.AL_GAIN, this.volume * (GRConfig.getConfig().volume/100f) * MinecraftClient.getInstance().options.getSoundVolume(SoundCategory.MASTER));
+            AL10.alSourcef(this.source.get(0), AL10.AL_GAIN, this.volume * (GRConfig.getConfig().volume / 100f) * MinecraftClient.getInstance().options.getSoundVolume(SoundCategory.MASTER));
 
             if (alError()) {
                 close();
@@ -73,15 +66,14 @@ public class AudioPlayer {
             this.playing = true;
             ProcessResult result = ProcessResult.SUCCESS;
 
-            while (this.playing && result == ProcessResult.SUCCESS)
-            {
-                AL10.alSourcef(this.source.get(0), AL10.AL_GAIN, this.volume * (GRConfig.getConfig().volume/100f) * MinecraftClient.getInstance().options.getSoundVolume(SoundCategory.MASTER));
+            while (this.playing && result == ProcessResult.SUCCESS) {
+                AL10.alSourcef(this.source.get(0), AL10.AL_GAIN, this.volume * (GRConfig.getConfig().volume / 100f) * MinecraftClient.getInstance().options.getSoundVolume(SoundCategory.MASTER));
                 result = decodeFrame();
             }
 
             close();
             return result;
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return ProcessResult.EXCEPTION;
         }
@@ -105,13 +97,12 @@ public class AudioPlayer {
         try {
             Header h = this.bitstream.readFrame();
 
-            if (h == null)
-            {
+            if (h == null) {
                 close();
                 return ProcessResult.STOP;
             }
 
-            SampleBuffer output = (SampleBuffer)this.decoder.decodeFrame(h, this.bitstream);
+            SampleBuffer output = (SampleBuffer) this.decoder.decodeFrame(h, this.bitstream);
             short[] samples = output.getBuffer();
 
             if (this.buffer == null) {
@@ -135,7 +126,7 @@ public class AudioPlayer {
                 if (this.started == 0L || System.currentTimeMillis() < this.started + 100L) {
                     this.started = System.currentTimeMillis();
                     AL10.alSourcePlay(this.source.get(0));
-                }else {
+                } else {
                     close();
                     return ProcessResult.RESTART;
                 }
@@ -144,7 +135,7 @@ public class AudioPlayer {
             this.bitstream.closeFrame();
 
             return ProcessResult.SUCCESS;
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return ProcessResult.EXCEPTION;
         }
@@ -152,8 +143,7 @@ public class AudioPlayer {
 
     protected boolean skipFrame() throws JavaLayerException {
         Header h = this.bitstream.readFrame();
-        if (h == null)
-        {
+        if (h == null) {
             return false;
         }
         this.bitstream.closeFrame();
@@ -175,7 +165,7 @@ public class AudioPlayer {
     public void setVolume(float f) {
         this.volume = f;
         if (this.playing && this.source != null) {
-            float volume = this.muted ? 0F : f * (GRConfig.getConfig().volume/100f) * MinecraftClient.getInstance().options.getSoundVolume(SoundCategory.MASTER);
+            float volume = this.muted ? 0F : f * (GRConfig.getConfig().volume / 100f) * MinecraftClient.getInstance().options.getSoundVolume(SoundCategory.MASTER);
             AL10.alSourcef(this.source.get(0), AL10.AL_GAIN, volume);
         }
     }

@@ -13,8 +13,8 @@ public class MixinScreen {
 
     @Inject(at = @At(value = "HEAD"), method = "wrapScreenError", cancellable = true)
     private static void onMouseClick(Runnable task, String errorTitle, String screenName, CallbackInfo info) {
-        int mouseX = (int)(CraftGR.MC.mouse.getX() * (double)CraftGR.MC.getWindow().getScaledWidth() / (double)CraftGR.MC.getWindow().getWidth());
-        int mouseY = (int)(CraftGR.MC.mouse.getY() * (double)CraftGR.MC.getWindow().getScaledHeight() / (double)CraftGR.MC.getWindow().getHeight());
+        int mouseX = (int) (CraftGR.MC.mouse.getX() * (double) CraftGR.MC.getWindow().getScaledWidth() / (double) CraftGR.MC.getWindow().getWidth());
+        int mouseY = (int) (CraftGR.MC.mouse.getY() * (double) CraftGR.MC.getWindow().getScaledHeight() / (double) CraftGR.MC.getWindow().getHeight());
 
         if ((errorTitle != null) && errorTitle.equals("mouseClicked event handler")) {
             OverlayHandler.clickPressAll(mouseX, mouseY, info);

@@ -61,17 +61,17 @@ public class SongInfoOverlay extends Overlay {
             float height = size[1];
 
             float[] coord = getOverlayCoordinate(GRConfig.getConfig().overlayPosition, width, height);
-            int x = (int)coord[0];
-            int y = (int)coord[1];
+            int x = (int) coord[0];
+            int y = (int) coord[1];
 
-            RenderUtil.fill(matrix, x, y, x + width,  y + ALBUM_ART_SIZE + 10 + 10, GRConfig.getConfig().overlayBgColor + 0xFF000000, 0.6f);
+            RenderUtil.fill(matrix, x, y, x + width, y + ALBUM_ART_SIZE + 10 + 10, GRConfig.getConfig().overlayBgColor + 0xFF000000, 0.6f);
 
             if (albumArts.containsKey(currentSong.albumArt) && !GRConfig.getConfig().hideAlbumArt) {
                 Identifier albumArt = albumArts.get(currentSong.albumArt);
 
                 if (albumArt == null) {
                     RenderUtil.bindTexture(ALBUM_ART_PLACEHOLDER);
-                }else {
+                } else {
                     RenderUtil.bindTexture(albumArt);
                 }
                 DrawableHelper.drawTexture(matrix, x + 6, y + 6, 0f, 0f, ALBUM_ART_SIZE, ALBUM_ART_SIZE, ALBUM_ART_SIZE, ALBUM_ART_SIZE);
@@ -92,7 +92,7 @@ public class SongInfoOverlay extends Overlay {
 
             if (currentSong.intermission) {
                 RenderUtil.fill(matrix, x, y + ALBUM_ART_SIZE + 10 + 10, x + width, y + height, GRConfig.getConfig().overlayBgColor + 0xFF000000, 0.6f);
-            }else {
+            } else {
                 long duration = currentSong.songEnd - currentSong.songStart;
                 long played = System.currentTimeMillis() / 1000L - SongHandler.getInstance().songStart;
                 if (played > duration) played = duration;
@@ -100,10 +100,10 @@ public class SongInfoOverlay extends Overlay {
                 DrawableHelper.drawStringWithShadow(matrix, CraftGR.MC.textRenderer, getTimer((int) played), x + 6, y + ALBUM_ART_SIZE + 10, Color.WHITE.getRGB());
 
                 int timerWidth = font.getWidth(getTimer((int) duration));
-                DrawableHelper.drawStringWithShadow(matrix, CraftGR.MC.textRenderer, getTimer((int) duration), x + (int)width - timerWidth - 6, y + ALBUM_ART_SIZE + 10, Color.WHITE.getRGB());
+                DrawableHelper.drawStringWithShadow(matrix, CraftGR.MC.textRenderer, getTimer((int) duration), x + (int) width - timerWidth - 6, y + ALBUM_ART_SIZE + 10, Color.WHITE.getRGB());
 
-                RenderUtil.fill(matrix, x, y + ALBUM_ART_SIZE + 10 + 10, x + (float)played / duration * width, y + height, GRConfig.getConfig().overlayBarColor + 0xFF000000, 0.6f);
-                RenderUtil.fill(matrix, x + (float)played / duration * width, y + ALBUM_ART_SIZE + 10 + 10, x + width, y + height, GRConfig.getConfig().overlayBgColor + 0xFF000000, 0.6f);
+                RenderUtil.fill(matrix, x, y + ALBUM_ART_SIZE + 10 + 10, x + (float) played / duration * width, y + height, GRConfig.getConfig().overlayBarColor + 0xFF000000, 0.6f);
+                RenderUtil.fill(matrix, x + (float) played / duration * width, y + ALBUM_ART_SIZE + 10 + 10, x + width, y + height, GRConfig.getConfig().overlayBgColor + 0xFF000000, 0.6f);
             }
         }
     }
@@ -123,8 +123,8 @@ public class SongInfoOverlay extends Overlay {
             float height = size[1];
 
             float[] coord = getOverlayCoordinate(GRConfig.getConfig().overlayPosition, width, height);
-            int x = (int)coord[0];
-            int y = (int)coord[1];
+            int x = (int) coord[0];
+            int y = (int) coord[1];
 
             if (scaledX >= x && scaledX <= x + width && scaledY >= y && scaledY <= y + height) {
                 boolean openScreen = true;
@@ -163,13 +163,13 @@ public class SongInfoOverlay extends Overlay {
 
         switch (position) {
             case TOP_RIGHT:
-                return new float[] {x, offset};
+                return new float[]{x, offset};
             case BOTTOM_LEFT:
-                return new float[] {offset, y};
+                return new float[]{offset, y};
             case BOTTOM_RIGHT:
-                return new float[] {x, y};
+                return new float[]{x, y};
             default:
-                return new float[] {offset, offset};
+                return new float[]{offset, offset};
         }
     }
 
@@ -181,7 +181,7 @@ public class SongInfoOverlay extends Overlay {
         int maxWidth = 0;
         if (currentSong.intermission) {
             maxWidth = font.getWidth(currentSong.title);
-        }else {
+        } else {
             String[] strings = {currentSong.title, currentSong.artist, currentSong.album, currentSong.circle};
             for (String string : strings) {
                 int width = font.getWidth(string);
@@ -196,7 +196,7 @@ public class SongInfoOverlay extends Overlay {
         float width = 12 + 7 + albumArtWidth + (maxWidth * 2) + 10;
         float height = ALBUM_ART_SIZE + 6 + 20;
 
-        return new float[] {width, height};
+        return new float[]{width, height};
     }
 
     public void createAlbumArtTexture(Song song) {
@@ -220,10 +220,10 @@ public class SongInfoOverlay extends Overlay {
                     }
 
                     albumArt = CraftGR.MC.getTextureManager().registerDynamicTexture("craftgr_album", new NativeImageBackedTexture(NativeImage.read(stream)));
-                }catch (Exception e) {
+                } catch (Exception e) {
                     CraftGR.log(Level.ERROR, "Error while creating album art texture!");
                     e.printStackTrace();
-                }finally {
+                } finally {
                     albumArts.put(song.albumArt, albumArt);
                 }
             });
@@ -254,7 +254,7 @@ public class SongInfoOverlay extends Overlay {
     private static float getUIScale(float uiScale) {
         double mcScale = CraftGR.MC.getWindow().getScaleFactor();
 
-        return (float) ((((double)BASE_SCALE) * (((double)BASE_SCALE) / mcScale)) * uiScale);
+        return (float) ((((double) BASE_SCALE) * (((double) BASE_SCALE) / mcScale)) * uiScale);
     }
 
     public static SongInfoOverlay getInstance() {

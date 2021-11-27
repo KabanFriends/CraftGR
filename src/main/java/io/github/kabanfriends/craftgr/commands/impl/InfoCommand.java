@@ -5,28 +5,12 @@ import com.mojang.brigadier.context.CommandContext;
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.commands.Command;
 import io.github.kabanfriends.craftgr.commands.arguments.ArgBuilder;
-import io.github.kabanfriends.craftgr.config.GRConfig;
 import io.github.kabanfriends.craftgr.handler.SongHandler;
 import io.github.kabanfriends.craftgr.song.Song;
-import io.github.kabanfriends.craftgr.util.MessageUtil;
 import net.fabricmc.fabric.api.client.command.v1.FabricClientCommandSource;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.*;
 import net.minecraft.util.Formatting;
-import org.apache.commons.io.input.ReaderInputStream;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StringReader;
-import java.net.URL;
-import java.net.URLConnection;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 
 public class InfoCommand extends Command {
 
@@ -77,4 +61,5 @@ public class InfoCommand extends Command {
                 .executes(InfoCommand::run)
         );
     }
+
 }

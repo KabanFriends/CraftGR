@@ -3,12 +3,12 @@
   "package": "io.github.kabanfriends.craftgr.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "MixinGameRenderer",
-    "MixinSoundSystem",
     "MixinGameOptionsScreen",
-    "MixinTitleScreen",
+    "MixinGameRenderer",
+    "MixinScreen",
     "MixinSoundOptionsScreen",
-    "MixinScreen"
+    "MixinSoundSystem",
+    "MixinTitleScreen"
   ],
   "client": [],
   "server": [],

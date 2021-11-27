@@ -1,6 +1,5 @@
 package io.github.kabanfriends.craftgr.keybinds;
 
-import io.github.kabanfriends.craftgr.audio.AudioPlayer;
 import io.github.kabanfriends.craftgr.handler.AudioPlayerHandler;
 import io.github.kabanfriends.craftgr.util.MessageUtil;
 import net.fabricmc.api.ClientModInitializer;
@@ -32,15 +31,15 @@ public class Keybinds implements ClientModInitializer {
         //=====================
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-           while (toggleMute.wasPressed()) {
-               AudioPlayerHandler handler = AudioPlayerHandler.getInstance();
+            while (toggleMute.wasPressed()) {
+                AudioPlayerHandler handler = AudioPlayerHandler.getInstance();
 
-               handler.player.muted = !AudioPlayerHandler.getInstance().player.muted;
-               if (handler.player.muted) MessageUtil.sendTranslatableMessage("text.craftgr.message.muted");
-               else MessageUtil.sendTranslatableMessage("text.craftgr.message.unmuted");
+                handler.player.muted = !AudioPlayerHandler.getInstance().player.muted;
+                if (handler.player.muted) MessageUtil.sendTranslatableMessage("text.craftgr.message.muted");
+                else MessageUtil.sendTranslatableMessage("text.craftgr.message.unmuted");
 
-               handler.player.setVolume(1.0F);
-           }
+                handler.player.setVolume(1.0F);
+            }
         });
 
     }

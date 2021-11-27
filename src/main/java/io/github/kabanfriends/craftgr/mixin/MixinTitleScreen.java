@@ -1,7 +1,6 @@
 package io.github.kabanfriends.craftgr.mixin;
 
 import io.github.kabanfriends.craftgr.CraftGR;
-import io.github.kabanfriends.craftgr.config.GRConfig;
 import io.github.kabanfriends.craftgr.handler.AudioPlayerHandler;
 import net.minecraft.client.gui.screen.TitleScreen;
 import net.minecraft.client.util.math.MatrixStack;
@@ -61,7 +60,7 @@ public class MixinTitleScreen {
                         musicFadeStart = Util.getMeasuringTimeMs();
                     }
 
-                    float value = doBackgroundFade ? (float)(Util.getMeasuringTimeMs() - musicFadeStart) / 2000.0F : 0.0F;
+                    float value = doBackgroundFade ? (float) (Util.getMeasuringTimeMs() - musicFadeStart) / 2000.0F : 0.0F;
                     handler.player.setVolume(MathHelper.clamp(value, 0.0f, 1.0f));
                 }
             }

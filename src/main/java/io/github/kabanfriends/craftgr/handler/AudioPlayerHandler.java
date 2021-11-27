@@ -4,7 +4,6 @@ import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.audio.AudioPlayer;
 import io.github.kabanfriends.craftgr.audio.AudioPlayer.ProcessResult;
 import io.github.kabanfriends.craftgr.config.GRConfig;
-import javazoom.jl.decoder.BitstreamException;
 import okhttp3.Request;
 import okhttp3.Response;
 import org.apache.logging.log4j.Level;
@@ -39,7 +38,8 @@ public class AudioPlayerHandler {
 
                         try {
                             Thread.sleep(5L * 1000L);
-                        } catch (InterruptedException e) {}
+                        } catch (InterruptedException e) {
+                        }
 
                         CraftGR.log(Level.ERROR, "Restarting audio player...");
                     } else if (result == ProcessResult.STOP) {
@@ -49,7 +49,7 @@ public class AudioPlayerHandler {
 
                     this.response.close();
                     initialize();
-                }else {
+                } else {
                     CraftGR.log(Level.ERROR, "Cannot start audio playback due to an initialization failure! Fix your config and restart the game.");
                     return;
                 }
@@ -73,7 +73,7 @@ public class AudioPlayerHandler {
             this.player = audioPlayer;
 
             INIT_STATE = 1;
-        }catch (Exception err) {
+        } catch (Exception err) {
             CraftGR.log(Level.ERROR, "Error when initializing the audio player:");
             err.printStackTrace();
 

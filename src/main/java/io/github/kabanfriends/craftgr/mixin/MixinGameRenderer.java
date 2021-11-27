@@ -27,10 +27,11 @@ public class MixinGameRenderer {
     @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/Screen;render(Lnet/minecraft/client/util/math/MatrixStack;IIF)V", shift = At.Shift.AFTER), method = "render")
     public void onRenderScreen(CallbackInfo i) {
         if (GRConfig.getConfig().overlayVisibility == SongInfoOverlay.OverlayVisibility.NONE) return;
-        if (GRConfig.getConfig().overlayVisibility == SongInfoOverlay.OverlayVisibility.CHAT && !(CraftGR.MC.currentScreen instanceof ChatScreen)) return;
+        if (GRConfig.getConfig().overlayVisibility == SongInfoOverlay.OverlayVisibility.CHAT && !(CraftGR.MC.currentScreen instanceof ChatScreen))
+            return;
 
-        int mouseX = (int)(CraftGR.MC.mouse.getX() * (double)CraftGR.MC.getWindow().getScaledWidth() / (double)CraftGR.MC.getWindow().getWidth());
-        int mouseY = (int)(CraftGR.MC.mouse.getY() * (double)CraftGR.MC.getWindow().getScaledHeight() / (double)CraftGR.MC.getWindow().getHeight());
+        int mouseX = (int) (CraftGR.MC.mouse.getX() * (double) CraftGR.MC.getWindow().getScaledWidth() / (double) CraftGR.MC.getWindow().getWidth());
+        int mouseY = (int) (CraftGR.MC.mouse.getY() * (double) CraftGR.MC.getWindow().getScaledHeight() / (double) CraftGR.MC.getWindow().getHeight());
 
         OverlayHandler.renderAll(this.matrix, mouseX, mouseY);
     }
@@ -44,8 +45,8 @@ public class MixinGameRenderer {
     @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;render(Lnet/minecraft/client/util/math/MatrixStack;F)V", shift = At.Shift.AFTER), method = "render")
     public void onRenderHud(CallbackInfo i) {
         if (GRConfig.getConfig().overlayVisibility == SongInfoOverlay.OverlayVisibility.ALWAYS && CraftGR.MC.currentScreen == null) {
-            int mouseX = (int)(CraftGR.MC.mouse.getX() * (double)CraftGR.MC.getWindow().getScaledWidth() / (double)CraftGR.MC.getWindow().getWidth());
-            int mouseY = (int)(CraftGR.MC.mouse.getY() * (double)CraftGR.MC.getWindow().getScaledHeight() / (double)CraftGR.MC.getWindow().getHeight());
+            int mouseX = (int) (CraftGR.MC.mouse.getX() * (double) CraftGR.MC.getWindow().getScaledWidth() / (double) CraftGR.MC.getWindow().getWidth());
+            int mouseY = (int) (CraftGR.MC.mouse.getY() * (double) CraftGR.MC.getWindow().getScaledHeight() / (double) CraftGR.MC.getWindow().getHeight());
 
             OverlayHandler.renderAll(this.matrix, mouseX, mouseY);
         }

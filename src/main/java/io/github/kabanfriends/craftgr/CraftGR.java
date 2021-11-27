@@ -1,7 +1,6 @@
 package io.github.kabanfriends.craftgr;
 
 import io.github.kabanfriends.craftgr.config.GRConfig;
-import io.github.kabanfriends.craftgr.handler.AudioPlayerHandler;
 import io.github.kabanfriends.craftgr.handler.CommandHandler;
 import io.github.kabanfriends.craftgr.handler.OverlayHandler;
 import io.github.kabanfriends.craftgr.handler.SongHandler;
@@ -9,7 +8,6 @@ import io.github.kabanfriends.craftgr.render.impl.SongInfoOverlay;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.fabricmc.api.ModInitializer;
-
 import net.minecraft.client.MinecraftClient;
 import okhttp3.OkHttpClient;
 import org.apache.logging.log4j.Level;
@@ -48,8 +46,8 @@ public class CraftGR implements ModInitializer {
         new CommandHandler();
     }
 
-    public static void log(Level level, String message){
-        LOGGER.log(level, "["+MOD_NAME+"] " + message);
+    public static void log(Level level, String message) {
+        LOGGER.log(level, "[" + MOD_NAME + "] " + message);
     }
 
 }
