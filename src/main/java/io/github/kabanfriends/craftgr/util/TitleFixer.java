@@ -75,6 +75,7 @@ public class TitleFixer {
                 last = current;
             }
         }
+        line.append(last);
 
         return line.toString();
     }
