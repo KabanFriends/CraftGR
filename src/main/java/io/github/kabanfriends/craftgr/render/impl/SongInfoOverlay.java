@@ -203,6 +203,11 @@ public class SongInfoOverlay extends Overlay {
                 int width = font.getWidth(string);
                 if (width > maxWidth) maxWidth = width;
             }
+
+            if (currentSong.intermission) {
+                int width = font.getWidth(new TranslatableText("text.craftgr.song.intermission"));
+                if (width > maxWidth) maxWidth = width;
+            }
         }
 
         int albumArtWidth;
