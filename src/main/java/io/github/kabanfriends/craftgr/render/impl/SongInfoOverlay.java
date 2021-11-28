@@ -179,16 +179,12 @@ public class SongInfoOverlay extends Overlay {
         float x = CraftGR.MC.getWindow().getWidth() / GRConfig.getConfig().overlayScale - width - offset;
         float y = CraftGR.MC.getWindow().getHeight() / GRConfig.getConfig().overlayScale - height - offset;
 
-        switch (position) {
-            case TOP_RIGHT:
-                return new float[]{x, offset};
-            case BOTTOM_LEFT:
-                return new float[]{offset, y};
-            case BOTTOM_RIGHT:
-                return new float[]{x, y};
-            default:
-                return new float[]{offset, offset};
-        }
+        return switch (position) {
+            case TOP_RIGHT -> new float[]{x, offset};
+            case BOTTOM_LEFT -> new float[]{offset, y};
+            case BOTTOM_RIGHT -> new float[]{x, y};
+            default -> new float[]{offset, offset};
+        };
     }
 
     private float[] getOverlaySize() {
