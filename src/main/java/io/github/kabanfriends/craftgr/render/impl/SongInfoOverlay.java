@@ -198,16 +198,11 @@ public class SongInfoOverlay extends Overlay {
 
         int maxWidth = 0;
         if (currentSong.intermission) {
-            maxWidth = font.getWidth(currentSong.title);
+            maxWidth = font.getWidth(new TranslatableText("text.craftgr.song.intermission"));
         } else {
             String[] strings = {currentSong.title, currentSong.artist, currentSong.album, currentSong.circle};
             for (String string : strings) {
                 int width = font.getWidth(string);
-                if (width > maxWidth) maxWidth = width;
-            }
-
-            if (currentSong.intermission) {
-                int width = font.getWidth(new TranslatableText("text.craftgr.song.intermission"));
                 if (width > maxWidth) maxWidth = width;
             }
         }
