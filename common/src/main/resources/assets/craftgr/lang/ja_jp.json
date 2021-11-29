@@ -1,0 +1,38 @@
+{
+  "text.autoconfig.craftgr.title": "CraftGR 設定",
+
+  "text.autoconfig.craftgr.option.volume": "音楽の再生音量 (%)",
+  "text.autoconfig.craftgr.option.volume.@Tooltip": "Gensokyo Radioの音楽を再生する音量です。",
+  "text.autoconfig.craftgr.option.overlayVisibility": "オーバーレイの表示",
+  "text.autoconfig.craftgr.option.overlayVisibility.@Tooltip": "曲情報を表示する形式の設定です。\nNONE → 表示しない\nALWAYS → 常に表示\nMENU → メニュー内のみ表示\nCHAT → チャット内のみ表示",
+  "text.autoconfig.craftgr.option.overlayPosition": "オーバーレイの位置",
+  "text.autoconfig.craftgr.option.overlayPosition.@Tooltip": "曲情報オーバーレイの表示位置の設定です。\nTOP_LEFT → 左上\nTOP_RIGHT → 右上\nBOTTOM_LEFT → 左下\nBOTTOM_RIGHT → 右下",
+  "text.autoconfig.craftgr.option.openAlbum": "ｵｰﾊﾞｰﾚｲをｸﾘｯｸしてｱﾙﾊﾞﾑを見る",
+  "text.autoconfig.craftgr.option.openAlbum.@Tooltip": "曲情報オーバーレイをクリックした際に\nその曲のアルバム情報をブラウザで開くか\nどうかの設定です。",
+  "text.autoconfig.craftgr.option.hideAlbumArt": "アルバムカバー画像を隠す",
+  "text.autoconfig.craftgr.option.hideAlbumArt.@Tooltip": "曲情報オーバーレイにアルバムの\nカバー画像を表示するかどうかの\n設定です。",
+  "text.autoconfig.craftgr.option.overlayBgColor": "オーバーレイの背景色",
+  "text.autoconfig.craftgr.option.overlayBgColor.@Tooltip": "曲情報オーバーレイの背景の色の設定です。",
+  "text.autoconfig.craftgr.option.overlayBarColor": "オーバーレイのシークバー色",
+  "text.autoconfig.craftgr.option.overlayBarColor.@Tooltip": "曲情報オーバーレイ下部のシークバーの色の設定です。",
+  "text.autoconfig.craftgr.option.overlayScale": "オーバーレイの大きさ",
+  "text.autoconfig.craftgr.option.overlayScale.@Tooltip": "曲情報オーバーレイをどのくらいの\n大きさで表示するかの設定です。\n拡大倍率を記入してください。",
+
+  "text.autoconfig.craftgr.option.url": "上級者向け設定",
+  "text.autoconfig.craftgr.option.url.streamURL": "ストリーミング音源のURL",
+  "text.autoconfig.craftgr.option.url.streamURL.@Tooltip": "音楽をストリーミングする音源のURLです。\nMP3の音源のみ使用できます。",
+  "text.autoconfig.craftgr.option.url.songInfoURL": "曲データのURL",
+  "text.autoconfig.craftgr.option.url.songInfoURL.@Tooltip": "曲情報オーバーレイに表示するデータを\n取得するソースのURLです。",
+  "text.autoconfig.craftgr.option.url.albumArtURL": "アルバムカバー画像のURL",
+  "text.autoconfig.craftgr.option.url.albumArtURL.@Tooltip": "曲情報オーバーレイに表示するアルバム\nカバー画像を取得するURLです。",
+
+  "text.craftgr.gui.options.volume": "Gensokyo Radio",
+
+  "text.craftgr.message.muted": "Gensokyo Radio をミュートしました",
+  "text.craftgr.message.unmuted": "Gensokyo Radio のミュートを解除しました",
+
+  "text.craftgr.song.intermission": "インターミッション",
+
+  "key.category.craftgr": "CraftGR",
+  "key.craftgr.togglemute": "ミュート切り替え"
+}
