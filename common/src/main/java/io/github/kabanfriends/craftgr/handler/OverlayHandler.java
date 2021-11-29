@@ -2,7 +2,6 @@ package io.github.kabanfriends.craftgr.handler;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.kabanfriends.craftgr.render.Overlay;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.ArrayList;
 import java.util.List;

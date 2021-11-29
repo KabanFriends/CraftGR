@@ -9,9 +9,9 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(OptionsSubScreen.class)
-public class MixinGameOptionsScreen extends Screen {
+public class MixinOptionsSubScreen extends Screen {
 
-    public MixinGameOptionsScreen(TextComponent title) {
+    public MixinOptionsSubScreen(TextComponent title) {
         super(title);
     }
 

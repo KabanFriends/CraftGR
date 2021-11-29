@@ -6,7 +6,6 @@ import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.autoconfig.annotation.ConfigEntry;
-import me.shedaniel.clothconfig2.api.ConfigScreen;
 
 @Config(name = CraftGR.MOD_ID)
 public class GRConfig implements ConfigData {

@@ -3,7 +3,6 @@ package io.github.kabanfriends.craftgr.audio;
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.config.GRConfig;
 import javazoom.jl.decoder.*;
-import net.minecraft.client.Minecraft;
 import net.minecraft.sounds.SoundSource;
 import org.apache.logging.log4j.Level;
 import org.lwjgl.BufferUtils;

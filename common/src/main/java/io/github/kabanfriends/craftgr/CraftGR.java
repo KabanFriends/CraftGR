@@ -7,7 +7,6 @@ import io.github.kabanfriends.craftgr.platform.Platform;
 import io.github.kabanfriends.craftgr.render.impl.SongInfoOverlay;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
-import net.fabricmc.api.ModInitializer;
 import net.minecraft.client.Minecraft;
 import okhttp3.OkHttpClient;
 import org.apache.logging.log4j.Level;
