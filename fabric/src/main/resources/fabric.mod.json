@@ -13,7 +13,7 @@
     "issues": "https://github.com/KabanFriends/CraftGR/issues"
   },
   "environment": "client",
-  "license": "MIT",
+  "license": "LGPL-3.0",
   "icon": "assets/craftgr/icon.png",
   "entrypoints": {
     "main": [
