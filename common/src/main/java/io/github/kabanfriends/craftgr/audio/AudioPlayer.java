@@ -83,8 +83,6 @@ public class AudioPlayer {
     }
 
     public void close() throws BitstreamException {
-        this.playing = false;
-
         if (this.source != null) {
             AL10.alSourceStop(this.source.get());
             AL10.alDeleteSources(this.source);
