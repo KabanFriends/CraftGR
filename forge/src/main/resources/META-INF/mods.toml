@@ -1,0 +1,28 @@
+modLoader = "javafml"
+loaderVersion = "[@FORGE_LOADER_MAJOR@,)"
+#issueTrackerURL = ""
+license = "Insert License Here"
+
+[[mods]]
+modId = "craftgr"
+version = "${version}"
+displayName = "CraftGR"
+authors = "KabanFriends"
+description = '''
+Plays Gensokyo Radio in Minecraft
+'''
+#logoFile = ""
+
+[[dependencies.craftgr]]
+modId = "forge"
+mandatory = true
+versionRange = "[@FORGE_LOADER_MAJOR@,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.craftgr]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[@MINECRAFT@,)"
+ordering = "NONE"
+side = "BOTH"

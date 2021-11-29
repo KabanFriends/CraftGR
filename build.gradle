@@ -1,115 +1,65 @@
 plugins {
-	id 'fabric-loom' version '0.7-SNAPSHOT'
-	id 'com.github.johnrengelman.shadow' version '4.0.4'
-	id 'maven-publish'
+    id "architectury-plugin" version "3.4-SNAPSHOT"
+    id "dev.architectury.loom" version "0.10.0-SNAPSHOT" apply false
 }
 
-repositories {
-    mavenCentral()
-    jcenter()
-    maven {
-        url = "https://oss.sonatype.org/content/repositories/snapshots/"
+architectury {
+    minecraft = rootProject.minecraft_version
+}
+
+subprojects {
+    apply plugin: "dev.architectury.loom"
+
+    loom {
+        silentMojangMappingsLicense()
     }
-	maven {
-		url = "https://maven.shedaniel.me/"
-	}
-	maven {
-		url = "https://jitpack.io"
-	}
+
+    repositories {
+        mavenCentral()
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        maven { url "https://maven.shedaniel.me/" }
+        maven { url "https://jitpack.io" }
+    }
+
+    dependencies {
+        minecraft "com.mojang:minecraft:${rootProject.minecraft_version}"
+        // The following line declares the mojmap mappings, you may use other mappings as well
+        mappings loom.officialMojangMappings()
+        // The following line declares the yarn mappings you may select this one as well.
+        // mappings "net.fabricmc:yarn:1.16.5+build.10:v2"
+    }
 }
 
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
+allprojects {
+    apply plugin: "java"
+    apply plugin: "architectury-plugin"
+    apply plugin: "maven-publish"
 
-archivesBaseName = project.archives_base_name
-version = "${project.mod_version}-mc${project.minecraft_version}"
-group = project.maven_group
+    archivesBaseName = rootProject.archives_base_name
+    version = rootProject.mod_version
+    group = rootProject.maven_group
 
-minecraft {
-}
+    repositories {
+        // Add repositories to retrieve artifacts from in here.
+        // You should only use this when depending on other mods because
+        // Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
+        // See https://docs.gradle.org/current/userguide/declaring_repositories.html
+        // for more information about repositories.
+    }
 
-dependencies {
-	//to change the versions see the gradle.properties file
-	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-	
-	modImplementation "javazoom:jlayer:1.0.1"
-	modImplementation "com.squareup.okhttp3:okhttp:3.14.9"
-	modImplementation "com.googlecode.soundlibs:tritonus-share:0.3.7-2"
-	modImplementation "com.googlecode.soundlibs:mp3spi:1.9.5-1"
-	include("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}") { exclude(group: "net.fabricmc.fabric-api") }
-	include "com.squareup.okio:okio:1.17.5"
-	include "javazoom:jlayer:1.0.1"
-	include "com.squareup.okhttp3:okhttp:3.14.9"
-	include "com.googlecode.soundlibs:tritonus-share:0.3.7-2"
-	include "com.googlecode.soundlibs:mp3spi:1.9.5-1"
+    tasks.withType(JavaCompile) {
+        options.encoding = "UTF-8"
 
-	modApi "io.github.prospector:modmenu:1.16.9"
-	modApi("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}") { exclude(group: "net.fabricmc.fabric-api") }
+        // The Minecraft launcher currently installs Java 8 for users, so your mod probably wants to target Java 8 too
+        // JDK 9 introduced a new way of specifying this that will make sure no newer classes or methods are used.
+        // We'll use that if it's available, but otherwise we'll use the older option.
+        def targetVersion = 8
+        if (JavaVersion.current().isJava9Compatible()) {
+            options.release = targetVersion
+        }
+    }
 
-	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
-
-	//runtime stuff i guess
-	modRuntime "io.github.prospector:modmenu:1.16.9"
-	modRuntime("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}") { exclude(group: "net.fabricmc.fabric-api") }
-	modRuntime("com.github.SuperCoder7979:databreaker:0.2.6") {
-		exclude module: "fabric-loader"
-	}
-}
-
-processResources {
-	inputs.property "version", project.version
-
-	from(sourceSets.main.resources.srcDirs) {
-		include "fabric.mod.json"
-		expand "version": project.version
-	}
-
-	from(sourceSets.main.resources.srcDirs) {
-		exclude "fabric.mod.json"
-	}
-}
-
-// ensure that the encoding is set to UTF-8, no matter what the system default is
-// this fixes some edge cases with special characters not displaying correctly
-// see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
-tasks.withType(JavaCompile) {
-	options.encoding = "UTF-8"
-}
-
-// Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
-// if it is present.
-// If you remove this task, sources will not be generated.
-task sourcesJar(type: Jar, dependsOn: classes) {
-	classifier = "sources"
-	from sourceSets.main.allSource
-}
-
-jar {
-	from "LICENSE"
-}
-
-// configure the maven publication
-publishing {
-	publications {
-		mavenJava(MavenPublication) {
-			// add all the jars that should be included when publishing to maven
-			artifact(jar) {
-				builtBy remapJar
-			}
-			artifact("${project.buildDir.absolutePath}/libs/${archivesBaseName}-${project.version}.jar"){
-				builtBy remapJar
-			}
-			artifact(sourcesJar) {
-				builtBy remapSourcesJar
-			}
-		}
-	}
-
-	// select the repositories you want to publish to
-	repositories {
-		// uncomment to publish to the local maven
-		// mavenLocal()
-	}
+    java {
+        withSourcesJar()
+    }
 }

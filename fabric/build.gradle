@@ -1,0 +1,93 @@
+plugins {
+    id "com.github.johnrengelman.shadow" version "7.0.0"
+}
+
+architectury {
+    platformSetupLoomIde()
+    fabric()
+}
+
+configurations {
+    common
+    shadowCommon // Don't use shadow from the shadow plugin because we don't want IDEA to index this.
+    compileClasspath.extendsFrom common
+    runtimeClasspath.extendsFrom common
+    developmentFabric.extendsFrom common
+}
+
+dependencies {
+    modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
+    modApi "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
+
+    common(project(path: ":common", configuration: "namedElements")) { transitive false }
+    shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
+
+    modImplementation "javazoom:jlayer:1.0.1"
+    modImplementation "com.squareup.okhttp3:okhttp:3.14.9"
+    modImplementation "com.googlecode.soundlibs:tritonus-share:0.3.7-2"
+    modImplementation "com.googlecode.soundlibs:mp3spi:1.9.5-1"
+    include("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}") { exclude(group: "net.fabricmc.fabric-api") }
+    include "com.squareup.okio:okio:1.17.5"
+    include "javazoom:jlayer:1.0.1"
+    include "com.squareup.okhttp3:okhttp:3.14.9"
+    include "com.googlecode.soundlibs:tritonus-share:0.3.7-2"
+    include "com.googlecode.soundlibs:mp3spi:1.9.5-1"
+
+    modApi "io.github.prospector:modmenu:1.16.9"
+    modApi("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}") { exclude(group: "net.fabricmc.fabric-api") }
+
+    modRuntime "io.github.prospector:modmenu:1.16.9"
+    modRuntime("me.shedaniel.cloth:cloth-config-fabric:${rootProject.cloth_config_version}") { exclude(group: "net.fabricmc.fabric-api") }
+    modRuntime("com.github.SuperCoder7979:databreaker:0.2.6") {
+        exclude module: "fabric-loader"
+    }
+}
+
+processResources {
+    inputs.property "version", project.version
+
+    filesMatching("fabric.mod.json") {
+        expand "version": project.version
+    }
+}
+
+shadowJar {
+    configurations = [project.configurations.shadowCommon]
+    classifier "dev-shadow"
+}
+
+remapJar {
+    input.set shadowJar.archiveFile
+    dependsOn shadowJar
+    classifier null
+}
+
+jar {
+    classifier "dev"
+}
+
+sourcesJar {
+    def commonSources = project(":common").sourcesJar
+    dependsOn commonSources
+    from commonSources.archiveFile.map { zipTree(it) }
+}
+
+components.java {
+    withVariantsFromConfiguration(project.configurations.shadowRuntimeElements) {
+        skip()
+    }
+}
+
+publishing {
+    publications {
+        mavenFabric(MavenPublication) {
+            artifactId = rootProject.archives_base_name + "-" + project.name
+            from components.java
+        }
+    }
+
+    // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
+    repositories {
+        // Add repositories to publish to here.
+    }
+}

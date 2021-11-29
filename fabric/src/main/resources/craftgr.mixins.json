@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "io.github.kabanfriends.craftgr.fabric.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "MixinGameRenderer",
+    "MixinScreen"
+  ],
+  "client": [],
+  "server": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
