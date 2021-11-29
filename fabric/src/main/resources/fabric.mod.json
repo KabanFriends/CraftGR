@@ -3,7 +3,7 @@
   "id": "craftgr",
   "version": "${version}",
   "name": "CraftGR",
-  "description": "Plays Gensokyo Radio in Minecraft",
+  "description": "Plays Gensokyo Radio in Minecraft with a cool HUD overlay",
   "authors": [
     "KabanFriends"
   ],

@@ -10,6 +10,7 @@ displayName = "CraftGR"
 authors = "KabanFriends"
 description = '''
 Plays Gensokyo Radio in Minecraft
+with a cool HUD overlay
 '''
 logoFile = "icon.png"
 
