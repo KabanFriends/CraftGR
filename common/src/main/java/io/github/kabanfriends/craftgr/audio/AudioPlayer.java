@@ -74,8 +74,11 @@ public class AudioPlayer {
             close();
             return result;
         } catch (Exception e) {
-            e.printStackTrace();
-            return ProcessResult.EXCEPTION;
+            if (this.playing) {
+                e.printStackTrace();
+                return ProcessResult.EXCEPTION;
+            }
+            return ProcessResult.STOP;
         }
     }
 
@@ -136,8 +139,11 @@ public class AudioPlayer {
 
             return ProcessResult.SUCCESS;
         } catch (Exception e) {
-            e.printStackTrace();
-            return ProcessResult.EXCEPTION;
+            if (this.playing) {
+                e.printStackTrace();
+                return ProcessResult.EXCEPTION;
+            }
+            return ProcessResult.STOP;
         }
     }
 

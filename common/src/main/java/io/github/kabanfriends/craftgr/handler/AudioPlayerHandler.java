@@ -43,7 +43,7 @@ public class AudioPlayerHandler {
 
                         CraftGR.log(Level.ERROR, "Restarting audio player...");
                     } else if (result == ProcessResult.STOP) {
-                        CraftGR.log(Level.INFO, "Playback has stopped!");
+                        CraftGR.log(Level.INFO, "Audio playback has stopped!");
                         return;
                     }
 
@@ -55,6 +55,12 @@ public class AudioPlayerHandler {
                 }
             }
         });
+    }
+
+    public void stopPlayback() {
+        CraftGR.log(Level.INFO, "Stopping audio playback...");
+        this.player.stop();
+        this.response.close();
     }
 
     public void initialize() {
