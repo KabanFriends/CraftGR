@@ -4,7 +4,7 @@
   "text.autoconfig.craftgr.option.volume": "音楽の再生音量 (%)",
   "text.autoconfig.craftgr.option.volume.@Tooltip": "Gensokyo Radioの音楽を再生する音量です。",
   "text.autoconfig.craftgr.option.overlayVisibility": "オーバーレイの表示",
-  "text.autoconfig.craftgr.option.overlayVisibility.@Tooltip": "曲情報を表示する形式の設定です。\nNONE → 表示しない\nALWAYS → 常に表示\nMENU → メニュー内のみ表示\nCHAT → チャット内のみ表示",
+  "text.autoconfig.craftgr.option.overlayVisibility.@Tooltip": "曲情報オーバーレイの表示タイプの設定です。\nNONE → 表示しない\nALWAYS → 常に表示\nMENU → メニュー内のみ表示\nCHAT → チャット内のみ表示",
   "text.autoconfig.craftgr.option.overlayPosition": "オーバーレイの位置",
   "text.autoconfig.craftgr.option.overlayPosition.@Tooltip": "曲情報オーバーレイの表示位置の設定です。\nTOP_LEFT → 左上\nTOP_RIGHT → 右上\nBOTTOM_LEFT → 左下\nBOTTOM_RIGHT → 右下",
   "text.autoconfig.craftgr.option.openAlbum": "オーバーレイをクリックでアルバム情報を表示",
@@ -19,11 +19,11 @@
   "text.autoconfig.craftgr.option.overlayScale.@Tooltip": "曲情報オーバーレイをどのくらいの\n大きさで表示するかの設定です。\n拡大倍率を記入してください。",
 
   "text.autoconfig.craftgr.option.url": "上級者向け設定",
-  "text.autoconfig.craftgr.option.url.streamURL": "ストリーミング音源のURL",
+  "text.autoconfig.craftgr.option.url.streamURL": "ストリーミング音源URL",
   "text.autoconfig.craftgr.option.url.streamURL.@Tooltip": "音楽をストリーミングする音源のURLです。\nMP3の音源のみ使用できます。",
-  "text.autoconfig.craftgr.option.url.songInfoURL": "曲データのURL",
+  "text.autoconfig.craftgr.option.url.songInfoURL": "曲データURL",
   "text.autoconfig.craftgr.option.url.songInfoURL.@Tooltip": "曲情報オーバーレイに表示するデータを\n取得するソースのURLです。",
-  "text.autoconfig.craftgr.option.url.albumArtURL": "アルバムカバー画像のURL",
+  "text.autoconfig.craftgr.option.url.albumArtURL": "アルバムカバー画像URL",
   "text.autoconfig.craftgr.option.url.albumArtURL.@Tooltip": "曲情報オーバーレイに表示するアルバム\nカバー画像を取得するURLです。",
 
   "text.craftgr.gui.options.volume": "Gensokyo Radio",
