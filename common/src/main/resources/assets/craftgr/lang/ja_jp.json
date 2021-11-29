@@ -7,7 +7,7 @@
   "text.autoconfig.craftgr.option.overlayVisibility.@Tooltip": "曲情報を表示する形式の設定です。\nNONE → 表示しない\nALWAYS → 常に表示\nMENU → メニュー内のみ表示\nCHAT → チャット内のみ表示",
   "text.autoconfig.craftgr.option.overlayPosition": "オーバーレイの位置",
   "text.autoconfig.craftgr.option.overlayPosition.@Tooltip": "曲情報オーバーレイの表示位置の設定です。\nTOP_LEFT → 左上\nTOP_RIGHT → 右上\nBOTTOM_LEFT → 左下\nBOTTOM_RIGHT → 右下",
-  "text.autoconfig.craftgr.option.openAlbum": "ｵｰﾊﾞｰﾚｲをｸﾘｯｸしてｱﾙﾊﾞﾑを見る",
+  "text.autoconfig.craftgr.option.openAlbum": "オーバーレイをクリックでアルバム情報を表示",
   "text.autoconfig.craftgr.option.openAlbum.@Tooltip": "曲情報オーバーレイをクリックした際に\nその曲のアルバム情報をブラウザで開くか\nどうかの設定です。",
   "text.autoconfig.craftgr.option.hideAlbumArt": "アルバムカバー画像を隠す",
   "text.autoconfig.craftgr.option.hideAlbumArt.@Tooltip": "曲情報オーバーレイにアルバムの\nカバー画像を表示するかどうかの\n設定です。",
