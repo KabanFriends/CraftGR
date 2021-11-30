@@ -4,7 +4,6 @@ plugins {
 loom {
     forge {
         mixinConfig "craftgr-common.mixins.json"
-        mixinConfig "craftgr.mixins.json"
     }
 }
 
@@ -28,11 +27,16 @@ dependencies {
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }
 
     modApi("me.shedaniel.cloth:cloth-config-forge:${rootProject.cloth_config_version}")
-    shadow "com.squareup.okio:okio:1.17.5"
-    shadow "javazoom:jlayer:1.0.1"
-    shadow "com.squareup.okhttp3:okhttp:3.14.9"
-    shadow "com.googlecode.soundlibs:tritonus-share:0.3.7-2"
-    shadow "com.googlecode.soundlibs:mp3spi:1.9.5-1"
+
+    shadowCommon("com.squareup.okhttp3:okhttp:3.14.9") { transitive = false }
+    shadowCommon("com.squareup.okio:okio:1.17.5") { transitive = false }
+    shadowCommon("javazoom:jlayer:1.0.1") { transitive = false }
+
+    modImplementation "com.squareup.okhttp3:okhttp:3.14.9"
+    modImplementation "com.squareup.okio:okio:1.17.5"
+    modImplementation "javazoom:jlayer:1.0.1"
+    modImplementation "com.googlecode.soundlibs:tritonus-share:0.3.7-2"
+    modImplementation "com.googlecode.soundlibs:mp3spi:1.9.5-1"
 }
 
 processResources {
