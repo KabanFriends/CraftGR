@@ -85,7 +85,7 @@ public class SongInfoOverlay extends Overlay {
                 } else {
                     RenderUtil.bindTexture(albumArt);
                 }
-                RenderSystem.color4f(255f, 255f, 255f, 255f);
+                RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
                 GuiComponent.blit(poseStack, x + 6, y + 6, 0f, 0f, ALBUM_ART_SIZE, ALBUM_ART_SIZE, ALBUM_ART_SIZE, ALBUM_ART_SIZE);
             }
 

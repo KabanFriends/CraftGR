@@ -3,13 +3,14 @@ package io.github.kabanfriends.craftgr.util;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Matrix4f;
-import io.github.kabanfriends.craftgr.CraftGR;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 
 public class RenderUtil {
 
     public static void bindTexture(ResourceLocation texture, boolean depthTest) {
-        CraftGR.MC.getTextureManager().bind(texture);
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderTexture(0, texture);
         RenderSystem.enableBlend();
         if (depthTest) {
             RenderSystem.enableDepthTest();
@@ -45,7 +46,8 @@ public class RenderUtil {
         RenderSystem.enableBlend();
         RenderSystem.disableTexture();
         RenderSystem.defaultBlendFunc();
-        bb.begin(7, DefaultVertexFormat.POSITION_COLOR);
+        RenderSystem.setShader(GameRenderer::getPositionColorShader);
+        bb.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
         bb.vertex(matrix4f, minX, maxY, 0.0F).color(r, g, b, a).endVertex();
         bb.vertex(matrix4f, maxX, maxY, 0.0F).color(r, g, b, a).endVertex();
         bb.vertex(matrix4f, maxX, minY, 0.0F).color(r, g, b, a).endVertex();

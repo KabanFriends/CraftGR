@@ -29,8 +29,8 @@ ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.craftgr]]
-modId = "cloth-config"
+modId = "cloth_config"
 mandatory = true
-versionRange="[4.0.1,)"
+versionRange="[5.1.0,)"
 ordering = "NONE"
 side = "BOTH"

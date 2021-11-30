@@ -32,9 +32,9 @@
     "craftgr.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.7.4",
+    "fabricloader": ">=0.12.4",
     "fabric": "*",
-    "minecraft": "1.16.x",
+    "minecraft": "1.17.x",
     "fabric-key-binding-api-v1": "*"
   },
   "custom": {
