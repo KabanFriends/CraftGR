@@ -61,6 +61,8 @@ public class SongInfoOverlay extends Overlay {
             Font font = CraftGR.MC.font;
 
             float scale = GRConfig.getConfig().overlayScale;
+
+            RenderUtil.setZLevelPre(poseStack, 400);
             poseStack.scale(getUIScale(scale), getUIScale(scale), getUIScale(scale));
 
             int albumArtWidth;
@@ -119,6 +121,8 @@ public class SongInfoOverlay extends Overlay {
                 RenderUtil.fill(poseStack, x, y + ALBUM_ART_SIZE + 10 + 10, x + (float) played / duration * width, y + height, GRConfig.getConfig().overlayBarColor + 0xFF000000, 0.6f);
                 RenderUtil.fill(poseStack, x + (float) played / duration * width, y + ALBUM_ART_SIZE + 10 + 10, x + width, y + height, GRConfig.getConfig().overlayBgColor + 0xFF000000, 0.6f);
             }
+
+            RenderUtil.setZLevelPost(poseStack);
         }
     }
 

@@ -8,6 +8,17 @@ import net.minecraft.resources.ResourceLocation;
 
 public class RenderUtil {
 
+    public static void setZLevelPre(PoseStack poseStack, int zLevel) {
+        RenderSystem.disableDepthTest();
+        poseStack.pushPose();
+        poseStack.translate(0.0D, 0.0D, zLevel);
+    }
+
+    public static void setZLevelPost(PoseStack poseStack) {
+        poseStack.popPose();
+        RenderSystem.enableDepthTest();
+    }
+
     public static void bindTexture(ResourceLocation texture, boolean depthTest) {
         CraftGR.MC.getTextureManager().bind(texture);
         RenderSystem.enableBlend();
