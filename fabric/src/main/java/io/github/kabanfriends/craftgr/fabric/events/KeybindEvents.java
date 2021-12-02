@@ -1,4 +1,4 @@
-package io.github.kabanfriends.craftgr.fabric.keybinds;
+package io.github.kabanfriends.craftgr.fabric.events;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import io.github.kabanfriends.craftgr.handler.KeyActionHandler;
@@ -8,7 +8,7 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.KeyMapping;
 import org.lwjgl.glfw.GLFW;
 
-public class Keybinds implements ClientModInitializer {
+public class KeybindEvents implements ClientModInitializer {
 
     private static KeyMapping toggleMute;
 
