@@ -3,7 +3,7 @@ package io.github.kabanfriends.craftgr.forge.platform;
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.platform.Platform;
 import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fmlclient.gui.screen.ModListScreen;
+import net.minecraftforge.client.gui.ModListScreen;
 
 public class ForgePlatform extends Platform {
 

@@ -2,7 +2,7 @@ package io.github.kabanfriends.craftgr.forge.keybinds;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
-import net.minecraftforge.fmlclient.registry.ClientRegistry;
+import net.minecraftforge.client.ClientRegistry;
 import org.lwjgl.glfw.GLFW;
 
 public class Keybinds {

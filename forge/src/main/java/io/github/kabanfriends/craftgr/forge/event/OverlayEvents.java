@@ -2,7 +2,7 @@ package io.github.kabanfriends.craftgr.forge.event;
 
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.handler.OverlayHandler;
-import net.minecraftforge.client.event.GuiScreenEvent;
+import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -16,12 +16,12 @@ public class OverlayEvents {
     }
 
     @SubscribeEvent
-    public void renderScreen(GuiScreenEvent.DrawScreenEvent.Post event) {
-        OverlayHandler.renderAll(event.getMatrixStack(), event.getMouseX(), event.getMouseY());
+    public void renderScreen(ScreenEvent.DrawScreenEvent.Post event) {
+        OverlayHandler.renderAll(event.getPoseStack(), event.getMouseX(), event.getMouseY());
     }
 
     @SubscribeEvent
-    public void clickScreen(GuiScreenEvent.MouseClickedEvent event) {
+    public void clickScreen(ScreenEvent.MouseClickedEvent.Pre event) {
         event.setCanceled(OverlayHandler.clickPressAll((int)event.getMouseX(), (int)event.getMouseY()));
     }
 
