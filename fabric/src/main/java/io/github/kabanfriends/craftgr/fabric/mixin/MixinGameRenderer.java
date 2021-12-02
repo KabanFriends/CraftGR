@@ -29,17 +29,4 @@ public class MixinGameRenderer {
         OverlayHandler.renderAll(this.poseStack, mouseX, mouseY);
     }
 
-    @ModifyVariable(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Gui;render(Lcom/mojang/blaze3d/vertex/PoseStack;F)V"), ordinal = 0, method = "render")
-    public PoseStack onHudMatrixCreate(PoseStack poseStack) {
-        this.poseStack = poseStack;
-        return poseStack;
-    }
-
-    @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Gui;render(Lcom/mojang/blaze3d/vertex/PoseStack;F)V", shift = At.Shift.AFTER), method = "render")
-    public void onRenderHud(CallbackInfo i) {
-        if (CraftGR.MC.screen == null) {
-            OverlayHandler.renderAll(this.poseStack, 0, 0);
-        }
-    }
-
 }
