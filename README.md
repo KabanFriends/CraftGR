@@ -1,6 +1,7 @@
 # CraftGR
 CraftGR is a Minecraft mod for [Fabric](https://fabricmc.net/) and [Forge](https://files.minecraftforge.net/) that lets you listen to [Gensokyo Radio](https://gensokyoradio.net/) in game.
-This mod is currently in development and features such as, an overlay HUD for song information, are planned.
+
+### Download the mod on [Modrinth](https://modrinth.com/mod/craftgr)!
 
 ## Compiling
 To compile this mod, run the following commands:
