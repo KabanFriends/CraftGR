@@ -41,7 +41,7 @@ public class AudioPlayerHandler {
                         return;
                     }
 
-                    this.response.close();
+                    response.close();
                     initialize();
                 } else {
                     CraftGR.log(Level.ERROR, "Cannot start audio playback due to an initialization failure! Fix your config and restart the game.");
@@ -55,13 +55,14 @@ public class AudioPlayerHandler {
         CraftGR.log(Level.INFO, "Stopping audio playback...");
         this.player.stop();
         this.response.close();
+        response.close();
     }
 
     public void initialize() {
         try {
             Request request = new Request.Builder().url(GRConfig.getConfig().url.streamURL).build();
 
-            this.response = CraftGR.getHttpClient().newCall(request).execute();
+            response = CraftGR.getHttpClient().newCall(request).execute();
             InputStream stream = response.body().byteStream();
 
             AudioPlayer audioPlayer = new AudioPlayer(stream);
