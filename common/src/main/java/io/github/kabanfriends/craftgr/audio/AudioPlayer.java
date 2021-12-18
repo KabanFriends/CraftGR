@@ -15,9 +15,7 @@ import java.nio.ShortBuffer;
 
 //Code based on: https://github.com/PC-Logix/OpenFM/blob/1.12.2/src/main/java/pcl/OpenFM/player/MP3Player.java
 public class AudioPlayer {
-
-    private static boolean FORCE_STOP;
-
+    
     private InputStream stream;
     private Bitstream bitstream;
     private Decoder decoder;
@@ -122,8 +120,7 @@ public class AudioPlayer {
             AL10.alSourceQueueBuffers(this.source.get(0), buffer);
 
             int state = AL10.alGetSourcei(this.source.get(0), AL10.AL_SOURCE_STATE);
-            if ((this.playing && state != AL10.AL_PLAYING) || FORCE_STOP) {
-                if (FORCE_STOP) FORCE_STOP = false;
+            if ((this.playing && state != AL10.AL_PLAYING)) {
                 if (this.started == 0L || System.currentTimeMillis() < this.started + 100L) {
                     this.started = System.currentTimeMillis();
                     AL10.alSourcePlay(this.source.get(0));
@@ -160,10 +157,6 @@ public class AudioPlayer {
             AL10.alSourcef(this.source.get(0), AL10.AL_GAIN, 0.0f);
             AL10.alSourceStop(this.source.get());
         }
-    }
-
-    public void stopNext() {
-        FORCE_STOP = true;
     }
 
     public void setVolume(float f) {
