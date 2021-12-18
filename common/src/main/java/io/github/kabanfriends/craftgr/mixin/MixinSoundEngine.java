@@ -17,12 +17,12 @@ public class MixinSoundEngine {
 
     @Inject(method = "reload()V", at = @At("HEAD"))
     public void stopPlayback(CallbackInfo ci) {
-        if (AudioPlayerHandler.isInitialized()) {
+        if (AudioPlayerHandler.getInstance().getInitState() == AudioPlayerHandler.InitState.SUCCESS) {
             AudioPlayerHandler handler = AudioPlayerHandler.getInstance();
 
             try {
                 CraftGR.log(Level.INFO, "Closing the audio player");
-                AudioPlayerHandler.getInstance().player.close();
+                AudioPlayerHandler.getInstance().getAudioPlayer().close();
             } catch (BitstreamException e) {
                 CraftGR.log(Level.ERROR, "Error when closing the audio player!");
                 e.printStackTrace();

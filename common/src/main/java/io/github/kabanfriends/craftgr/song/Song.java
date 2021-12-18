@@ -2,7 +2,7 @@ package io.github.kabanfriends.craftgr.song;
 
 public class Song {
 
-    public boolean intermission;
+    private boolean intermission;
 
     //SONGINFO
     public String title;
@@ -40,5 +40,13 @@ public class Song {
 
         this.albumArt = "";
         this.offsetTime = 0;
+    }
+
+    public void setIntermission(boolean intermission) {
+        this.intermission = intermission;
+    }
+
+    public boolean isIntermission() {
+        return this.intermission;
     }
 }

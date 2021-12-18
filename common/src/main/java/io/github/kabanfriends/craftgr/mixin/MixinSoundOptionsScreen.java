@@ -25,7 +25,7 @@ public class MixinSoundOptionsScreen extends MixinOptionsSubScreen {
         return (double) GRConfig.getConfig().volume;
     }, (gameOptions, volume) -> {
         GRConfig.getConfig().volume = volume.intValue();
-        AudioPlayerHandler.getInstance().player.setVolume(1.0f);
+        AudioPlayerHandler.getInstance().getAudioPlayer().setVolume(1.0f);
     }, (gameOptions, option) -> {
         return new TranslatableComponent("options.percent_value", new TranslatableComponent("text.craftgr.gui.options.volume"), GRConfig.getConfig().volume);
     });
@@ -34,9 +34,9 @@ public class MixinSoundOptionsScreen extends MixinOptionsSubScreen {
 
     @Inject(method = "init()V", at = @At("RETURN"))
     protected void init(CallbackInfo callbackInfo) {
-        this.addRenderableWidget(new SliderButton(CraftGR.MC.options, this.width / 2 - 155 + 160, this.height / 6 - 12 + 24 * (11 >> 1), 150 - 24, 20, PLAYBACK_VOLUME, null));
+        this.addRenderableWidget(new SliderButton(CraftGR.MC.options, this.width / 2 - 155 + 160, this.height / 6 - 12 + 24 * (11 >> 1), 150 - 24, 20, PLAYBACK_VOLUME));
         this.addRenderableWidget(new ImageButton(this.width / 2 - 155 + 160 + 150 - 20, this.height / 6 - 12 + 24 * (11 >> 1), 20, 20, 0, 0, 20, CONFIG_BUTTON, 20, 40, (button) -> {
-            CraftGR.MC.setScreen(AutoConfig.getConfigScreen(GRConfig.class, CraftGR.MC.screen).get());
+            CraftGR.getPlatform().openConfigScreen();
         }));
     }
 

@@ -12,25 +12,19 @@ import java.io.InputStream;
 
 public class AudioPlayerHandler {
 
-    private static AudioPlayerHandler INSTANCE;
-    private static int INIT_STATE;
+    private static final AudioPlayerHandler INSTANCE = new AudioPlayerHandler();
 
-    public AudioPlayer player;
-    public Response response;
-    public boolean playing = false;
-
-    public AudioPlayerHandler() {
-        INSTANCE = this;
-        INIT_STATE = 0;
-        initialize();
-    }
+    private InitState initState = InitState.NOT_INITIALIZED;
+    private AudioPlayer player;
+    private Response response;
+    private boolean playing = false;
 
     public void startPlayback() {
         this.playing = true;
 
         CraftGR.EXECUTOR.submit(() -> {
             while (true) {
-                if (INIT_STATE == 1) {
+                if (initState == InitState.SUCCESS) {
                     ProcessResult result = this.player.play();
 
                     if (result == ProcessResult.AL_ERROR || result == ProcessResult.EXCEPTION) {
@@ -40,17 +34,16 @@ public class AudioPlayerHandler {
                             Thread.sleep(5L * 1000L);
                         } catch (InterruptedException e) {
                         }
-
-                        CraftGR.log(Level.ERROR, "Restarting audio player...");
                     } else if (result == ProcessResult.STOP) {
                         CraftGR.log(Level.INFO, "Audio playback has stopped!");
                         return;
                     }
 
-                    this.response.close();
+                    response.close();
                     initialize();
                 } else {
                     CraftGR.log(Level.ERROR, "Cannot start audio playback due to an initialization failure! Fix your config and restart the game.");
+                    this.stopPlayback();
                     return;
                 }
             }
@@ -59,39 +52,65 @@ public class AudioPlayerHandler {
 
     public void stopPlayback() {
         CraftGR.log(Level.INFO, "Stopping audio playback...");
-        this.player.stop();
-        this.response.close();
+        if (player != null) player.stop();
+        if (response != null) response.close();
+
+        this.playing = false;
+        this.player = null;
+        this.initState = InitState.NOT_INITIALIZED;
     }
 
     public void initialize() {
+        CraftGR.log(Level.INFO, "Initializing the audio player...");
+        initState = InitState.INITIALIZING;
+
         try {
+            if (response != null) response.close();
+
             Request request = new Request.Builder().url(GRConfig.getConfig().url.streamURL).build();
 
-            this.response = CraftGR.HTTP_CLIENT.newCall(request).execute();
+            response = CraftGR.getHttpClient().newCall(request).execute();
             InputStream stream = response.body().byteStream();
 
             AudioPlayer audioPlayer = new AudioPlayer(stream);
 
-            if (INIT_STATE == 1) {
-                audioPlayer.setVolume(1.0f);
-            }
+            if (player != null) player.stop();
+            player = audioPlayer;
 
-            this.player = audioPlayer;
-
-            INIT_STATE = 1;
+            initState = InitState.SUCCESS;
+            CraftGR.log(Level.INFO, "Audio player is ready!");
         } catch (Exception err) {
             CraftGR.log(Level.ERROR, "Error when initializing the audio player:");
             err.printStackTrace();
 
-            INIT_STATE = -1;
+            initState = InitState.FAIL;
         }
     }
 
-    public static boolean isInitialized() {
-        return INIT_STATE == 1;
+    public InitState getInitState() {
+        return initState;
+    }
+
+    public boolean isPlaying() {
+        return playing;
+    }
+
+    public AudioPlayer getAudioPlayer() {
+        return player;
+    }
+
+    public boolean hasAudioPlayer() {
+        return player != null;
     }
 
     public static AudioPlayerHandler getInstance() {
         return INSTANCE;
+    }
+
+    public enum InitState {
+        NOT_INITIALIZED,
+        INITIALIZING,
+        SUCCESS,
+        FAIL
     }
 }

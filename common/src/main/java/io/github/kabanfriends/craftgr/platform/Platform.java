@@ -13,11 +13,15 @@ public class Platform {
     }
 
     public boolean isModLoaded(String id) {
-        throw new AssertionError();
+        throw new AssertionError("No platform specified!");
     }
 
-    public boolean isInForgeModMenu() {
+    public boolean isInModMenu() {
         return false;
+    }
+
+    public void openConfigScreen() {
+        throw new AssertionError("No platform specified!");
     }
 
     public enum PlatformType {
