@@ -27,14 +27,14 @@ public class CraftGR {
     public static final Minecraft MC = Minecraft.getInstance();
     public static final ExecutorService EXECUTOR = Executors.newCachedThreadPool();
 
-    public static Platform PLATFORM;
-    public static OkHttpClient HTTP_CLIENT;
+    private static Platform platform;
+    private static OkHttpClient httpClient;
 
     public static void init(Platform platform) {
         AutoConfig.register(GRConfig.class, GsonConfigSerializer::new);
 
-        PLATFORM = platform;
-        HTTP_CLIENT = new OkHttpClient.Builder()
+        CraftGR.platform = platform;
+        CraftGR.httpClient = new OkHttpClient.Builder()
                 .connectTimeout(20, TimeUnit.SECONDS)
                 .writeTimeout(40, TimeUnit.SECONDS)
                 .readTimeout(20, TimeUnit.SECONDS)
@@ -42,7 +42,15 @@ public class CraftGR {
 
         OverlayHandler.addOverlay(new SongInfoOverlay());
 
-        new SongHandler();
+        SongHandler.getInstance().initialize();
+    }
+
+    public static Platform getPlatform() {
+        return platform;
+    }
+
+    public static OkHttpClient getHttpClient() {
+        return httpClient;
     }
 
     public static void log(Level level, String message) {

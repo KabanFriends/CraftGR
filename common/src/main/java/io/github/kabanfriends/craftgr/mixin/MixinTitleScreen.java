@@ -25,11 +25,11 @@ public class MixinTitleScreen {
 
     @Inject(method = "removed", at = @At("HEAD"))
     private void onClose(CallbackInfo info) {
-        if (AudioPlayerHandler.isInitialized()) {
+        if (AudioPlayerHandler.getInstance().isInitialized()) {
             AudioPlayerHandler handler = AudioPlayerHandler.getInstance();
 
-            if (handler.player.isPlaying()) {
-                handler.player.setVolume(1.0f);
+            if (handler.getAudioPlayer().isPlaying()) {
+                handler.getAudioPlayer().setVolume(1.0f);
             }
         }
     }
@@ -40,28 +40,28 @@ public class MixinTitleScreen {
         if (AudioPlayerHandler.getInstance() == null) {
             CraftGR.EXECUTOR.submit(() -> {
                 CraftGR.log(Level.INFO, "CraftGR is starting up!");
-                new AudioPlayerHandler();
+                AudioPlayerHandler.getInstance().initialize();
                 CraftGR.log(Level.INFO, "Audio player is ready!");
             });
         }
 
-        if (AudioPlayerHandler.isInitialized()) {
+        if (AudioPlayerHandler.getInstance().isInitialized()) {
             AudioPlayerHandler handler = AudioPlayerHandler.getInstance();
 
             if (fading) {
                 //Start music playback
-                if (!handler.playing && !handler.player.isPlaying()) {
+                if (!handler.isPlaying() && !handler.getAudioPlayer().isPlaying()) {
                     handler.startPlayback();
                 }
 
                 //Audio fade in
-                if (handler.player.isPlaying()) {
+                if (handler.getAudioPlayer().isPlaying()) {
                     if (musicFadeStart == 0L) {
                         musicFadeStart = Util.getMillis();
                     }
 
                     float value = fading ? (float) (Util.getMillis() - musicFadeStart) / 2000.0F : 0.0F;
-                    handler.player.setVolume(Mth.clamp(value, 0.0f, 1.0f));
+                    handler.getAudioPlayer().setVolume(Mth.clamp(value, 0.0f, 1.0f));
                 }
             }
         }

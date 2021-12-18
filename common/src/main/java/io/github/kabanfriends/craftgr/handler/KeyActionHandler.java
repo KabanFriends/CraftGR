@@ -11,8 +11,8 @@ public class KeyActionHandler {
         if (CraftGR.MC.screen == null) {
             AudioPlayerHandler handler = AudioPlayerHandler.getInstance();
 
-            handler.player.muted = !AudioPlayerHandler.getInstance().player.muted;
-            if (handler.player.muted) {
+            handler.getAudioPlayer().muted = !AudioPlayerHandler.getInstance().getAudioPlayer().muted;
+            if (handler.getAudioPlayer().muted) {
                 TextComponent icon = new TextComponent("❌ ");
                 icon.withStyle(ChatFormatting.RED);
                 TranslatableComponent message = new TranslatableComponent("text.craftgr.message.muted");
@@ -28,7 +28,7 @@ public class KeyActionHandler {
                 CraftGR.MC.player.displayClientMessage(icon.append(message), true);
             }
 
-            handler.player.setVolume(1.0F);
+            handler.getAudioPlayer().setVolume(1.0F);
         }
     }
 

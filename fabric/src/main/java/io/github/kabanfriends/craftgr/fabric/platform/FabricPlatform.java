@@ -20,7 +20,7 @@ public class FabricPlatform extends Platform {
 
     @Override
     public boolean isInModMenu() {
-        if (CraftGR.PLATFORM.isModLoaded("modmenu")) {
+        if (CraftGR.getPlatform().isModLoaded("modmenu")) {
             return CraftGR.MC.screen instanceof ModsScreen;
         }
         return false;

@@ -12,25 +12,19 @@ import java.io.InputStream;
 
 public class AudioPlayerHandler {
 
-    private static AudioPlayerHandler INSTANCE;
-    private static int INIT_STATE;
+    private static final AudioPlayerHandler INSTANCE = new AudioPlayerHandler();
 
-    public AudioPlayer player;
-    public Response response;
-    public boolean playing = false;
-
-    public AudioPlayerHandler() {
-        INSTANCE = this;
-        INIT_STATE = 0;
-        initialize();
-    }
+    private InitState initState = InitState.NOT_INITIALIZED;
+    private AudioPlayer player;
+    private Response response;
+    private boolean playing = false;
 
     public void startPlayback() {
         this.playing = true;
 
         CraftGR.EXECUTOR.submit(() -> {
             while (true) {
-                if (INIT_STATE == 1) {
+                if (initState == InitState.SUCCESS) {
                     ProcessResult result = this.player.play();
 
                     if (result == ProcessResult.AL_ERROR || result == ProcessResult.EXCEPTION) {
@@ -67,31 +61,45 @@ public class AudioPlayerHandler {
         try {
             Request request = new Request.Builder().url(GRConfig.getConfig().url.streamURL).build();
 
-            this.response = CraftGR.HTTP_CLIENT.newCall(request).execute();
+            this.response = CraftGR.getHttpClient().newCall(request).execute();
             InputStream stream = response.body().byteStream();
 
             AudioPlayer audioPlayer = new AudioPlayer(stream);
 
-            if (INIT_STATE == 1) {
+            if (initState == InitState.SUCCESS) {
                 audioPlayer.setVolume(1.0f);
             }
 
             this.player = audioPlayer;
 
-            INIT_STATE = 1;
+            initState = InitState.SUCCESS;
         } catch (Exception err) {
             CraftGR.log(Level.ERROR, "Error when initializing the audio player:");
             err.printStackTrace();
 
-            INIT_STATE = -1;
+            initState = InitState.FAIL;
         }
     }
 
-    public static boolean isInitialized() {
-        return INIT_STATE == 1;
+    public boolean isInitialized() {
+        return initState == InitState.SUCCESS;
+    }
+
+    public boolean isPlaying() {
+        return playing;
+    }
+
+    public AudioPlayer getAudioPlayer() {
+        return player;
     }
 
     public static AudioPlayerHandler getInstance() {
         return INSTANCE;
+    }
+
+    private enum InitState {
+        NOT_INITIALIZED,
+        SUCCESS,
+        FAIL
     }
 }

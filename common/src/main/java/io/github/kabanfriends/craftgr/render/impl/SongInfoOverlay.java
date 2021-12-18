@@ -53,7 +53,7 @@ public class SongInfoOverlay extends Overlay {
             if (visibility == SongInfoOverlay.OverlayVisibility.CHAT && !(CraftGR.MC.screen instanceof ChatScreen)) return;
         }
 
-        Song currentSong = SongHandler.getInstance().song;
+        Song currentSong = SongHandler.getInstance().getCurrentSong();
 
         if (currentSong != null) {
             Font font = CraftGR.MC.font;
@@ -92,7 +92,7 @@ public class SongInfoOverlay extends Overlay {
             poseStack.pushPose();
             poseStack.scale(2, 2, 2);
 
-            if (currentSong.intermission) {
+            if (currentSong.isIntermission()) {
                 GuiComponent.drawString(poseStack, CraftGR.MC.font, new TranslatableComponent("text.craftgr.song.intermission"), (x + 12 + 8 + albumArtWidth) / 2, (y + 8) / 2, Color.WHITE.getRGB());
             } else {
                 GuiComponent.drawString(poseStack, CraftGR.MC.font, currentSong.title, (x + 12 + 8 + albumArtWidth) / 2, (y + 8) / 2, Color.WHITE.getRGB());
@@ -104,11 +104,11 @@ public class SongInfoOverlay extends Overlay {
 
             poseStack.popPose();
 
-            if (currentSong.intermission) {
+            if (currentSong.isIntermission()) {
                 RenderUtil.fill(poseStack, x, y + ALBUM_ART_SIZE + 10 + 10, x + width, y + height, GRConfig.getConfig().overlayBgColor + 0xFF000000, 0.6f);
             } else {
                 long duration = currentSong.songEnd - currentSong.songStart;
-                long played = System.currentTimeMillis() / 1000L - SongHandler.getInstance().songStart;
+                long played = System.currentTimeMillis() / 1000L - SongHandler.getInstance().getSongStart();
                 if (played > duration) played = duration;
 
                 GuiComponent.drawString(poseStack, CraftGR.MC.font, getTimer((int) played), x + 6, y + ALBUM_ART_SIZE + 10, Color.WHITE.getRGB());
@@ -133,9 +133,9 @@ public class SongInfoOverlay extends Overlay {
         else if (CraftGR.MC.screen instanceof ConnectScreen) return true;
         else if (CraftGR.MC.screen instanceof GenericDirtMessageScreen) return true;
 
-        if (CraftGR.PLATFORM.isInModMenu()) return true;
+        if (CraftGR.getPlatform().isInModMenu()) return true;
 
-        if (CraftGR.PLATFORM.isModLoaded("cloth-config2") || CraftGR.PLATFORM.isModLoaded("cloth-config")) {
+        if (CraftGR.getPlatform().isModLoaded("cloth-config2") || CraftGR.getPlatform().isModLoaded("cloth-config")) {
             if (CraftGR.MC.screen instanceof ConfigScreen) return true;
         }
 
@@ -144,10 +144,10 @@ public class SongInfoOverlay extends Overlay {
         if (visibility == OverlayVisibility.NONE) return true;
         if (visibility == OverlayVisibility.CHAT && !(CraftGR.MC.screen instanceof ChatScreen)) return true;
 
-        Song currentSong = SongHandler.getInstance().song;
+        Song currentSong = SongHandler.getInstance().getCurrentSong();
 
         if (currentSong != null && GRConfig.getConfig().openAlbum) {
-            if (currentSong.intermission) return true;
+            if (currentSong.isIntermission()) return true;
 
             float scale = GRConfig.getConfig().overlayScale;
 
@@ -195,12 +195,12 @@ public class SongInfoOverlay extends Overlay {
     }
 
     private float[] getOverlaySize() {
-        Song currentSong = SongHandler.getInstance().song;
+        Song currentSong = SongHandler.getInstance().getCurrentSong();
 
         Font font = CraftGR.MC.font;
 
         int maxWidth = 0;
-        if (currentSong.intermission) {
+        if (currentSong.isIntermission()) {
             maxWidth = font.width(new TranslatableComponent("text.craftgr.song.intermission"));
         } else {
             String[] strings = {currentSong.title, currentSong.artist, currentSong.album, currentSong.circle};
@@ -232,7 +232,7 @@ public class SongInfoOverlay extends Overlay {
                 try {
                     Request request = new Request.Builder().url(GRConfig.getConfig().url.albumArtURL + song.albumArt).build();
 
-                    Response response = CraftGR.HTTP_CLIENT.newCall(request).execute();
+                    Response response = CraftGR.getHttpClient().newCall(request).execute();
                     InputStream stream = response.body().byteStream();
 
                     //Wait for texture manager to be initialized
