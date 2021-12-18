@@ -1,6 +1,7 @@
 package io.github.kabanfriends.craftgr.fabric.events;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.handler.KeyActionHandler;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -10,6 +11,7 @@ import org.lwjgl.glfw.GLFW;
 
 public class KeybindEvents implements ClientModInitializer {
 
+    private static boolean toggleMuteLastTick;
     private static KeyMapping toggleMute;
 
     @Override
@@ -30,7 +32,11 @@ public class KeybindEvents implements ClientModInitializer {
         //=====================
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            while (toggleMute.consumeClick()) KeyActionHandler.toggleMute();
+            if (CraftGR.MC.screen == null) {
+                if (toggleMute.isDown() && toggleMuteLastTick == false) KeyActionHandler.togglePlayback();
+            }
+
+            toggleMuteLastTick = toggleMute.isDown();
         });
 
     }

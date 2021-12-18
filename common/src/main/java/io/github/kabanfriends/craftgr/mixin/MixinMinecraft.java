@@ -12,7 +12,9 @@ public class MixinMinecraft {
 
     @Inject(method = "stop()V", at = @At("HEAD"))
     public void onClientStop(CallbackInfo ci) {
-        AudioPlayerHandler.getInstance().stopPlayback();
+        AudioPlayerHandler handler = AudioPlayerHandler.getInstance();
+
+        if (handler.isPlaying()) handler.stopPlayback();
     }
 
 }

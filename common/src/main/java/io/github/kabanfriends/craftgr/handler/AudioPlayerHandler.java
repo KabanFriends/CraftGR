@@ -34,8 +34,6 @@ public class AudioPlayerHandler {
                             Thread.sleep(5L * 1000L);
                         } catch (InterruptedException e) {
                         }
-
-                        CraftGR.log(Level.ERROR, "Restarting audio player...");
                     } else if (result == ProcessResult.STOP) {
                         CraftGR.log(Level.INFO, "Audio playback has stopped!");
                         return;
@@ -45,6 +43,7 @@ public class AudioPlayerHandler {
                     initialize();
                 } else {
                     CraftGR.log(Level.ERROR, "Cannot start audio playback due to an initialization failure! Fix your config and restart the game.");
+                    this.stopPlayback();
                     return;
                 }
             }
@@ -53,13 +52,21 @@ public class AudioPlayerHandler {
 
     public void stopPlayback() {
         CraftGR.log(Level.INFO, "Stopping audio playback...");
-        this.player.stop();
-        this.response.close();
-        response.close();
+        if (player != null) player.stop();
+        if (response != null) response.close();
+
+        this.playing = false;
+        this.player = null;
+        this.initState = InitState.NOT_INITIALIZED;
     }
 
     public void initialize() {
+        CraftGR.log(Level.INFO, "Initializing the audio player...");
+        initState = InitState.INITIALIZING;
+
         try {
+            if (response != null) response.close();
+
             Request request = new Request.Builder().url(GRConfig.getConfig().url.streamURL).build();
 
             response = CraftGR.getHttpClient().newCall(request).execute();
@@ -67,13 +74,11 @@ public class AudioPlayerHandler {
 
             AudioPlayer audioPlayer = new AudioPlayer(stream);
 
-            if (initState == InitState.SUCCESS) {
-                audioPlayer.setVolume(1.0f);
-            }
-
-            this.player = audioPlayer;
+            if (player != null) player.stop();
+            player = audioPlayer;
 
             initState = InitState.SUCCESS;
+            CraftGR.log(Level.INFO, "Audio player is ready!");
         } catch (Exception err) {
             CraftGR.log(Level.ERROR, "Error when initializing the audio player:");
             err.printStackTrace();
@@ -82,8 +87,8 @@ public class AudioPlayerHandler {
         }
     }
 
-    public boolean isInitialized() {
-        return initState == InitState.SUCCESS;
+    public InitState getInitState() {
+        return initState;
     }
 
     public boolean isPlaying() {
@@ -94,12 +99,17 @@ public class AudioPlayerHandler {
         return player;
     }
 
+    public boolean hasAudioPlayer() {
+        return player != null;
+    }
+
     public static AudioPlayerHandler getInstance() {
         return INSTANCE;
     }
 
-    private enum InitState {
+    public enum InitState {
         NOT_INITIALIZED,
+        INITIALIZING,
         SUCCESS,
         FAIL
     }

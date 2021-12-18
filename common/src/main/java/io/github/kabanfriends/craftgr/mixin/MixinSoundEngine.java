@@ -17,7 +17,7 @@ public class MixinSoundEngine {
 
     @Inject(method = "reload()V", at = @At("HEAD"))
     public void stopPlayback(CallbackInfo ci) {
-        if (AudioPlayerHandler.getInstance().isInitialized()) {
+        if (AudioPlayerHandler.getInstance().getInitState() == AudioPlayerHandler.InitState.SUCCESS) {
             AudioPlayerHandler handler = AudioPlayerHandler.getInstance();
 
             try {

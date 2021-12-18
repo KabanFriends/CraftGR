@@ -28,8 +28,8 @@
 
   "text.craftgr.gui.options.volume": "Gensokyo Radio",
 
-  "text.craftgr.message.muted": "Gensokyo Radio muted",
-  "text.craftgr.message.unmuted": "Gensokyo Radio unmuted",
+  "text.craftgr.message.stopped": "Stopped audio playback",
+  "text.craftgr.message.started": "Started audio playback",
 
   "text.craftgr.song.intermission": "Intermission",
 
