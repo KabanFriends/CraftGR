@@ -25,43 +25,44 @@ public class MixinTitleScreen {
 
     @Inject(method = "removed", at = @At("HEAD"))
     private void onClose(CallbackInfo info) {
-        if (AudioPlayerHandler.isInitialized()) {
+        if (AudioPlayerHandler.getInstance().getInitState() == AudioPlayerHandler.InitState.SUCCESS) {
             AudioPlayerHandler handler = AudioPlayerHandler.getInstance();
 
-            if (handler.player.isPlaying()) {
-                handler.player.setVolume(1.0f);
+            if (handler.getAudioPlayer().isPlaying()) {
+                handler.getAudioPlayer().setVolume(1.0f);
             }
         }
     }
 
     @Inject(method = "render", at = @At("HEAD"))
     private void render(PoseStack poseStack, int mouseX, int mouseY, float delta, CallbackInfo ci) {
+        AudioPlayerHandler handler = AudioPlayerHandler.getInstance();
+
         //Initialize audio player
-        if (AudioPlayerHandler.getInstance() == null) {
+        if (handler.getInitState() == AudioPlayerHandler.InitState.NOT_INITIALIZED) {
             CraftGR.EXECUTOR.submit(() -> {
-                CraftGR.log(Level.INFO, "CraftGR is starting up!");
-                new AudioPlayerHandler();
-                CraftGR.log(Level.INFO, "Audio player is ready!");
+                handler.initialize();
             });
         }
 
-        if (AudioPlayerHandler.isInitialized()) {
-            AudioPlayerHandler handler = AudioPlayerHandler.getInstance();
-
+        if (handler.getInitState() == AudioPlayerHandler.InitState.SUCCESS) {
             if (fading) {
                 //Start music playback
-                if (!handler.playing && !handler.player.isPlaying()) {
-                    handler.startPlayback();
-                }
-
-                //Audio fade in
-                if (handler.player.isPlaying()) {
-                    if (musicFadeStart == 0L) {
-                        musicFadeStart = Util.getMillis();
+                if (handler.hasAudioPlayer()) {
+                    if (!handler.isPlaying()) {
+                        handler.getAudioPlayer().setVolume(0.0f);
+                        handler.startPlayback();
                     }
 
-                    float value = fading ? (float) (Util.getMillis() - musicFadeStart) / 2000.0F : 0.0F;
-                    handler.player.setVolume(Mth.clamp(value, 0.0f, 1.0f));
+                    //Audio fade in
+                    if (handler.isPlaying()) {
+                        if (musicFadeStart == 0L) {
+                            musicFadeStart = Util.getMillis();
+                        }
+
+                        float value = fading ? (float) (Util.getMillis() - musicFadeStart) / 2000.0F : 0.0F;
+                        handler.getAudioPlayer().setVolume(Mth.clamp(value, 0.0f, 1.0f));
+                    }
                 }
             }
         }

@@ -22,10 +22,11 @@ dependencies {
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
 
-    modImplementation "javazoom:jlayer:1.0.1"
-    modImplementation "com.squareup.okhttp3:okhttp:3.14.9"
-    modImplementation "com.googlecode.soundlibs:tritonus-share:0.3.7-2"
-    modImplementation "com.googlecode.soundlibs:mp3spi:1.9.5-1"
+    implementation "javazoom:jlayer:1.0.1"
+    implementation "com.squareup.okhttp3:okhttp:3.14.9"
+    implementation "com.googlecode.soundlibs:tritonus-share:0.3.7-2"
+    implementation "com.googlecode.soundlibs:mp3spi:1.9.5-1"
+
     include("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}") { exclude(group: "net.fabricmc.fabric-api") }
     include "com.squareup.okio:okio:1.17.5"
     include "javazoom:jlayer:1.0.1"
@@ -36,11 +37,9 @@ dependencies {
     modApi "io.github.prospector:modmenu:1.16.9"
     modApi("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}") { exclude(group: "net.fabricmc.fabric-api") }
 
-    modRuntime "io.github.prospector:modmenu:1.16.9"
-    modRuntime("me.shedaniel.cloth:cloth-config-fabric:${rootProject.cloth_config_version}") { exclude(group: "net.fabricmc.fabric-api") }
-    modRuntime("com.github.SuperCoder7979:databreaker:0.2.6") {
-        exclude module: "fabric-loader"
-    }
+    modRuntimeOnly "io.github.prospector:modmenu:1.16.9"
+    modRuntimeOnly("me.shedaniel.cloth:cloth-config-fabric:${rootProject.cloth_config_version}") { exclude(group: "net.fabricmc.fabric-api") }
+    modRuntimeOnly("com.github.SuperCoder7979:databreaker:0.2.6") { exclude(module: "fabric-loader") }
 }
 
 processResources {

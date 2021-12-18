@@ -7,28 +7,35 @@ import net.minecraft.network.chat.TranslatableComponent;
 
 public class KeyActionHandler {
 
-    public static void toggleMute() {
-        if (CraftGR.MC.screen == null) {
-            AudioPlayerHandler handler = AudioPlayerHandler.getInstance();
+    public static void togglePlayback() {
+        AudioPlayerHandler handler = AudioPlayerHandler.getInstance();
 
-            handler.player.muted = !AudioPlayerHandler.getInstance().player.muted;
-            if (handler.player.muted) {
-                TextComponent icon = new TextComponent("❌ ");
-                icon.withStyle(ChatFormatting.RED);
-                TranslatableComponent message = new TranslatableComponent("text.craftgr.message.muted");
-                message.withStyle(ChatFormatting.WHITE);
+        if (handler.hasAudioPlayer()) {
+            handler.stopPlayback();
 
-                CraftGR.MC.player.displayClientMessage(icon.append(message), true);
-            }else {
+            TextComponent icon = new TextComponent("❌ ");
+            icon.withStyle(ChatFormatting.RED);
+            TranslatableComponent message = new TranslatableComponent("text.craftgr.message.stopped");
+            message.withStyle(ChatFormatting.WHITE);
+
+            CraftGR.MC.player.displayClientMessage(icon.append(message), true);
+        }else {
+            if (handler.getInitState() == AudioPlayerHandler.InitState.NOT_INITIALIZED) {
+                CraftGR.EXECUTOR.submit(() -> {
+                    handler.initialize();
+                    if (handler.hasAudioPlayer()) {
+                        handler.getAudioPlayer().setVolume(1.0f);
+                        handler.startPlayback();
+                    }
+                });
+
                 TextComponent icon = new TextComponent("♫ ");
                 icon.withStyle(ChatFormatting.GREEN);
-                TranslatableComponent message = new TranslatableComponent("text.craftgr.message.unmuted");
+                TranslatableComponent message = new TranslatableComponent("text.craftgr.message.started");
                 message.withStyle(ChatFormatting.WHITE);
 
                 CraftGR.MC.player.displayClientMessage(icon.append(message), true);
             }
-
-            handler.player.setVolume(1.0F);
         }
     }
 

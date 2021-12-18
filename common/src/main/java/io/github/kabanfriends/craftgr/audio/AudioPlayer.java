@@ -15,16 +15,13 @@ import java.nio.ShortBuffer;
 
 //Code based on: https://github.com/PC-Logix/OpenFM/blob/1.12.2/src/main/java/pcl/OpenFM/player/MP3Player.java
 public class AudioPlayer {
-
-    private static boolean FORCE_STOP;
-
+    
     private InputStream stream;
     private Bitstream bitstream;
     private Decoder decoder;
     private IntBuffer buffer;
     private IntBuffer source;
     private float volume = 0.0F;
-    public boolean muted = false;
     private boolean playing = false;
     private long started;
 
@@ -56,7 +53,7 @@ public class AudioPlayer {
             AL10.alSourcei(this.source.get(0), AL10.AL_LOOPING, AL10.AL_FALSE);
             AL10.alSourcef(this.source.get(0), AL10.AL_PITCH, 1.0f);
 
-            AL10.alSourcef(this.source.get(0), AL10.AL_GAIN, this.muted ? 0F : this.volume * (GRConfig.getConfig().volume / 100f) * CraftGR.MC.options.getSoundSourceVolume(SoundSource.MASTER));
+            AL10.alSourcef(this.source.get(0), AL10.AL_GAIN, this.volume * (GRConfig.getConfig().volume / 100f) * CraftGR.MC.options.getSoundSourceVolume(SoundSource.MASTER));
             
             if (alError()) {
                 close();
@@ -67,7 +64,7 @@ public class AudioPlayer {
             ProcessResult result = ProcessResult.SUCCESS;
 
             while (this.playing && result == ProcessResult.SUCCESS) {
-                AL10.alSourcef(this.source.get(0), AL10.AL_GAIN, this.muted ? 0F : this.volume * (GRConfig.getConfig().volume / 100f) * CraftGR.MC.options.getSoundSourceVolume(SoundSource.MASTER));
+                AL10.alSourcef(this.source.get(0), AL10.AL_GAIN, this.volume * (GRConfig.getConfig().volume / 100f) * CraftGR.MC.options.getSoundSourceVolume(SoundSource.MASTER));
                 result = decodeFrame();
             }
 
@@ -122,8 +119,7 @@ public class AudioPlayer {
             AL10.alSourceQueueBuffers(this.source.get(0), buffer);
 
             int state = AL10.alGetSourcei(this.source.get(0), AL10.AL_SOURCE_STATE);
-            if ((this.playing && state != AL10.AL_PLAYING) || FORCE_STOP) {
-                if (FORCE_STOP) FORCE_STOP = false;
+            if ((this.playing && state != AL10.AL_PLAYING)) {
                 if (this.started == 0L || System.currentTimeMillis() < this.started + 100L) {
                     this.started = System.currentTimeMillis();
                     AL10.alSourcePlay(this.source.get(0));
@@ -162,14 +158,10 @@ public class AudioPlayer {
         }
     }
 
-    public void stopNext() {
-        FORCE_STOP = true;
-    }
-
     public void setVolume(float f) {
         this.volume = f;
         if (this.playing && this.source != null) {
-            float volume = this.muted ? 0F : f * (GRConfig.getConfig().volume / 100f) * CraftGR.MC.options.getSoundSourceVolume(SoundSource.MASTER);
+            float volume = f * (GRConfig.getConfig().volume / 100f) * CraftGR.MC.options.getSoundSourceVolume(SoundSource.MASTER);
             AL10.alSourcef(this.source.get(0), AL10.AL_GAIN, volume);
         }
     }

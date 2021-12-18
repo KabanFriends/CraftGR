@@ -23,23 +23,21 @@ import java.nio.charset.StandardCharsets;
 
 public class SongHandler {
 
-    private static SongHandler INSTANCE;
-    private static boolean INIT_FAILED;
+    private static final SongHandler INSTANCE = new SongHandler();
+
+    private static boolean initFailed;
     private boolean destroyed;
 
-    public Song song;
+    private Song song;
+    private long songStart;
     private long songEnd;
 
-    public long songStart;
-
-    public SongHandler() {
-        INSTANCE = this;
-
+    public void initialize() {
         CraftGR.EXECUTOR.submit(() -> {
             try {
                 this.prepareNewSong();
             } catch (Exception e) {
-                INIT_FAILED = true;
+                initFailed = true;
             }
 
             this.start();
@@ -53,7 +51,7 @@ public class SongHandler {
     }
 
     private void start() {
-        if (!INIT_FAILED) {
+        if (!initFailed) {
             while (!destroyed) {
                 try {
 
@@ -78,7 +76,7 @@ public class SongHandler {
         try {
             Request request = new Request.Builder().url(url).build();
 
-            Response response = CraftGR.HTTP_CLIENT.newCall(request).execute();
+            Response response = CraftGR.getHttpClient().newCall(request).execute();
             InputStream stream = response.body().byteStream();
 
             BufferedReader r = new BufferedReader(new InputStreamReader(stream, Charset.forName("UTF-8")));
@@ -106,7 +104,7 @@ public class SongHandler {
                 } else if (c1.getNodeName().equals("SONGTIMES")) {
                     for (Node c2 = c1.getFirstChild(); c2 != null; c2 = c2.getNextSibling()) {
                         if (c2.getNodeName().equals("DURATION") && c2.getTextContent().equals("0"))
-                            song.intermission = true;
+                            song.setIntermission(true);
                         else if (c2.getNodeName().equals("SONGSTART"))
                             song.songStart = Long.parseLong(c2.getTextContent());
                         else if (c2.getNodeName().equals("SONGEND")) song.songEnd = Long.parseLong(c2.getTextContent());
@@ -130,7 +128,7 @@ public class SongHandler {
             this.songStart = System.currentTimeMillis() / 1000L - played;
             this.songEnd = this.songStart + duration;
 
-            if (song.intermission) {
+            if (song.isIntermission()) {
                 song.albumArt = "";
                 song.title = "";
 
@@ -153,6 +151,18 @@ public class SongHandler {
         DocumentBuilder builder = factory.newDocumentBuilder();
         InputStream is = new ReaderInputStream(new StringReader(xml), StandardCharsets.UTF_8);
         return builder.parse(is);
+    }
+
+    public Song getCurrentSong() {
+        return song;
+    }
+
+    public long getSongStart() {
+        return songStart;
+    }
+
+    public long getSongEnd() {
+        return songEnd;
     }
 
     public static SongHandler getInstance() {
