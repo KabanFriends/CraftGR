@@ -36,7 +36,7 @@ public class MixinSoundOptionsScreen extends MixinOptionsSubScreen {
     protected void init(CallbackInfo callbackInfo) {
         this.addButton(new SliderButton(CraftGR.MC.options, this.width / 2 - 155 + 160, this.height / 6 - 12 + 24 * (11 >> 1), 150 - 24, 20, PLAYBACK_VOLUME));
         this.addButton(new ImageButton(this.width / 2 - 155 + 160 + 150 - 20, this.height / 6 - 12 + 24 * (11 >> 1), 20, 20, 0, 0, 20, CONFIG_BUTTON, 20, 40, (button) -> {
-            CraftGR.MC.setScreen(AutoConfig.getConfigScreen(GRConfig.class, CraftGR.MC.screen).get());
+            CraftGR.PLATFORM.openConfigScreen();
         }));
     }
 

@@ -3,11 +3,9 @@ package io.github.kabanfriends.craftgr.render.impl;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.terraformersmc.modmenu.gui.ModsScreen;
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.config.GRConfig;
 import io.github.kabanfriends.craftgr.handler.SongHandler;
-import io.github.kabanfriends.craftgr.platform.Platform;
 import io.github.kabanfriends.craftgr.render.Overlay;
 import io.github.kabanfriends.craftgr.song.Song;
 import io.github.kabanfriends.craftgr.util.RenderUtil;
@@ -135,12 +133,7 @@ public class SongInfoOverlay extends Overlay {
         else if (CraftGR.MC.screen instanceof ConnectScreen) return true;
         else if (CraftGR.MC.screen instanceof GenericDirtMessageScreen) return true;
 
-        if (CraftGR.PLATFORM.getPlatform() == Platform.PlatformType.FABRIC) {
-            if (CraftGR.PLATFORM.isModLoaded("modmenu")) {
-                if (CraftGR.MC.screen instanceof ModsScreen) return true;
-            }
-        }
-        if (CraftGR.PLATFORM.isInForgeModMenu()) return true;
+        if (CraftGR.PLATFORM.isInModMenu()) return true;
 
         if (CraftGR.PLATFORM.isModLoaded("cloth-config2") || CraftGR.PLATFORM.isModLoaded("cloth-config")) {
             if (CraftGR.MC.screen instanceof ConfigScreen) return true;

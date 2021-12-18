@@ -32,11 +32,11 @@ dependencies {
     shadowCommon("com.squareup.okio:okio:1.17.5") { transitive = false }
     shadowCommon("javazoom:jlayer:1.0.1") { transitive = false }
 
-    modImplementation "com.squareup.okhttp3:okhttp:3.14.9"
-    modImplementation "com.squareup.okio:okio:1.17.5"
-    modImplementation "javazoom:jlayer:1.0.1"
-    modImplementation "com.googlecode.soundlibs:tritonus-share:0.3.7-2"
-    modImplementation "com.googlecode.soundlibs:mp3spi:1.9.5-1"
+    implementation "com.squareup.okhttp3:okhttp:3.14.9"
+    implementation "com.squareup.okio:okio:1.17.5"
+    implementation "javazoom:jlayer:1.0.1"
+    implementation "com.googlecode.soundlibs:tritonus-share:0.3.7-2"
+    implementation "com.googlecode.soundlibs:mp3spi:1.9.5-1"
 }
 
 processResources {
