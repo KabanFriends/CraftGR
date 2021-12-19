@@ -26,7 +26,6 @@ public class AudioPlayerHandler {
         CraftGR.EXECUTOR.submit(() -> {
             while (true) {
                 if (initState == InitState.SUCCESS) {
-                    System.out.println("Starting");
                     ProcessResult result = this.player.play();
 
                     if (result == ProcessResult.AL_ERROR || result == ProcessResult.EXCEPTION) {
