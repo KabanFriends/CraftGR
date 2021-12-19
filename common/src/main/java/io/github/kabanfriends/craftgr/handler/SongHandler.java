@@ -4,6 +4,7 @@ import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.config.GRConfig;
 import io.github.kabanfriends.craftgr.render.impl.SongInfoOverlay;
 import io.github.kabanfriends.craftgr.song.Song;
+import io.github.kabanfriends.craftgr.util.InitState;
 import io.github.kabanfriends.craftgr.util.TitleFixer;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -25,9 +26,9 @@ public class SongHandler {
 
     private static final SongHandler INSTANCE = new SongHandler();
 
-    private static boolean initFailed;
-    private boolean destroyed;
+    private static InitState initState = InitState.NOT_INITIALIZED;
 
+    private boolean destroyed;
     private Song song;
     private long songStart;
     private long songEnd;
@@ -37,9 +38,11 @@ public class SongHandler {
             try {
                 this.prepareNewSong();
             } catch (Exception e) {
-                initFailed = true;
+                initState = InitState.FAIL;
+                return;
             }
 
+            initState = InitState.SUCCESS;
             this.start();
         });
     }
@@ -51,7 +54,7 @@ public class SongHandler {
     }
 
     private void start() {
-        if (!initFailed) {
+        if (initState == InitState.SUCCESS) {
             while (!destroyed) {
                 try {
 

@@ -4,6 +4,7 @@ import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.audio.AudioPlayer;
 import io.github.kabanfriends.craftgr.audio.AudioPlayer.ProcessResult;
 import io.github.kabanfriends.craftgr.config.GRConfig;
+import io.github.kabanfriends.craftgr.util.InitState;
 import okhttp3.Request;
 import okhttp3.Response;
 import org.apache.logging.log4j.Level;
@@ -25,6 +26,7 @@ public class AudioPlayerHandler {
         CraftGR.EXECUTOR.submit(() -> {
             while (true) {
                 if (initState == InitState.SUCCESS) {
+                    System.out.println("Starting");
                     ProcessResult result = this.player.play();
 
                     if (result == ProcessResult.AL_ERROR || result == ProcessResult.EXCEPTION) {
@@ -51,13 +53,19 @@ public class AudioPlayerHandler {
     }
 
     public void stopPlayback() {
+        stopPlayback(false);
+    }
+
+    public void stopPlayback(boolean reloading) {
         CraftGR.log(Level.INFO, "Stopping audio playback...");
         if (player != null) player.stop();
         if (response != null) response.close();
 
         this.playing = false;
         this.player = null;
-        this.initState = InitState.NOT_INITIALIZED;
+
+        if (reloading) this.initState = InitState.RELOADING;
+        else this.initState = InitState.NOT_INITIALIZED;
     }
 
     public void initialize() {
@@ -105,12 +113,5 @@ public class AudioPlayerHandler {
 
     public static AudioPlayerHandler getInstance() {
         return INSTANCE;
-    }
-
-    public enum InitState {
-        NOT_INITIALIZED,
-        INITIALIZING,
-        SUCCESS,
-        FAIL
     }
 }

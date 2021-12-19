@@ -1,6 +1,7 @@
 package io.github.kabanfriends.craftgr.handler;
 
 import io.github.kabanfriends.craftgr.CraftGR;
+import io.github.kabanfriends.craftgr.util.InitState;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -20,7 +21,7 @@ public class KeyActionHandler {
 
             CraftGR.MC.player.displayClientMessage(icon.append(message), true);
         }else {
-            if (handler.getInitState() == AudioPlayerHandler.InitState.NOT_INITIALIZED) {
+            if (handler.getInitState() == InitState.NOT_INITIALIZED) {
                 CraftGR.EXECUTOR.submit(() -> {
                     handler.initialize();
                     if (handler.hasAudioPlayer()) {
