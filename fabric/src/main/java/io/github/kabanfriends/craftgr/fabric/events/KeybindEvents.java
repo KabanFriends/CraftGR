@@ -21,7 +21,7 @@ public class KeybindEvents implements ClientModInitializer {
         //=====================
 
         toggleMute = KeyBindingHelper.registerKeyBinding(new KeyMapping(
-                "key.craftgr.togglemute",
+                "key.craftgr.toggle",
                 InputConstants.Type.KEYSYM,
                 GLFW.GLFW_KEY_M,
                 "key.category.craftgr"
@@ -33,7 +33,7 @@ public class KeybindEvents implements ClientModInitializer {
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (CraftGR.MC.screen == null) {
-                if (toggleMute.isDown() && toggleMuteLastTick == false) KeyActionHandler.togglePlayback();
+                if (toggleMute.isDown() && !toggleMuteLastTick) KeyActionHandler.togglePlayback();
             }
 
             toggleMuteLastTick = toggleMute.isDown();
