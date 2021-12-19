@@ -21,14 +21,10 @@ public class MixinSoundOptionsScreen extends MixinOptionsSubScreen {
 
     private static final ResourceLocation CONFIG_BUTTON = new ResourceLocation(CraftGR.MOD_ID, "textures/button_config.png");
 
-    private static final ProgressOption PLAYBACK_VOLUME = new ProgressOption("options.craftgr.playback_volume", 0, 100, 1, (gameOptions) -> {
-        return (double) GRConfig.getConfig().volume;
-    }, (gameOptions, volume) -> {
+    private static final ProgressOption PLAYBACK_VOLUME = new ProgressOption("options.craftgr.playback_volume", 0, 100, 1, (gameOptions) -> (double) GRConfig.getConfig().volume, (gameOptions, volume) -> {
         GRConfig.getConfig().volume = volume.intValue();
         AudioPlayerHandler.getInstance().getAudioPlayer().setVolume(1.0f);
-    }, (gameOptions, option) -> {
-        return new TranslatableComponent("options.percent_value", new TranslatableComponent("text.craftgr.gui.options.volume"), GRConfig.getConfig().volume);
-    });
+    }, (gameOptions, option) -> new TranslatableComponent("options.percent_value", new TranslatableComponent("text.craftgr.gui.options.volume"), GRConfig.getConfig().volume));
 
     public MixinSoundOptionsScreen(TextComponent title) { super(title); }
 
