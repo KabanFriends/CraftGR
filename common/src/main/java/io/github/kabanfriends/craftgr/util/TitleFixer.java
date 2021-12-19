@@ -53,16 +53,17 @@ public class TitleFixer {
 
     public static String fixJapaneseString(String input) {
 
-        //Replace full-width space with two half-width spaces (Full-width space appears as IDSP in Minecraft)
-        String spaced = input.replaceAll("　", "  ");
+        //Replace or remove special characters that are visible only in Minecraft font
+        input = input.replaceAll("　", "  ");
+        input = input.replaceAll("\u200B", "");
 
         //Combine separated voicing and semi-voicing symbols
         String last = "";
         String current = "";
         StringBuilder line = new StringBuilder();
 
-        for ( int i = 0; i < spaced.length(); i++ ) {
-            current = spaced.substring(i, i + 1);
+        for ( int i = 0; i < input.length(); i++ ) {
+            current = input.substring(i, i + 1);
 
             if (current.equals("゙")) {
                 line.append(getFixedChar(last, 0));
