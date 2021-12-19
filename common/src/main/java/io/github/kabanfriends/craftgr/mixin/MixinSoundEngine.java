@@ -2,9 +2,8 @@ package io.github.kabanfriends.craftgr.mixin;
 
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.handler.AudioPlayerHandler;
-import javazoom.jl.decoder.BitstreamException;
+import io.github.kabanfriends.craftgr.util.InitState;
 import net.minecraft.client.sounds.SoundEngine;
-import org.apache.logging.log4j.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -13,20 +12,27 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(SoundEngine.class)
 public class MixinSoundEngine {
 
-    private static boolean LOADED = false;
-
     @Inject(method = "reload()V", at = @At("HEAD"))
-    public void stopPlayback(CallbackInfo ci) {
-        if (AudioPlayerHandler.getInstance().getInitState() == AudioPlayerHandler.InitState.SUCCESS) {
-            AudioPlayerHandler handler = AudioPlayerHandler.getInstance();
+    public void stopAudio(CallbackInfo ci) {
+        AudioPlayerHandler handler = AudioPlayerHandler.getInstance();
 
-            try {
-                CraftGR.log(Level.INFO, "Closing the audio player");
-                AudioPlayerHandler.getInstance().getAudioPlayer().close();
-            } catch (BitstreamException e) {
-                CraftGR.log(Level.ERROR, "Error when closing the audio player!");
-                e.printStackTrace();
-            }
+        if (handler.getInitState() == InitState.SUCCESS) {
+            handler.stopPlayback(true);
+        }
+    }
+
+    @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/sounds/SoundBufferLibrary;preload(Ljava/util/Collection;)Ljava/util/concurrent/CompletableFuture;", shift = At.Shift.AFTER), method = "loadLibrary()V")
+    public void startAudio(CallbackInfo ci) {
+        AudioPlayerHandler handler = AudioPlayerHandler.getInstance();
+
+        if (handler.getInitState() == InitState.RELOADING) {
+            CraftGR.EXECUTOR.submit(() -> {
+                handler.initialize();
+                if (handler.hasAudioPlayer()) {
+                    handler.getAudioPlayer().setVolume(1.0f);
+                    handler.startPlayback();
+                }
+            });
         }
     }
 }

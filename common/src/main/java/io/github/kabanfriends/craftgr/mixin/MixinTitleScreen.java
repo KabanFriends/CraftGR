@@ -3,6 +3,7 @@ package io.github.kabanfriends.craftgr.mixin;
 import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.handler.AudioPlayerHandler;
+import io.github.kabanfriends.craftgr.util.InitState;
 import net.minecraft.Util;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.util.Mth;
@@ -25,7 +26,7 @@ public class MixinTitleScreen {
 
     @Inject(method = "removed", at = @At("HEAD"))
     private void onClose(CallbackInfo info) {
-        if (AudioPlayerHandler.getInstance().getInitState() == AudioPlayerHandler.InitState.SUCCESS) {
+        if (AudioPlayerHandler.getInstance().getInitState() == InitState.SUCCESS) {
             AudioPlayerHandler handler = AudioPlayerHandler.getInstance();
 
             if (handler.getAudioPlayer().isPlaying()) {
@@ -39,13 +40,13 @@ public class MixinTitleScreen {
         AudioPlayerHandler handler = AudioPlayerHandler.getInstance();
 
         //Initialize audio player
-        if (handler.getInitState() == AudioPlayerHandler.InitState.NOT_INITIALIZED) {
+        if (handler.getInitState() == InitState.NOT_INITIALIZED) {
             CraftGR.EXECUTOR.submit(() -> {
                 handler.initialize();
             });
         }
 
-        if (handler.getInitState() == AudioPlayerHandler.InitState.SUCCESS) {
+        if (handler.getInitState() == InitState.SUCCESS) {
             if (fading) {
                 //Start music playback
                 if (handler.hasAudioPlayer()) {
