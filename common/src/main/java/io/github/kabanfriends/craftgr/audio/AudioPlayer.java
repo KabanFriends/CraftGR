@@ -15,7 +15,7 @@ import java.nio.ShortBuffer;
 
 //Code based on: https://github.com/PC-Logix/OpenFM/blob/1.12.2/src/main/java/pcl/OpenFM/player/MP3Player.java
 public class AudioPlayer {
-    
+
     private InputStream stream;
     private Bitstream bitstream;
     private Decoder decoder;
@@ -23,7 +23,6 @@ public class AudioPlayer {
     private IntBuffer source;
     private float volume = 0.0F;
     private boolean playing = false;
-    private long started;
 
     public AudioPlayer(InputStream stream) {
         this.stream = stream;
@@ -31,22 +30,23 @@ public class AudioPlayer {
         this.decoder = new Decoder();
     }
 
-    protected boolean alError() {
-        if (AL10.alGetError() != AL10.AL_NO_ERROR) {
-            CraftGR.log(Level.ERROR, String.format("AL10 Error: %d: %s", AL10.alGetError(), AL10.alGetString(AL10.alGetError())));
-            return true;
+    protected int alError() {
+        int error = AL10.alGetError();
+        if (error != AL10.AL_NO_ERROR) {
+            CraftGR.log(Level.ERROR, String.format("AL10 Error: %d: %s", error, AL10.alGetString(error)));
+            return error;
         }
-        return false;
+        return 0;
     }
 
     public ProcessResult play() {
         try {
-            this.started = 0L;
-
             this.source = BufferUtils.createIntBuffer(1);
             AL10.alGenSources(this.source);
-            if (alError()) {
+            int error = alError();
+            if (error != AL10.AL_NO_ERROR) {
                 close();
+                if (error == AL10.AL_INVALID_OPERATION) return ProcessResult.AL_ENGINE_STOP;
                 return ProcessResult.AL_ERROR;
             }
 
@@ -54,9 +54,11 @@ public class AudioPlayer {
             AL10.alSourcef(this.source.get(0), AL10.AL_PITCH, 1.0f);
 
             AL10.alSourcef(this.source.get(0), AL10.AL_GAIN, this.volume * (GRConfig.getConfig().volume / 100f) * CraftGR.MC.options.getSoundSourceVolume(SoundSource.MASTER));
-            
-            if (alError()) {
+
+            error = alError();
+            if (error != AL10.AL_NO_ERROR) {
                 close();
+                if (error == AL10.AL_INVALID_OPERATION) return ProcessResult.AL_ENGINE_STOP;
                 return ProcessResult.AL_ERROR;
             }
 
@@ -119,14 +121,8 @@ public class AudioPlayer {
             AL10.alSourceQueueBuffers(this.source.get(0), buffer);
 
             int state = AL10.alGetSourcei(this.source.get(0), AL10.AL_SOURCE_STATE);
-            if ((this.playing && state != AL10.AL_PLAYING)) {
-                if (this.started == 0L || System.currentTimeMillis() < this.started + 100L) {
-                    this.started = System.currentTimeMillis();
-                    AL10.alSourcePlay(this.source.get(0));
-                } else {
-                    close();
-                    return ProcessResult.RESTART;
-                }
+            if (this.playing && state != AL10.AL_PLAYING) {
+                AL10.alSourcePlay(this.source.get(0));
             }
 
             this.bitstream.closeFrame();
@@ -177,8 +173,8 @@ public class AudioPlayer {
     public enum ProcessResult {
         SUCCESS,
         STOP,
-        RESTART,
         AL_ERROR,
+        AL_ENGINE_STOP,
         EXCEPTION
     }
 }

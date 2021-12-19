@@ -35,6 +35,10 @@ public class AudioPlayerHandler {
                             Thread.sleep(5L * 1000L);
                         } catch (InterruptedException e) {
                         }
+                    } else if (result == ProcessResult.AL_ENGINE_STOP) {
+                        CraftGR.log(Level.INFO, "Sound Engine is unavailable! Playback stopped.");
+                        this.stopPlayback(true);
+                        return;
                     } else if (result == ProcessResult.STOP) {
                         CraftGR.log(Level.INFO, "Audio playback has stopped!");
                         return;
