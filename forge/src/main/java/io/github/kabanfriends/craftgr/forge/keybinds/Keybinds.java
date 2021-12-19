@@ -8,7 +8,7 @@ import org.lwjgl.glfw.GLFW;
 public class Keybinds {
 
     public static final KeyMapping toggleMute = new KeyMapping(
-            "key.craftgr.togglemute",
+            "key.craftgr.toggle",
             InputConstants.Type.KEYSYM,
             GLFW.GLFW_KEY_M,
             "key.category.craftgr"
