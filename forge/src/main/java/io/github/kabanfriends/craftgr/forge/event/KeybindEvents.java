@@ -13,7 +13,7 @@ public class KeybindEvents {
     @SubscribeEvent
     public void clientTick(TickEvent.ClientTickEvent event) {
         if (CraftGR.MC.screen == null) {
-            if (Keybinds.toggleMute.isDown() && toggleMuteLastTick == false) KeyActionHandler.togglePlayback();
+            if (Keybinds.toggleMute.isDown() && !toggleMuteLastTick) KeyActionHandler.togglePlayback();
         }
 
         toggleMuteLastTick = Keybinds.toggleMute.isDown();
