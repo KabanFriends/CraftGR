@@ -48,8 +48,8 @@ public class MixinTitleScreen {
 
         if (handler.getInitState() == InitState.SUCCESS) {
             if (fading) {
-                //Start music playback
                 if (handler.hasAudioPlayer()) {
+                    //Start music playback
                     if (!handler.isPlaying()) {
                         handler.getAudioPlayer().setVolume(0.0f);
                         handler.startPlayback();
