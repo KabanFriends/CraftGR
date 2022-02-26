@@ -82,7 +82,7 @@ public class SongHandler {
             Response response = CraftGR.getHttpClient().newCall(request).execute();
             InputStream stream = response.body().byteStream();
 
-            BufferedReader r = new BufferedReader(new InputStreamReader(stream, Charset.forName("UTF-8")));
+            BufferedReader r = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
 
             StringBuilder sb = new StringBuilder();
             String line;
@@ -96,33 +96,66 @@ public class SongHandler {
             Song song = new Song();
 
             for (Node c1 = node.getFirstChild(); c1 != null; c1 = c1.getNextSibling()) {
-                if (c1.getNodeName().equals("SONGINFO")) {
-                    for (Node c2 = c1.getFirstChild(); c2 != null; c2 = c2.getNextSibling()) {
-                        if (c2.getNodeName().equals("TITLE")) song.title = TitleFixer.fixJapaneseString(c2.getTextContent());
-                        else if (c2.getNodeName().equals("ARTIST")) song.artist = TitleFixer.fixJapaneseString(c2.getTextContent());
-                        else if (c2.getNodeName().equals("ALBUM")) song.album = TitleFixer.fixJapaneseString(c2.getTextContent());
-                        else if (c2.getNodeName().equals("YEAR")) song.year = c2.getTextContent();
-                        else if (c2.getNodeName().equals("CIRCLE")) song.circle = TitleFixer.fixJapaneseString(c2.getTextContent());
-                    }
-                } else if (c1.getNodeName().equals("SONGTIMES")) {
-                    for (Node c2 = c1.getFirstChild(); c2 != null; c2 = c2.getNextSibling()) {
-                        if (c2.getNodeName().equals("DURATION") && c2.getTextContent().equals("0"))
-                            song.setIntermission(true);
-                        else if (c2.getNodeName().equals("SONGSTART"))
-                            song.songStart = Long.parseLong(c2.getTextContent());
-                        else if (c2.getNodeName().equals("SONGEND")) song.songEnd = Long.parseLong(c2.getTextContent());
-                    }
-                } else if (c1.getNodeName().equals("SONGDATA")) {
-                    for (Node c2 = c1.getFirstChild(); c2 != null; c2 = c2.getNextSibling()) {
-                        if (c2.getNodeName().equals("ALBUMID")) song.albumId = Integer.parseInt(c2.getTextContent());
-                        else if (c2.getNodeName().equals("RATING")) song.rating = Float.parseFloat(c2.getTextContent());
-                    }
-                } else if (c1.getNodeName().equals("MISC")) {
-                    for (Node c2 = c1.getFirstChild(); c2 != null; c2 = c2.getNextSibling()) {
-                        if (c2.getNodeName().equals("ALBUMART")) song.albumArt = c2.getTextContent();
-                        else if (c2.getNodeName().equals("OFFSETTIME"))
-                            song.offsetTime = Long.parseLong(c2.getTextContent());
-                    }
+                switch (c1.getNodeName()) {
+                    case "SONGINFO":
+                        for (Node c2 = c1.getFirstChild(); c2 != null; c2 = c2.getNextSibling()) {
+                            String content = c2.getTextContent();
+                            switch (c2.getNodeName()) {
+                                case "TITLE":
+                                    song.title = TitleFixer.fixJapaneseString(content);
+                                    break;
+                                case "ARTIST":
+                                    song.artist = TitleFixer.fixJapaneseString(content);
+                                    break;
+                                case "ALBUM":
+                                    song.album = TitleFixer.fixJapaneseString(content);
+                                    break;
+                                case "YEAR":
+                                    song.year = content;
+                                    break;
+                                case "CIRCLE":
+                                    song.circle = TitleFixer.fixJapaneseString(content);
+                            }
+                        }
+                        break;
+                    case "SONGTIMES":
+                        for (Node c2 = c1.getFirstChild(); c2 != null; c2 = c2.getNextSibling()) {
+                            String content = c2.getTextContent();
+                            switch (c2.getNodeName()) {
+                                case "DURATION":
+                                    if (content.equals("0")) song.setIntermission(true);
+                                    break;
+                                case "SONGSTART":
+                                    song.songStart = Long.parseLong(content);
+                                    break;
+                                case "SONGEND":
+                                    song.songEnd = Long.parseLong(content);
+                            }
+                        }
+                        break;
+                    case "SONGDATA":
+                        for (Node c2 = c1.getFirstChild(); c2 != null; c2 = c2.getNextSibling()) {
+                            String content = c2.getTextContent();
+                            switch (c2.getNodeName()) {
+                                case "ALBUMID":
+                                    song.albumId = Integer.parseInt(content);
+                                    break;
+                                case "RATING":
+                                    song.rating = Integer.parseInt(content);
+                            }
+                        }
+                        break;
+                    case "MISC":
+                        for (Node c2 = c1.getFirstChild(); c2 != null; c2 = c2.getNextSibling()) {
+                            String content = c2.getTextContent();
+                            switch (c2.getNodeName()) {
+                                case "ALBUMART":
+                                    song.albumArt = content;
+                                    break;
+                                case "OFFSETTIME":
+                                    song.offsetTime = Long.parseLong(content);
+                            }
+                        }
                 }
             }
 
