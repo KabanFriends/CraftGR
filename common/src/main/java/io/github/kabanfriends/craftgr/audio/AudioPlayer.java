@@ -43,24 +43,13 @@ public class AudioPlayer {
         try {
             this.source = BufferUtils.createIntBuffer(1);
             AL10.alGenSources(this.source);
-            int error = alError();
-            if (error != AL10.AL_NO_ERROR) {
-                close();
-                if (error == AL10.AL_INVALID_OPERATION) return ProcessResult.AL_ENGINE_STOP;
-                return ProcessResult.AL_ERROR;
-            }
+            alError();
 
             AL10.alSourcei(this.source.get(0), AL10.AL_LOOPING, AL10.AL_FALSE);
             AL10.alSourcef(this.source.get(0), AL10.AL_PITCH, 1.0f);
 
             AL10.alSourcef(this.source.get(0), AL10.AL_GAIN, this.volume * (GRConfig.getConfig().volume / 100f) * CraftGR.MC.options.getSoundSourceVolume(SoundSource.MASTER));
-
-            error = alError();
-            if (error != AL10.AL_NO_ERROR) {
-                close();
-                if (error == AL10.AL_INVALID_OPERATION) return ProcessResult.AL_ENGINE_STOP;
-                return ProcessResult.AL_ERROR;
-            }
+            alError();
 
             this.playing = true;
             ProcessResult result = ProcessResult.SUCCESS;
@@ -75,13 +64,13 @@ public class AudioPlayer {
         } catch (Exception e) {
             if (this.playing) {
                 e.printStackTrace();
-                return ProcessResult.EXCEPTION;
+                return ProcessResult.ERROR;
             }
             return ProcessResult.STOP;
         }
     }
 
-    public void close() throws BitstreamException {
+    public void close() {
         if (this.source != null) {
             AL10.alSourceStop(this.source.get());
             AL10.alDeleteSources(this.source);
@@ -131,7 +120,7 @@ public class AudioPlayer {
         } catch (Exception e) {
             if (this.playing) {
                 e.printStackTrace();
-                return ProcessResult.EXCEPTION;
+                return ProcessResult.ERROR;
             }
             return ProcessResult.STOP;
         }
@@ -173,8 +162,6 @@ public class AudioPlayer {
     public enum ProcessResult {
         SUCCESS,
         STOP,
-        AL_ERROR,
-        AL_ENGINE_STOP,
-        EXCEPTION
+        ERROR
     }
 }

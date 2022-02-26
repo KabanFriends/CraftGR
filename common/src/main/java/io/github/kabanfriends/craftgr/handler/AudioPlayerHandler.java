@@ -28,26 +28,23 @@ public class AudioPlayerHandler {
                 if (initState == InitState.SUCCESS) {
                     ProcessResult result = this.player.play();
 
-                    if (result == ProcessResult.AL_ERROR || result == ProcessResult.EXCEPTION) {
-                        CraftGR.log(Level.ERROR, "Error during audio playback! Restarting in 5 seconds...");
+                    switch (result) {
+                        case ERROR:
+                            CraftGR.log(Level.ERROR, "Error during audio playback! Restarting in 5 seconds...");
 
-                        try {
-                            Thread.sleep(5L * 1000L);
-                        } catch (InterruptedException e) {
-                        }
-                    } else if (result == ProcessResult.AL_ENGINE_STOP) {
-                        CraftGR.log(Level.INFO, "Sound Engine is unavailable! Playback stopped.");
-                        this.stopPlayback(true);
-                        return;
-                    } else if (result == ProcessResult.STOP) {
-                        CraftGR.log(Level.INFO, "Audio playback has stopped!");
-                        return;
+                            try {
+                                Thread.sleep(5L * 1000L);
+                            } catch (InterruptedException e) { }
+                            break;
+                        case STOP:
+                            CraftGR.log(Level.INFO, "Audio playback has stopped!");
+                            return;
                     }
 
                     response.close();
                     initialize();
                 } else {
-                    CraftGR.log(Level.ERROR, "Cannot start audio playback due to an initialization failure! Fix your config and restart the game.");
+                    CraftGR.log(Level.ERROR, "Cannot start audio playback due to an initialization failure!");
                     this.stopPlayback();
                     return;
                 }

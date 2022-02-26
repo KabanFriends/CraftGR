@@ -21,7 +21,8 @@ public class KeyActionHandler {
 
             CraftGR.MC.player.displayClientMessage(icon.append(message), true);
         }else {
-            if (handler.getInitState() == InitState.NOT_INITIALIZED) {
+            InitState state = handler.getInitState();
+            if (state == InitState.NOT_INITIALIZED || state == InitState.RELOADING || state == InitState.FAIL) {
                 CraftGR.EXECUTOR.submit(() -> {
                     handler.initialize();
                     if (handler.hasAudioPlayer()) {
