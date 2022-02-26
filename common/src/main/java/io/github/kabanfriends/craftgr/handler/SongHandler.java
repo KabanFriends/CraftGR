@@ -38,6 +38,9 @@ public class SongHandler {
             try {
                 this.prepareNewSong();
             } catch (Exception e) {
+                CraftGR.LOGGER.log(Level.ERROR, "Error while loading song information!");
+                e.printStackTrace();
+
                 initState = InitState.FAIL;
                 return;
             }
@@ -141,7 +144,7 @@ public class SongHandler {
                                     song.albumId = Integer.parseInt(content);
                                     break;
                                 case "RATING":
-                                    song.rating = Integer.parseInt(content);
+                                    song.rating = Float.parseFloat(content);
                             }
                         }
                         break;
