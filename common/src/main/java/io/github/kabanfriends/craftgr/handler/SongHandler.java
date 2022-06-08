@@ -34,12 +34,13 @@ public class SongHandler {
 
     public void initialize() {
         CraftGR.EXECUTOR.submit(() -> {
-            ProcessResult result = this.prepareNewSong();
+            ProcessResult result = prepareNewSong();
             if (result == ProcessResult.ERROR) {
                 initState = InitState.FAIL;
+            } else {
+                initState = InitState.SUCCESS;
             }
 
-            initState = InitState.SUCCESS;
             this.start();
         });
     }
