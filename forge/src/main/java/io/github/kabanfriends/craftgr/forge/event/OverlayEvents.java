@@ -11,7 +11,7 @@ public class OverlayEvents {
     @SubscribeEvent
     public void renderOverlay(RenderGameOverlayEvent.Post event) {
         if (event.getType() == RenderGameOverlayEvent.ElementType.TEXT && CraftGR.MC.screen == null) {
-            OverlayHandler.renderAll(event.getMatrixStack(), 0, 0);
+            OverlayHandler.renderAll(event.getPoseStack(), 0, 0);
         }
     }
 

@@ -3,8 +3,8 @@ package io.github.kabanfriends.craftgr.handler;
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.util.InitState;
 import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 
 public class KeyActionHandler {
 
@@ -14,9 +14,9 @@ public class KeyActionHandler {
         if (handler.hasAudioPlayer()) {
             handler.stopPlayback();
 
-            TextComponent icon = new TextComponent("❌ ");
+            MutableComponent icon = Component.literal("❌ ");
             icon.withStyle(ChatFormatting.RED);
-            TranslatableComponent message = new TranslatableComponent("text.craftgr.message.stopped");
+            MutableComponent message = Component.translatable("text.craftgr.message.stopped");
             message.withStyle(ChatFormatting.WHITE);
 
             CraftGR.MC.player.displayClientMessage(icon.append(message), true);
@@ -31,9 +31,9 @@ public class KeyActionHandler {
                     }
                 });
 
-                TextComponent icon = new TextComponent("♫ ");
+                MutableComponent icon = Component.literal("♫ ");
                 icon.withStyle(ChatFormatting.GREEN);
-                TranslatableComponent message = new TranslatableComponent("text.craftgr.message.started");
+                MutableComponent message = Component.translatable("text.craftgr.message.started");
                 message.withStyle(ChatFormatting.WHITE);
 
                 CraftGR.MC.player.displayClientMessage(icon.append(message), true);

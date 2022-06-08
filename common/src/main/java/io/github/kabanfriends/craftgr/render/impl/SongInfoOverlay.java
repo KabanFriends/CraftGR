@@ -15,7 +15,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.screens.*;
 import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -93,7 +93,7 @@ public class SongInfoOverlay extends Overlay {
             poseStack.scale(2, 2, 2);
 
             if (currentSong.isIntermission()) {
-                GuiComponent.drawString(poseStack, CraftGR.MC.font, new TranslatableComponent("text.craftgr.song.intermission"), (x + 12 + 8 + albumArtWidth) / 2, (y + 8) / 2, Color.WHITE.getRGB());
+                GuiComponent.drawString(poseStack, CraftGR.MC.font, Component.translatable("text.craftgr.song.intermission"), (x + 12 + 8 + albumArtWidth) / 2, (y + 8) / 2, Color.WHITE.getRGB());
             } else {
                 GuiComponent.drawString(poseStack, CraftGR.MC.font, currentSong.title, (x + 12 + 8 + albumArtWidth) / 2, (y + 8) / 2, Color.WHITE.getRGB());
                 GuiComponent.drawString(poseStack, CraftGR.MC.font, "(" + currentSong.year + ")", (x + 12 + 10 + albumArtWidth) / 2, (y + 8 + 20) / 2, Color.LIGHT_GRAY.getRGB());
@@ -201,7 +201,7 @@ public class SongInfoOverlay extends Overlay {
 
         int maxWidth = 0;
         if (currentSong.isIntermission()) {
-            maxWidth = font.width(new TranslatableComponent("text.craftgr.song.intermission"));
+            maxWidth = font.width(Component.translatable("text.craftgr.song.intermission"));
         } else {
             String[] strings = {currentSong.title, currentSong.artist, currentSong.album, currentSong.circle};
             for (String string : strings) {

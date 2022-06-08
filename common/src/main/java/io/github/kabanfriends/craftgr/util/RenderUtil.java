@@ -63,8 +63,7 @@ public class RenderUtil {
         bb.vertex(matrix4f, maxX, maxY, 0.0F).color(r, g, b, a).endVertex();
         bb.vertex(matrix4f, maxX, minY, 0.0F).color(r, g, b, a).endVertex();
         bb.vertex(matrix4f, minX, minY, 0.0F).color(r, g, b, a).endVertex();
-        bb.end();
-        BufferUploader.end(bb);
+        BufferUploader.drawWithShader(bb.end());
         RenderSystem.enableTexture();
         RenderSystem.disableBlend();
     }

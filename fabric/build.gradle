@@ -34,10 +34,10 @@ dependencies {
     include "com.googlecode.soundlibs:tritonus-share:0.3.7-2"
     include "com.googlecode.soundlibs:mp3spi:1.9.5-1"
 
-    modApi "io.github.prospector:modmenu:1.16.9"
+    modApi "com.terraformersmc:modmenu:4.0.0"
     modApi("me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}") { exclude(group: "net.fabricmc.fabric-api") }
 
-    modRuntimeOnly "io.github.prospector:modmenu:1.16.9"
+    modRuntimeOnly "com.terraformersmc:modmenu:4.0.0"
     modRuntimeOnly("me.shedaniel.cloth:cloth-config-fabric:${rootProject.cloth_config_version}") { exclude(group: "net.fabricmc.fabric-api") }
     modRuntimeOnly("com.github.SuperCoder7979:databreaker:0.2.6") { exclude(module: "fabric-loader") }
 }
