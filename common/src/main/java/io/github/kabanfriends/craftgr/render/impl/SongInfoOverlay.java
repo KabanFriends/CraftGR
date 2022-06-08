@@ -244,6 +244,8 @@ public class SongInfoOverlay extends Overlay {
                 } catch (Exception e) {
                     CraftGR.log(Level.ERROR, "Error while creating album art texture!");
                     e.printStackTrace();
+
+                    albumArt = null;
                 } finally {
                     albumArts.put(song.albumArt, albumArt);
                 }
