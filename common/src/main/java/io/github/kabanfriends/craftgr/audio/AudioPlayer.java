@@ -2,6 +2,7 @@ package io.github.kabanfriends.craftgr.audio;
 
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.config.GRConfig;
+import io.github.kabanfriends.craftgr.util.ProcessResult;
 import javazoom.jl.decoder.*;
 import net.minecraft.sounds.SoundSource;
 import org.apache.logging.log4j.Level;
@@ -159,9 +160,4 @@ public class AudioPlayer {
         return this.playing;
     }
 
-    public enum ProcessResult {
-        SUCCESS,
-        STOP,
-        ERROR
-    }
 }

@@ -2,7 +2,7 @@ package io.github.kabanfriends.craftgr.handler;
 
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.audio.AudioPlayer;
-import io.github.kabanfriends.craftgr.audio.AudioPlayer.ProcessResult;
+import io.github.kabanfriends.craftgr.util.ProcessResult;
 import io.github.kabanfriends.craftgr.config.GRConfig;
 import io.github.kabanfriends.craftgr.util.InitState;
 import okhttp3.Request;
