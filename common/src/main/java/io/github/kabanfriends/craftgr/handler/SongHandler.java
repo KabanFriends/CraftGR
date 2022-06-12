@@ -125,9 +125,7 @@ public class SongHandler {
         this.songStart = System.currentTimeMillis() / 1000L - played;
         this.songEnd = this.songStart + duration;
 
-        if (songTimes.get("DURATION").getAsInt() == 0) {
-            song.setIntermission(true);
-        } else if (song.offsetTime >= song.songEnd) {
+        if (songData.get("SONGID").getAsInt() == 0 || song.offsetTime >= song.songEnd) {
             song.setIntermission(true);
         }
 
