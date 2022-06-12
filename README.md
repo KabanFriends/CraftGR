@@ -4,16 +4,11 @@ CraftGR is a Minecraft mod for [Fabric](https://fabricmc.net/) and [Forge](https
 ### Download the mod on [Modrinth](https://modrinth.com/mod/craftgr)!
 
 ## Compiling
-To compile this mod, run the following commands:
-- Compile for Fabric:
+To compile this mod, run the following command:
 ```
-./gradlew fabric:build
+./gradlew build
 ```
-- Compile for Forge:
-```
-./gradlew forge:build
-```
-The mod jar will be created in `./<mod loader>/build/libs/` folder.
+The mod jar will be created in `./<forge or fabric>/build/libs/` folder.
 
 ## Attributions
 - CraftGR is an open source project under [GPL-3.0](https://github.com/KabanFriends/CraftGR/blob/master/LICENSE) license
