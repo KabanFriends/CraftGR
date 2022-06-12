@@ -1,5 +1,7 @@
 package io.github.kabanfriends.craftgr.handler;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.config.GRConfig;
 import io.github.kabanfriends.craftgr.render.impl.SongInfoOverlay;
@@ -9,15 +11,8 @@ import io.github.kabanfriends.craftgr.util.ProcessResult;
 import io.github.kabanfriends.craftgr.util.TitleFixer;
 import okhttp3.Request;
 import okhttp3.Response;
-import org.apache.commons.io.input.ReaderInputStream;
 import org.apache.logging.log4j.Level;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 
@@ -48,7 +43,7 @@ public class SongHandler {
     private ProcessResult prepareNewSong() {
         Song song;
         try {
-            song = getSongFromInfoXML(GRConfig.getConfig().url.songInfoURL);
+            song = getSongFromJson(GRConfig.getConfig().url.infoJsonURL);
         } catch (Exception e) {
             CraftGR.log(Level.ERROR, "Error while fetching song information!");
             e.printStackTrace();
@@ -90,7 +85,7 @@ public class SongHandler {
         destroyed = true;
     }
 
-    private Song getSongFromInfoXML(String url) throws ParserConfigurationException, IOException, SAXException {
+    private Song getSongFromJson(String url) throws IOException {
         Request request = new Request.Builder().url(url).build();
 
         Response response = CraftGR.getHttpClient().newCall(request).execute();
@@ -104,79 +99,37 @@ public class SongHandler {
             sb.append(line);
         }
 
-        Document document = loadXMLFromString(sb.toString());
-        Node node = document.getDocumentElement();
+        response.close();
 
-        Song song = new Song();
+        JsonObject json = JsonParser.parseString(sb.toString()).getAsJsonObject();
+        JsonObject songInfo = json.getAsJsonObject("SONGINFO");
+        JsonObject songTimes = json.getAsJsonObject("SONGTIMES");
+        JsonObject songData = json.getAsJsonObject("SONGDATA");
+        JsonObject misc = json.getAsJsonObject("MISC");
 
-        for (Node c1 = node.getFirstChild(); c1 != null; c1 = c1.getNextSibling()) {
-            switch (c1.getNodeName()) {
-                case "SONGINFO":
-                    for (Node c2 = c1.getFirstChild(); c2 != null; c2 = c2.getNextSibling()) {
-                        String content = c2.getTextContent();
-                        switch (c2.getNodeName()) {
-                            case "TITLE":
-                                song.title = TitleFixer.fixJapaneseString(content);
-                                break;
-                            case "ARTIST":
-                                song.artist = TitleFixer.fixJapaneseString(content);
-                                break;
-                            case "ALBUM":
-                                song.album = TitleFixer.fixJapaneseString(content);
-                                break;
-                            case "YEAR":
-                                song.year = content;
-                                break;
-                            case "CIRCLE":
-                                song.circle = TitleFixer.fixJapaneseString(content);
-                        }
-                    }
-                    break;
-                case "SONGTIMES":
-                    for (Node c2 = c1.getFirstChild(); c2 != null; c2 = c2.getNextSibling()) {
-                        String content = c2.getTextContent();
-                        switch (c2.getNodeName()) {
-                            case "DURATION":
-                                if (content.equals("0")) song.setIntermission(true);
-                                break;
-                            case "SONGSTART":
-                                song.songStart = Long.parseLong(content);
-                                break;
-                            case "SONGEND":
-                                song.songEnd = Long.parseLong(content);
-                        }
-                    }
-                    break;
-                case "SONGDATA":
-                    for (Node c2 = c1.getFirstChild(); c2 != null; c2 = c2.getNextSibling()) {
-                        String content = c2.getTextContent();
-                        switch (c2.getNodeName()) {
-                            case "ALBUMID":
-                                song.albumId = Integer.parseInt(content);
-                                break;
-                            case "RATING":
-                                song.rating = Float.parseFloat(content);
-                        }
-                    }
-                    break;
-                case "MISC":
-                    for (Node c2 = c1.getFirstChild(); c2 != null; c2 = c2.getNextSibling()) {
-                        String content = c2.getTextContent();
-                        switch (c2.getNodeName()) {
-                            case "ALBUMART":
-                                song.albumArt = content;
-                                break;
-                            case "OFFSETTIME":
-                                song.offsetTime = Long.parseLong(content);
-                        }
-                    }
-            }
-        }
+        Song song = new Song(
+                TitleFixer.fixJapaneseString(songInfo.get("TITLE").getAsString()),
+                TitleFixer.fixJapaneseString(songInfo.get("ARTIST").getAsString()),
+                TitleFixer.fixJapaneseString(songInfo.get("ALBUM").getAsString()),
+                songInfo.get("YEAR").getAsString(),
+                TitleFixer.fixJapaneseString(songInfo.get("CIRCLE").getAsString()),
+                songTimes.get("SONGSTART").getAsLong(),
+                songTimes.get("SONGEND").getAsLong(),
+                songData.get("ALBUMID").getAsInt(),
+                misc.get("ALBUMART").getAsString(),
+                misc.get("OFFSETTIME").getAsLong()
+        );
 
         long played = song.offsetTime - song.songStart;
         long duration = song.songEnd - song.songStart;
         this.songStart = System.currentTimeMillis() / 1000L - played;
         this.songEnd = this.songStart + duration;
+
+        if (songTimes.get("DURATION").getAsInt() == 0) {
+            song.setIntermission(true);
+        } else if (song.offsetTime >= song.songEnd) {
+            song.setIntermission(true);
+        }
 
         if (song.isIntermission()) {
             song.albumArt = "";
@@ -185,16 +138,7 @@ public class SongHandler {
             this.songEnd = System.currentTimeMillis() / 1000L + 4L;
         }
 
-        response.close();
-
         return song;
-    }
-
-    private static Document loadXMLFromString(String xml) throws ParserConfigurationException, IOException, SAXException {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder builder = factory.newDocumentBuilder();
-        InputStream is = new ReaderInputStream(new StringReader(xml), StandardCharsets.UTF_8);
-        return builder.parse(is);
     }
 
     public Song getCurrentSong() {

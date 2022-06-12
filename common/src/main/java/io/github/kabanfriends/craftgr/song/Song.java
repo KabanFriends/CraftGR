@@ -17,29 +17,25 @@ public class Song {
 
     //SONGDATA
     public int albumId;
-    public float rating;
 
     //MISC
     public String albumArt;
     public long offsetTime;
 
-    public Song() {
-        this.intermission = false;
+    public Song(String title, String artist, String album, String year, String circle, long start, long end, int albumId, String albumArt, long offsetTime) {
+        this.title = title;
+        this.artist = artist;
+        this.album = album;
+        this.year = year;
+        this.circle = circle;
 
-        this.title = "N/A";
-        this.artist = "N/A";
-        this.album = "N/A";
-        this.year = "N/A";
-        this.circle = "N/A";
+        this.songStart = start;
+        this.songEnd = end;
 
-        this.songStart = 0L;
-        this.songEnd = 0L;
+        this.albumId = albumId;
 
-        this.albumId = 0;
-        this.rating = 0f;
-
-        this.albumArt = "";
-        this.offsetTime = 0;
+        this.albumArt = albumArt;
+        this.offsetTime = offsetTime;
     }
 
     public void setIntermission(boolean intermission) {
