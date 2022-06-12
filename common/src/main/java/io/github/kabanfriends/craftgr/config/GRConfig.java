@@ -49,7 +49,7 @@ public class GRConfig implements ConfigData {
         public String streamURL = "https://stream.gensokyoradio.net/1/";
 
         @ConfigEntry.Gui.Tooltip
-        public String songInfoURL = "https://gensokyoradio.net/xml/";
+        public String infoJsonURL = "https://gensokyoradio.net/api/station/playing/";
 
         @ConfigEntry.Gui.Tooltip
         public String albumArtURL = "https://gensokyoradio.net/images/albums/500/";
