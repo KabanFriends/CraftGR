@@ -96,7 +96,9 @@ public class SongInfoOverlay extends Overlay {
                 GuiComponent.drawString(poseStack, CraftGR.MC.font, Component.translatable("text.craftgr.song.intermission"), (x + 12 + 8 + albumArtWidth) / 2, (y + 8) / 2, Color.WHITE.getRGB());
             } else {
                 GuiComponent.drawString(poseStack, CraftGR.MC.font, currentSong.title, (x + 12 + 8 + albumArtWidth) / 2, (y + 8) / 2, Color.WHITE.getRGB());
-                GuiComponent.drawString(poseStack, CraftGR.MC.font, "(" + currentSong.year + ")", (x + 12 + 10 + albumArtWidth) / 2, (y + 8 + 20) / 2, Color.LIGHT_GRAY.getRGB());
+                if (currentSong.year != null) {
+                    GuiComponent.drawString(poseStack, CraftGR.MC.font, "(" + currentSong.year + ")", (x + 12 + 10 + albumArtWidth) / 2, (y + 8 + 20) / 2, Color.LIGHT_GRAY.getRGB());
+                }
                 GuiComponent.drawString(poseStack, CraftGR.MC.font, currentSong.artist, (x + 12 + 8 + albumArtWidth) / 2, (y + 8 + 7 + 20 * 2) / 2, Color.LIGHT_GRAY.getRGB());
                 GuiComponent.drawString(poseStack, CraftGR.MC.font, currentSong.album, (x + 12 + 8 + albumArtWidth) / 2, (y + 8 + 7 + 20 * 3) / 2, Color.LIGHT_GRAY.getRGB());
                 GuiComponent.drawString(poseStack, CraftGR.MC.font, currentSong.circle, (x + 12 + 8 + albumArtWidth) / 2, (y + 8 + 7 + 20 * 4) / 2, Color.LIGHT_GRAY.getRGB());
