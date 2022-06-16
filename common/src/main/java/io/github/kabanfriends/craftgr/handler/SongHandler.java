@@ -114,11 +114,19 @@ public class SongHandler {
             albumId = albumIdElement.getAsInt();
         }
 
+        String year;
+        JsonElement yearElement = songInfo.get("YEAR");
+        if (yearElement.getAsJsonPrimitive().isNumber()) {
+            year = null;
+        } else {
+            year = yearElement.getAsString();
+        }
+
         Song song = new Song(
                 TitleFixer.fixJapaneseString(songInfo.get("TITLE").getAsString()),
                 TitleFixer.fixJapaneseString(songInfo.get("ARTIST").getAsString()),
                 TitleFixer.fixJapaneseString(songInfo.get("ALBUM").getAsString()),
-                songInfo.get("YEAR").getAsString(),
+                year,
                 TitleFixer.fixJapaneseString(songInfo.get("CIRCLE").getAsString()),
                 songTimes.get("SONGSTART").getAsLong(),
                 songTimes.get("SONGEND").getAsLong(),
