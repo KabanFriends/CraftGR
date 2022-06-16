@@ -1,5 +1,6 @@
 package io.github.kabanfriends.craftgr.handler;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.github.kabanfriends.craftgr.CraftGR;
@@ -107,6 +108,12 @@ public class SongHandler {
         JsonObject songData = json.getAsJsonObject("SONGDATA");
         JsonObject misc = json.getAsJsonObject("MISC");
 
+        int albumId = 0;
+        JsonElement albumIdElement = songData.get("ALBUMID");
+        if (!albumIdElement.isJsonNull()) {
+            albumId = albumIdElement.getAsInt();
+        }
+
         Song song = new Song(
                 TitleFixer.fixJapaneseString(songInfo.get("TITLE").getAsString()),
                 TitleFixer.fixJapaneseString(songInfo.get("ARTIST").getAsString()),
@@ -115,7 +122,7 @@ public class SongHandler {
                 TitleFixer.fixJapaneseString(songInfo.get("CIRCLE").getAsString()),
                 songTimes.get("SONGSTART").getAsLong(),
                 songTimes.get("SONGEND").getAsLong(),
-                songData.get("ALBUMID").getAsInt(),
+                albumId,
                 misc.get("ALBUMART").getAsString(),
                 misc.get("OFFSETTIME").getAsLong()
         );
