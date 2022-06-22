@@ -5,6 +5,7 @@ import io.github.kabanfriends.craftgr.audio.AudioPlayer;
 import io.github.kabanfriends.craftgr.util.ProcessResult;
 import io.github.kabanfriends.craftgr.config.GRConfig;
 import io.github.kabanfriends.craftgr.util.InitState;
+import io.github.kabanfriends.craftgr.util.ResponseHolder;
 import okhttp3.Request;
 import okhttp3.Response;
 import org.apache.logging.log4j.Level;
@@ -17,7 +18,7 @@ public class AudioPlayerHandler {
 
     private InitState initState = InitState.NOT_INITIALIZED;
     private AudioPlayer player;
-    private Response response;
+    private ResponseHolder response;
     private boolean playing = false;
 
     public void startPlayback() {
@@ -41,7 +42,7 @@ public class AudioPlayerHandler {
                             return;
                     }
 
-                    response.close();
+                    if (response != null && !response.isClosed()) response.close();
                     initialize();
                 } else {
                     CraftGR.log(Level.ERROR, "Cannot start audio playback due to an initialization failure!");
@@ -59,7 +60,7 @@ public class AudioPlayerHandler {
     public void stopPlayback(boolean reloading) {
         CraftGR.log(Level.INFO, "Stopping audio playback...");
         if (player != null) player.stop();
-        if (response != null) response.close();
+        if (response != null && !response.isClosed()) response.close();
 
         this.playing = false;
         this.player = null;
@@ -77,8 +78,10 @@ public class AudioPlayerHandler {
 
             Request request = new Request.Builder().url(GRConfig.getConfig().url.streamURL).build();
 
-            response = CraftGR.getHttpClient().newCall(request).execute();
-            InputStream stream = response.body().byteStream();
+            Response rawResponse = CraftGR.getHttpClient().newCall(request).execute();
+            response = new ResponseHolder(rawResponse);
+
+            InputStream stream = rawResponse.body().byteStream();
 
             AudioPlayer audioPlayer = new AudioPlayer(stream);
 
