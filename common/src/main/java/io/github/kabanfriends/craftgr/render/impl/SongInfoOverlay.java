@@ -96,13 +96,11 @@ public class SongInfoOverlay extends Overlay {
             if (currentSong.isIntermission()) {
                 GuiComponent.drawString(poseStack, CraftGR.MC.font, new TranslatableComponent("text.craftgr.song.intermission"), (x + 12 + 8 + albumArtWidth) / 2, (y + 8) / 2, Color.WHITE.getRGB());
             } else {
-                GuiComponent.drawString(poseStack, CraftGR.MC.font, currentSong.title, (x + 12 + 8 + albumArtWidth) / 2, (y + 8) / 2, Color.WHITE.getRGB());
-                if (currentSong.year != null) {
-                    GuiComponent.drawString(poseStack, CraftGR.MC.font, "(" + currentSong.year + ")", (x + 12 + 10 + albumArtWidth) / 2, (y + 8 + 20) / 2, Color.LIGHT_GRAY.getRGB());
-                }
-                GuiComponent.drawString(poseStack, CraftGR.MC.font, currentSong.artist, (x + 12 + 8 + albumArtWidth) / 2, (y + 8 + 7 + 20 * 2) / 2, Color.LIGHT_GRAY.getRGB());
-                GuiComponent.drawString(poseStack, CraftGR.MC.font, currentSong.album, (x + 12 + 8 + albumArtWidth) / 2, (y + 8 + 7 + 20 * 3) / 2, Color.LIGHT_GRAY.getRGB());
-                GuiComponent.drawString(poseStack, CraftGR.MC.font, currentSong.circle, (x + 12 + 8 + albumArtWidth) / 2, (y + 8 + 7 + 20 * 4) / 2, Color.LIGHT_GRAY.getRGB());
+                if (currentSong.title != null) GuiComponent.drawString(poseStack, CraftGR.MC.font, currentSong.title, (x + 12 + 8 + albumArtWidth) / 2, (y + 8) / 2, Color.WHITE.getRGB());
+                if (currentSong.year != null) GuiComponent.drawString(poseStack, CraftGR.MC.font, "(" + currentSong.year + ")", (x + 12 + 10 + albumArtWidth) / 2, (y + 8 + 20) / 2, Color.LIGHT_GRAY.getRGB());
+                if (currentSong.artist != null) GuiComponent.drawString(poseStack, CraftGR.MC.font, currentSong.artist, (x + 12 + 8 + albumArtWidth) / 2, (y + 8 + 7 + 20 * 2) / 2, Color.LIGHT_GRAY.getRGB());
+                if (currentSong.album != null) GuiComponent.drawString(poseStack, CraftGR.MC.font, currentSong.album, (x + 12 + 8 + albumArtWidth) / 2, (y + 8 + 7 + 20 * 3) / 2, Color.LIGHT_GRAY.getRGB());
+                if (currentSong.circle != null) GuiComponent.drawString(poseStack, CraftGR.MC.font, currentSong.circle, (x + 12 + 8 + albumArtWidth) / 2, (y + 8 + 7 + 20 * 4) / 2, Color.LIGHT_GRAY.getRGB());
             }
 
             poseStack.popPose();
@@ -208,8 +206,10 @@ public class SongInfoOverlay extends Overlay {
         } else {
             String[] strings = {currentSong.title, currentSong.artist, currentSong.album, currentSong.circle};
             for (String string : strings) {
-                int width = font.width(string);
-                if (width > maxWidth) maxWidth = width;
+                if (string != null) {
+                    int width = font.width(string);
+                    if (width > maxWidth) maxWidth = width;
+                }
             }
         }
 

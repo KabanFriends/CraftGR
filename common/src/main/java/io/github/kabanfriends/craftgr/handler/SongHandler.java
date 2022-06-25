@@ -3,20 +3,16 @@ package io.github.kabanfriends.craftgr.handler;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonPrimitive;
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.config.GRConfig;
 import io.github.kabanfriends.craftgr.render.impl.SongInfoOverlay;
 import io.github.kabanfriends.craftgr.song.Song;
 import io.github.kabanfriends.craftgr.util.*;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.client.methods.RequestBuilder;
 import org.apache.logging.log4j.Level;
 
 import java.io.*;
-import java.net.URI;
 import java.nio.charset.StandardCharsets;
 
 public class SongHandler {
@@ -110,31 +106,17 @@ public class SongHandler {
         JsonObject songData = json.getAsJsonObject("SONGDATA");
         JsonObject misc = json.getAsJsonObject("MISC");
 
-        int albumId = 0;
-        JsonElement albumIdElement = songData.get("ALBUMID");
-        if (!albumIdElement.isJsonNull()) {
-            albumId = albumIdElement.getAsInt();
-        }
-
-        String year;
-        JsonElement yearElement = songInfo.get("YEAR");
-        if (yearElement.getAsJsonPrimitive().isNumber()) {
-            year = null;
-        } else {
-            year = yearElement.getAsString();
-        }
-
         Song song = new Song(
-                TitleFixer.fixJapaneseString(songInfo.get("TITLE").getAsString()),
-                TitleFixer.fixJapaneseString(songInfo.get("ARTIST").getAsString()),
-                TitleFixer.fixJapaneseString(songInfo.get("ALBUM").getAsString()),
-                year,
-                TitleFixer.fixJapaneseString(songInfo.get("CIRCLE").getAsString()),
-                songTimes.get("SONGSTART").getAsLong(),
-                songTimes.get("SONGEND").getAsLong(),
-                albumId,
-                misc.get("ALBUMART").getAsString(),
-                misc.get("OFFSETTIME").getAsLong()
+                TitleFixer.fixJapaneseString(getValueWithDefault(songInfo, "TITLE", null, String.class)),
+                TitleFixer.fixJapaneseString(getValueWithDefault(songInfo, "ARTIST", null, String.class)),
+                TitleFixer.fixJapaneseString(getValueWithDefault(songInfo, "ALBUM", null, String.class)),
+                getValueWithDefault(songInfo, "YEAR", null, String.class),
+                TitleFixer.fixJapaneseString(getValueWithDefault(songInfo, "CIRCLE", null, String.class)),
+                getValueWithDefault(songTimes, "SONGSTART", 0L, Long.class),
+                getValueWithDefault(songTimes, "SONGEND", System.currentTimeMillis() / 1000L + 4L, Long.class),
+                getValueWithDefault(songData, "ALBUMID", 0, Integer.class),
+                getValueWithDefault(misc, "ALBUMART", "", String.class),
+                getValueWithDefault(misc, "OFFSETTIME", 0L, Long.class)
         );
 
         long played = song.offsetTime - song.songStart;
@@ -142,18 +124,36 @@ public class SongHandler {
         this.songStart = System.currentTimeMillis() / 1000L - played;
         this.songEnd = this.songStart + duration;
 
-        if (songData.get("SONGID").getAsInt() == 0 || song.offsetTime >= song.songEnd) {
+        if (song.offsetTime >= song.songEnd) {
             song.setIntermission(true);
         }
 
-        if (song.isIntermission()) {
-            song.albumArt = "";
-            song.title = "";
-
-            this.songEnd = System.currentTimeMillis() / 1000L + 4L;
-        }
-
         return song;
+    }
+
+    private <T> T getValueWithDefault(JsonObject json, String key, T defaultValue, Class<T> clazz) {
+        JsonElement element = json.get(key);
+        if (element.isJsonPrimitive()) {
+            JsonPrimitive value = element.getAsJsonPrimitive();
+            if (value.isNumber()) {
+                if (clazz == Byte.class) {
+                    return (T) Byte.valueOf(value.getAsNumber().byteValue());
+                } else if (clazz == Double.class) {
+                    return (T) Double.valueOf(value.getAsNumber().doubleValue());
+                } else if (clazz == Float.class) {
+                    return (T) Float.valueOf(value.getAsNumber().floatValue());
+                } else if (clazz == Long.class) {
+                    return (T) Long.valueOf(value.getAsNumber().longValue());
+                } else if (clazz == Integer.class) {
+                    return (T) Integer.valueOf(value.getAsNumber().intValue());
+                } else if (clazz == Short.class) {
+                    return (T) Short.valueOf(value.getAsNumber().shortValue());
+                }
+            } else if (value.isString()) {
+                return (T) value.getAsString();
+            }
+        }
+        return defaultValue;
     }
 
     public Song getCurrentSong() {
