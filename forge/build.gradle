@@ -28,12 +28,8 @@ dependencies {
 
     modApi("me.shedaniel.cloth:cloth-config-forge:${rootProject.cloth_config_version}")
 
-    shadowCommon("com.squareup.okhttp3:okhttp:3.14.9") { transitive = false }
-    shadowCommon("com.squareup.okio:okio:1.17.5") { transitive = false }
     shadowCommon("javazoom:jlayer:1.0.1") { transitive = false }
 
-    implementation "com.squareup.okhttp3:okhttp:3.14.9"
-    implementation "com.squareup.okio:okio:1.17.5"
     implementation "javazoom:jlayer:1.0.1"
     implementation "com.googlecode.soundlibs:tritonus-share:0.3.7-2"
     implementation "com.googlecode.soundlibs:mp3spi:1.9.5-1"

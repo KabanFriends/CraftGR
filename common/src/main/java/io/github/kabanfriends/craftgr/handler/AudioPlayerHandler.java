@@ -2,12 +2,13 @@ package io.github.kabanfriends.craftgr.handler;
 
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.audio.AudioPlayer;
+import io.github.kabanfriends.craftgr.util.HttpUtil;
 import io.github.kabanfriends.craftgr.util.ProcessResult;
 import io.github.kabanfriends.craftgr.config.GRConfig;
 import io.github.kabanfriends.craftgr.util.InitState;
 import io.github.kabanfriends.craftgr.util.ResponseHolder;
-import okhttp3.Request;
-import okhttp3.Response;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.*;
 import org.apache.logging.log4j.Level;
 
 import java.io.InputStream;
@@ -76,12 +77,11 @@ public class AudioPlayerHandler {
         try {
             if (response != null) response.close();
 
-            Request request = new Request.Builder().url(GRConfig.getConfig().url.streamURL).build();
+            HttpGet get = HttpUtil.get(GRConfig.getConfig().url.streamURL);
+            ResponseHolder response = new ResponseHolder(CraftGR.getHttpClient().execute(get));
+            this.response = response;
 
-            Response rawResponse = CraftGR.getHttpClient().newCall(request).execute();
-            response = new ResponseHolder(rawResponse);
-
-            InputStream stream = rawResponse.body().byteStream();
+            InputStream stream = response.getResponse().getEntity().getContent();
 
             AudioPlayer audioPlayer = new AudioPlayer(stream);
 
