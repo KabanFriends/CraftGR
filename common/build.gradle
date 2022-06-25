@@ -6,7 +6,6 @@ dependencies {
     implementation "me.shedaniel.cloth:cloth-config:${project.cloth_config_version}"
 
     implementation "javazoom:jlayer:1.0.1"
-    implementation "com.squareup.okhttp3:okhttp:3.14.9"
 }
 
 architectury {

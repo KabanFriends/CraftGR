@@ -8,7 +8,9 @@ import io.github.kabanfriends.craftgr.config.GRConfig;
 import io.github.kabanfriends.craftgr.handler.SongHandler;
 import io.github.kabanfriends.craftgr.render.Overlay;
 import io.github.kabanfriends.craftgr.song.Song;
+import io.github.kabanfriends.craftgr.util.HttpUtil;
 import io.github.kabanfriends.craftgr.util.RenderUtil;
+import io.github.kabanfriends.craftgr.util.ResponseHolder;
 import me.shedaniel.clothconfig2.api.ConfigScreen;
 import net.minecraft.Util;
 import net.minecraft.client.gui.Font;
@@ -17,8 +19,7 @@ import net.minecraft.client.gui.screens.*;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import okhttp3.Request;
-import okhttp3.Response;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.logging.log4j.Level;
 
 import java.awt.*;
@@ -232,10 +233,9 @@ public class SongInfoOverlay extends Overlay {
             CraftGR.EXECUTOR.submit(() -> {
                 ResourceLocation albumArt = null;
                 try {
-                    Request request = new Request.Builder().url(GRConfig.getConfig().url.albumArtURL + song.albumArt).build();
-
-                    Response response = CraftGR.getHttpClient().newCall(request).execute();
-                    InputStream stream = response.body().byteStream();
+                    HttpGet get = HttpUtil.get(GRConfig.getConfig().url.albumArtURL + song.albumArt);
+                    ResponseHolder response = new ResponseHolder(CraftGR.getHttpClient().execute(get));
+                    InputStream stream = response.getResponse().getEntity().getContent();
 
                     //Wait for texture manager to be initialized
                     while (CraftGR.MC.getTextureManager() == null) {
@@ -243,6 +243,7 @@ public class SongInfoOverlay extends Overlay {
                     }
 
                     albumArt = CraftGR.MC.getTextureManager().register("craftgr_album", new DynamicTexture(NativeImage.read(stream)));
+                    response.close();
                 } catch (Exception e) {
                     CraftGR.log(Level.ERROR, "Error while creating album art texture!");
                     e.printStackTrace();

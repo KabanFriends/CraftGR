@@ -7,14 +7,16 @@ import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.config.GRConfig;
 import io.github.kabanfriends.craftgr.render.impl.SongInfoOverlay;
 import io.github.kabanfriends.craftgr.song.Song;
-import io.github.kabanfriends.craftgr.util.InitState;
-import io.github.kabanfriends.craftgr.util.ProcessResult;
-import io.github.kabanfriends.craftgr.util.TitleFixer;
-import okhttp3.Request;
-import okhttp3.Response;
+import io.github.kabanfriends.craftgr.util.*;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.methods.RequestBuilder;
 import org.apache.logging.log4j.Level;
 
 import java.io.*;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 
 public class SongHandler {
@@ -87,10 +89,10 @@ public class SongHandler {
     }
 
     private Song getSongFromJson(String url) throws IOException {
-        Request request = new Request.Builder().url(url).build();
+        HttpGet get = HttpUtil.get(url);
+        ResponseHolder response = new ResponseHolder(CraftGR.getHttpClient().execute(get));
 
-        Response response = CraftGR.getHttpClient().newCall(request).execute();
-        InputStream stream = response.body().byteStream();
+        InputStream stream = response.getResponse().getEntity().getContent();
 
         BufferedReader r = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
 

@@ -8,14 +8,15 @@ import io.github.kabanfriends.craftgr.render.impl.SongInfoOverlay;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.minecraft.client.Minecraft;
-import okhttp3.OkHttpClient;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 public class CraftGR {
 
@@ -28,16 +29,17 @@ public class CraftGR {
     public static final ExecutorService EXECUTOR = Executors.newCachedThreadPool();
 
     private static Platform platform;
-    private static OkHttpClient httpClient;
+    private static CloseableHttpClient httpClient;
+    private static RequestConfig requestConfig;
 
     public static void init(Platform platform) {
         AutoConfig.register(GRConfig.class, GsonConfigSerializer::new);
 
         CraftGR.platform = platform;
-        CraftGR.httpClient = new OkHttpClient.Builder()
-                .connectTimeout(20, TimeUnit.SECONDS)
-                .writeTimeout(40, TimeUnit.SECONDS)
-                .readTimeout(20, TimeUnit.SECONDS)
+        CraftGR.httpClient = HttpClients.createSystem();
+        CraftGR.requestConfig = RequestConfig.custom()
+                .setConnectTimeout(2000)
+                .setSocketTimeout(2000)
                 .build();
 
         OverlayHandler.addOverlay(new SongInfoOverlay());
@@ -49,8 +51,12 @@ public class CraftGR {
         return platform;
     }
 
-    public static OkHttpClient getHttpClient() {
+    public static CloseableHttpClient getHttpClient() {
         return httpClient;
+    }
+
+    public static RequestConfig getRequestConfig() {
+        return requestConfig;
     }
 
     public static void log(Level level, String message) {
