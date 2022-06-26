@@ -126,6 +126,7 @@ public class SongHandler {
 
         if (song.offsetTime >= song.songEnd) {
             song.setIntermission(true);
+            song.albumArt = "";
         }
 
         return song;
