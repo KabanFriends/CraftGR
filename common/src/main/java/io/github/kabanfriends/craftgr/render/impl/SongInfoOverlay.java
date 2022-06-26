@@ -24,8 +24,6 @@ import org.apache.logging.log4j.Level;
 
 import java.awt.*;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
 
 public class SongInfoOverlay extends Overlay {
 
@@ -35,12 +33,12 @@ public class SongInfoOverlay extends Overlay {
 
     private static SongInfoOverlay INSTANCE;
 
-    private Map<String, ResourceLocation> albumArts;
+    private ResourceLocation albumArtTexture;
+    private String lastAlbumArtUrl;
 
     public SongInfoOverlay() {
         INSTANCE = this;
-
-        this.albumArts = new HashMap<>();
+        this.lastAlbumArtUrl = "";
     }
 
     @Override
@@ -78,13 +76,11 @@ public class SongInfoOverlay extends Overlay {
 
             RenderUtil.fill(poseStack, x, y, x + width, y + ALBUM_ART_SIZE + 10 + 10, GRConfig.getConfig().overlayBgColor + 0xFF000000, 0.6f);
 
-            if (albumArts.containsKey(currentSong.albumArt) && !GRConfig.getConfig().hideAlbumArt) {
-                ResourceLocation albumArt = albumArts.get(currentSong.albumArt);
-
-                if (albumArt == null) {
+            if (!GRConfig.getConfig().hideAlbumArt) {
+                if (albumArtTexture == null) {
                     RenderUtil.bindTexture(ALBUM_ART_PLACEHOLDER);
                 } else {
-                    RenderUtil.bindTexture(albumArt);
+                    RenderUtil.bindTexture(albumArtTexture);
                 }
                 RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
                 GuiComponent.blit(poseStack, x + 6, y + 6, 0f, 0f, ALBUM_ART_SIZE, ALBUM_ART_SIZE, ALBUM_ART_SIZE, ALBUM_ART_SIZE);
@@ -224,16 +220,12 @@ public class SongInfoOverlay extends Overlay {
     }
 
     public void createAlbumArtTexture(Song song) {
-        if (!albumArts.containsKey(song.albumArt)) {
-            if (song.albumArt.isEmpty()) {
-                albumArts.put(song.albumArt, null);
-                return;
-            }
-
+        albumArtTexture = null;
+        String url = GRConfig.getConfig().url.albumArtURL + song.albumArt;
+        if (!lastAlbumArtUrl.equals(url)) {
             CraftGR.EXECUTOR.submit(() -> {
-                ResourceLocation albumArt = null;
                 try {
-                    HttpGet get = HttpUtil.get(GRConfig.getConfig().url.albumArtURL + song.albumArt);
+                    HttpGet get = HttpUtil.get(url);
                     ResponseHolder response = new ResponseHolder(CraftGR.getHttpClient().execute(get));
                     InputStream stream = response.getResponse().getEntity().getContent();
 
@@ -242,15 +234,11 @@ public class SongInfoOverlay extends Overlay {
                         Thread.sleep(1);
                     }
 
-                    albumArt = CraftGR.MC.getTextureManager().register("craftgr_album", new DynamicTexture(NativeImage.read(stream)));
+                    albumArtTexture = CraftGR.MC.getTextureManager().register("craftgr_album", new DynamicTexture(NativeImage.read(stream)));
                     response.close();
                 } catch (Exception e) {
                     CraftGR.log(Level.ERROR, "Error while creating album art texture!");
                     e.printStackTrace();
-
-                    albumArt = null;
-                } finally {
-                    albumArts.put(song.albumArt, albumArt);
                 }
             });
         }

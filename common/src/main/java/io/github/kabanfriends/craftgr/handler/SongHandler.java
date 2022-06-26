@@ -126,6 +126,7 @@ public class SongHandler {
 
         if (song.offsetTime >= song.songEnd) {
             song.setIntermission(true);
+            song.albumArt = "";
         }
 
         return song;
@@ -136,18 +137,19 @@ public class SongHandler {
         if (element.isJsonPrimitive()) {
             JsonPrimitive value = element.getAsJsonPrimitive();
             if (value.isNumber()) {
+                Number number = value.getAsNumber();
                 if (clazz == Byte.class) {
-                    return (T) Byte.valueOf(value.getAsNumber().byteValue());
+                    return (T) Byte.valueOf(number.byteValue());
                 } else if (clazz == Double.class) {
-                    return (T) Double.valueOf(value.getAsNumber().doubleValue());
+                    return (T) Double.valueOf(number.doubleValue());
                 } else if (clazz == Float.class) {
-                    return (T) Float.valueOf(value.getAsNumber().floatValue());
+                    return (T) Float.valueOf(number.floatValue());
                 } else if (clazz == Long.class) {
-                    return (T) Long.valueOf(value.getAsNumber().longValue());
+                    return (T) Long.valueOf(number.longValue());
                 } else if (clazz == Integer.class) {
-                    return (T) Integer.valueOf(value.getAsNumber().intValue());
+                    return (T) Integer.valueOf(number.intValue());
                 } else if (clazz == Short.class) {
-                    return (T) Short.valueOf(value.getAsNumber().shortValue());
+                    return (T) Short.valueOf(number.shortValue());
                 }
             } else if (value.isString()) {
                 return (T) value.getAsString();
