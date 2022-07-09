@@ -21,8 +21,8 @@
   "text.autoconfig.craftgr.option.url": "上級者向け設定",
   "text.autoconfig.craftgr.option.url.streamURL": "ストリーミング音源URL",
   "text.autoconfig.craftgr.option.url.streamURL.@Tooltip": "音楽をストリーミングする音源のURLです。\nMP3の音源のみ使用できます。",
-  "text.autoconfig.craftgr.option.url.songInfoURL": "曲データURL",
-  "text.autoconfig.craftgr.option.url.songInfoURL.@Tooltip": "曲情報オーバーレイに表示するデータを\n取得するソースのURLです。",
+  "text.autoconfig.craftgr.option.url.infoJsonURL": "曲データURL",
+  "text.autoconfig.craftgr.option.url.infoJsonURL.@Tooltip": "曲情報オーバーレイに表示するデータを\n取得するソースのURLです。",
   "text.autoconfig.craftgr.option.url.albumArtURL": "アルバムカバー画像URL",
   "text.autoconfig.craftgr.option.url.albumArtURL.@Tooltip": "曲情報オーバーレイに表示するアルバム\nカバー画像を取得するURLです。",
 

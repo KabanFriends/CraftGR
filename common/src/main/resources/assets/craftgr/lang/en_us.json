@@ -21,8 +21,8 @@
   "text.autoconfig.craftgr.option.url": "Advanced Settings",
   "text.autoconfig.craftgr.option.url.streamURL": "Streaming URL",
   "text.autoconfig.craftgr.option.url.streamURL.@Tooltip": "URL to stream audio from.\nOnly works with MP3 streams.",
-  "text.autoconfig.craftgr.option.url.songInfoURL": "Song Info URL",
-  "text.autoconfig.craftgr.option.url.songInfoURL.@Tooltip": "URL to get song info from.",
+  "text.autoconfig.craftgr.option.url.infoJsonURL": "Song Info URL",
+  "text.autoconfig.craftgr.option.url.infoJsonURL.@Tooltip": "URL to get song info from.",
   "text.autoconfig.craftgr.option.url.albumArtURL": "Album Image URL",
   "text.autoconfig.craftgr.option.url.albumArtURL.@Tooltip": "URL to get album cover images from.",
 
