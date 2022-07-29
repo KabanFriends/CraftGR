@@ -233,7 +233,7 @@ public class SongInfoOverlay extends Overlay {
 
                     //Wait for texture manager to be initialized
                     while (CraftGR.MC.getTextureManager() == null) {
-                        wait(1);
+                        Thread.sleep(1);
                     }
 
                     albumArtTexture = CraftGR.MC.getTextureManager().register("craftgr_album", texture);
