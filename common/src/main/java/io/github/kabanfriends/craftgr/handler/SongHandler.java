@@ -68,7 +68,7 @@ public class SongHandler {
             }
 
             try {
-                wait(1);
+                Thread.sleep(1);
             } catch (InterruptedException e) { }
         }
 
