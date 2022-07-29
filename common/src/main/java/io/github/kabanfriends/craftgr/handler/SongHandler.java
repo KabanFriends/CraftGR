@@ -107,16 +107,16 @@ public class SongHandler {
         JsonObject misc = json.getAsJsonObject("MISC");
 
         Song song = new Song(
-                TitleFixer.fixJapaneseString(getValueWithDefault(songInfo, "TITLE", null, String.class)),
-                TitleFixer.fixJapaneseString(getValueWithDefault(songInfo, "ARTIST", null, String.class)),
-                TitleFixer.fixJapaneseString(getValueWithDefault(songInfo, "ALBUM", null, String.class)),
-                getValueWithDefault(songInfo, "YEAR", null, String.class),
-                TitleFixer.fixJapaneseString(getValueWithDefault(songInfo, "CIRCLE", null, String.class)),
-                getValueWithDefault(songTimes, "SONGSTART", 0L, Long.class),
-                getValueWithDefault(songTimes, "SONGEND", System.currentTimeMillis() / 1000L + 4L, Long.class),
-                getValueWithDefault(songData, "ALBUMID", 0, Integer.class),
-                getValueWithDefault(misc, "ALBUMART", "", String.class),
-                getValueWithDefault(misc, "OFFSETTIME", 0L, Long.class)
+                TitleFixer.fixJapaneseString(getValueWithDefault(songInfo, "TITLE", null)),
+                TitleFixer.fixJapaneseString(getValueWithDefault(songInfo, "ARTIST", null)),
+                TitleFixer.fixJapaneseString(getValueWithDefault(songInfo, "ALBUM", null)),
+                getValueWithDefault(songInfo, "YEAR", null),
+                TitleFixer.fixJapaneseString(getValueWithDefault(songInfo, "CIRCLE", null)),
+                getValueWithDefault(songTimes, "SONGSTART", 0L),
+                getValueWithDefault(songTimes, "SONGEND", System.currentTimeMillis() / 1000L + 4L),
+                getValueWithDefault(songData, "ALBUMID", 0),
+                getValueWithDefault(misc, "ALBUMART", ""),
+                getValueWithDefault(misc, "OFFSETTIME", 0L)
         );
 
         long played = song.offsetTime - song.songStart;
@@ -130,32 +130,6 @@ public class SongHandler {
         }
 
         return song;
-    }
-
-    private <T> T getValueWithDefault(JsonObject json, String key, T defaultValue, Class<T> clazz) {
-        JsonElement element = json.get(key);
-        if (element.isJsonPrimitive()) {
-            JsonPrimitive value = element.getAsJsonPrimitive();
-            if (value.isNumber()) {
-                Number number = value.getAsNumber();
-                if (clazz == Byte.class) {
-                    return (T) Byte.valueOf(number.byteValue());
-                } else if (clazz == Double.class) {
-                    return (T) Double.valueOf(number.doubleValue());
-                } else if (clazz == Float.class) {
-                    return (T) Float.valueOf(number.floatValue());
-                } else if (clazz == Long.class) {
-                    return (T) Long.valueOf(number.longValue());
-                } else if (clazz == Integer.class) {
-                    return (T) Integer.valueOf(number.intValue());
-                } else if (clazz == Short.class) {
-                    return (T) Short.valueOf(number.shortValue());
-                }
-            } else if (value.isString()) {
-                return (T) value.getAsString();
-            }
-        }
-        return defaultValue;
     }
 
     public Song getCurrentSong() {
@@ -172,5 +146,27 @@ public class SongHandler {
 
     public static SongHandler getInstance() {
         return INSTANCE;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T> T getValueWithDefault(JsonObject json, String key, T defaultValue) {
+        JsonElement element = json.get(key);
+        if (element.isJsonPrimitive()) {
+            JsonPrimitive value = element.getAsJsonPrimitive();
+            if (value.isNumber()) {
+                Number number = value.getAsNumber();
+                Class<T> clazz = (Class<T>) defaultValue.getClass();
+                if (clazz == Byte.class) return (T) Byte.valueOf(number.byteValue());
+                if (clazz == Double.class) return (T) Double.valueOf(number.doubleValue());
+                if (clazz == Float.class) return (T) Float.valueOf(number.floatValue());
+                if (clazz == Long.class) return (T) Long.valueOf(number.longValue());
+                if (clazz == Integer.class) return (T) Integer.valueOf(number.intValue());
+                if (clazz == Short.class) return (T) Short.valueOf(number.shortValue());
+            } else if (value.isString()) {
+                return (T) value.getAsString();
+            }
+            throw new UnsupportedOperationException("Unsupported value type!");
+        }
+        return defaultValue;
     }
 }
