@@ -41,9 +41,7 @@ public class MixinTitleScreen {
 
         //Initialize audio player
         if (handler.getInitState() == InitState.NOT_INITIALIZED) {
-            CraftGR.EXECUTOR.submit(() -> {
-                handler.initialize();
-            });
+            CraftGR.EXECUTOR.submit(() -> handler.initialize());
         }
 
         if (handler.getInitState() == InitState.SUCCESS) {
