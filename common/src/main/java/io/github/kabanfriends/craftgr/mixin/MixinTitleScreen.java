@@ -19,22 +19,14 @@ public class MixinTitleScreen {
 
     @Inject(method = "removed", at = @At("HEAD"))
     private void onClose(CallbackInfo info) {
+        musicFadeStart = 1L;
         AudioPlayerHandler handler = AudioPlayerHandler.getInstance();
 
         if (handler.getState() == HandlerState.ACTIVE || handler.getState() == HandlerState.READY) {
-            if (handler.getAudioPlayer().isPlaying()) {
-                handler.getAudioPlayer().setVolume(1.0f);
+            if (!handler.getAudioPlayer().isPlaying()) {
+                handler.startPlayback();
             }
-        }
-    }
-
-    @Inject(method = "init", at = @At("HEAD"))
-    private void init(CallbackInfo ci) {
-        AudioPlayerHandler handler = AudioPlayerHandler.getInstance();
-
-        //Initialize audio player
-        if (handler.getState() == HandlerState.NOT_INITIALIZED) {
-            CraftGR.EXECUTOR.submit(handler::initialize);
+            handler.getAudioPlayer().setVolume(1.0f);
         }
     }
 
@@ -42,14 +34,19 @@ public class MixinTitleScreen {
     private void render(PoseStack poseStack, int mouseX, int mouseY, float delta, CallbackInfo ci) {
         AudioPlayerHandler handler = AudioPlayerHandler.getInstance();
 
-        if (handler.hasAudioPlayer()) {
-            if (handler.getState() == HandlerState.READY) {
-                //Start music playback
-                if (!handler.isPlaying()) {
+        //Initialize audio player
+        if (handler.getState() == HandlerState.NOT_INITIALIZED) {
+            CraftGR.EXECUTOR.submit(() -> {
+                handler.initialize();
+                if (CraftGR.MC.screen instanceof TitleScreen) {
                     handler.getAudioPlayer().setVolume(0.0f);
-                    handler.startPlayback();
                 }
-            } else if (handler.getState() == HandlerState.ACTIVE) {
+                handler.startPlayback();
+            });
+        }
+
+        if (handler.hasAudioPlayer()) {
+            if (handler.getState() == HandlerState.ACTIVE) {
                 //Audio fade in
                 if (handler.isPlaying()) {
                     if (musicFadeStart == 0L) {

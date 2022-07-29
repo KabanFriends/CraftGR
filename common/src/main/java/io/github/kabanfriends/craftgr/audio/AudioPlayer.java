@@ -22,7 +22,7 @@ public class AudioPlayer {
     private Decoder decoder;
     private IntBuffer buffer;
     private IntBuffer source;
-    private float volume = 0.0F;
+    private float volume = 1.0F;
     private boolean playing = false;
 
     public AudioPlayer(InputStream stream) {
