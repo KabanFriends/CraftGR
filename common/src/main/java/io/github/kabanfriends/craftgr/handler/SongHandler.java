@@ -19,7 +19,7 @@ public class SongHandler {
 
     private static final SongHandler INSTANCE = new SongHandler();
 
-    private static InitState initState = InitState.NOT_INITIALIZED;
+    private static HandlerState state = HandlerState.NOT_INITIALIZED;
 
     private Song song;
     private long songStart;
@@ -27,13 +27,13 @@ public class SongHandler {
 
     public void initialize() {
         CraftGR.EXECUTOR.submit(() -> {
-            initState = InitState.INITIALIZING;
+            state = HandlerState.INITIALIZING;
 
             ProcessResult result = prepareNewSong();
             if (result == ProcessResult.ERROR) {
-                initState = InitState.FAIL;
+                state = HandlerState.FAIL;
             } else {
-                initState = InitState.SUCCESS;
+                state = HandlerState.ACTIVE;
             }
 
             this.start();
@@ -57,7 +57,7 @@ public class SongHandler {
     }
 
     private void start() {
-        while (initState == InitState.SUCCESS) {
+        while (state == HandlerState.ACTIVE) {
             if (this.song != null) {
                 if (System.currentTimeMillis() / 1000L > this.getSongEnd()) {
                     ProcessResult result = prepareNewSong();

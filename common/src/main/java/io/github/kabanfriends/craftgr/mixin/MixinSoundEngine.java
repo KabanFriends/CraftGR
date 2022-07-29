@@ -2,7 +2,7 @@ package io.github.kabanfriends.craftgr.mixin;
 
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.handler.AudioPlayerHandler;
-import io.github.kabanfriends.craftgr.util.InitState;
+import io.github.kabanfriends.craftgr.util.HandlerState;
 import net.minecraft.client.sounds.SoundEngine;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -16,7 +16,7 @@ public class MixinSoundEngine {
     public void stopAudio(CallbackInfo ci) {
         AudioPlayerHandler handler = AudioPlayerHandler.getInstance();
 
-        if (handler.getInitState() == InitState.SUCCESS) {
+        if (handler.getState() == HandlerState.ACTIVE) {
             handler.stopPlayback(true);
         }
     }
@@ -25,7 +25,7 @@ public class MixinSoundEngine {
     public void startAudio(CallbackInfo ci) {
         AudioPlayerHandler handler = AudioPlayerHandler.getInstance();
 
-        if (handler.getInitState() == InitState.RELOADING) {
+        if (handler.getState() == HandlerState.RELOADING) {
             CraftGR.EXECUTOR.submit(() -> {
                 handler.initialize();
                 if (handler.hasAudioPlayer()) {

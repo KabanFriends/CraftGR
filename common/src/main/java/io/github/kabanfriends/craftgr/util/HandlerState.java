@@ -1,9 +1,11 @@
 package io.github.kabanfriends.craftgr.util;
 
-public enum InitState {
+public enum HandlerState {
     NOT_INITIALIZED,
     INITIALIZING,
+    READY,
+    ACTIVE,
     RELOADING,
-    SUCCESS,
+    STOPPED,
     FAIL
 }

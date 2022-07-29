@@ -5,9 +5,8 @@ import io.github.kabanfriends.craftgr.audio.AudioPlayer;
 import io.github.kabanfriends.craftgr.util.HttpUtil;
 import io.github.kabanfriends.craftgr.util.ProcessResult;
 import io.github.kabanfriends.craftgr.config.GRConfig;
-import io.github.kabanfriends.craftgr.util.InitState;
+import io.github.kabanfriends.craftgr.util.HandlerState;
 import io.github.kabanfriends.craftgr.util.ResponseHolder;
-import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.*;
 import org.apache.logging.log4j.Level;
 
@@ -17,39 +16,39 @@ public class AudioPlayerHandler {
 
     private static final AudioPlayerHandler INSTANCE = new AudioPlayerHandler();
 
-    private InitState initState = InitState.NOT_INITIALIZED;
+    private HandlerState state = HandlerState.NOT_INITIALIZED;
     private AudioPlayer player;
     private ResponseHolder response;
     private boolean playing = false;
 
     public void startPlayback() {
+        if (!(state == HandlerState.STOPPED || state == HandlerState.READY)) {
+            CraftGR.log(Level.ERROR, "Cannot start audio playback due to an initialization failure!");
+            return;
+        }
+
         this.playing = true;
+        state = HandlerState.ACTIVE;
 
         CraftGR.EXECUTOR.submit(() -> {
             while (true) {
-                if (initState == InitState.SUCCESS) {
-                    ProcessResult result = this.player.play();
+                ProcessResult result = this.player.play();
 
-                    switch (result) {
-                        case ERROR:
-                            CraftGR.log(Level.ERROR, "Error during audio playback! Restarting in 5 seconds...");
+                switch (result) {
+                    case ERROR:
+                        CraftGR.log(Level.ERROR, "Error during audio playback! Restarting in 5 seconds...");
 
-                            try {
-                                Thread.sleep(5L * 1000L);
-                            } catch (InterruptedException e) { }
-                            break;
-                        case STOP:
-                            CraftGR.log(Level.INFO, "Audio playback has stopped!");
-                            return;
-                    }
-
-                    if (response != null && !response.isClosed()) response.close();
-                    initialize();
-                } else {
-                    CraftGR.log(Level.ERROR, "Cannot start audio playback due to an initialization failure!");
-                    this.stopPlayback();
-                    return;
+                        try {
+                            Thread.sleep(5L * 1000L);
+                        } catch (InterruptedException e) { }
+                        break;
+                    case STOP:
+                        CraftGR.log(Level.INFO, "Audio playback has stopped!");
+                        return;
                 }
+
+                if (response != null && !response.isClosed()) response.close();
+                initialize();
             }
         });
     }
@@ -66,13 +65,13 @@ public class AudioPlayerHandler {
         this.playing = false;
         this.player = null;
 
-        if (reloading) this.initState = InitState.RELOADING;
-        else this.initState = InitState.NOT_INITIALIZED;
+        if (reloading) this.state = HandlerState.RELOADING;
+        else this.state = HandlerState.STOPPED;
     }
 
     public void initialize() {
         CraftGR.log(Level.INFO, "Initializing the audio player...");
-        initState = InitState.INITIALIZING;
+        state = HandlerState.INITIALIZING;
 
         try {
             if (response != null) response.close();
@@ -88,18 +87,18 @@ public class AudioPlayerHandler {
             if (player != null) player.stop();
             player = audioPlayer;
 
-            initState = InitState.SUCCESS;
+            state = HandlerState.READY;
             CraftGR.log(Level.INFO, "Audio player is ready!");
         } catch (Exception err) {
             CraftGR.log(Level.ERROR, "Error when initializing the audio player:");
             err.printStackTrace();
 
-            initState = InitState.FAIL;
+            state = HandlerState.FAIL;
         }
     }
 
-    public InitState getInitState() {
-        return initState;
+    public HandlerState getState() {
+        return state;
     }
 
     public boolean isPlaying() {
