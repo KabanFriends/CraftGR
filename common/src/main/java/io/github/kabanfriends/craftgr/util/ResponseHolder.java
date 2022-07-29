@@ -1,7 +1,6 @@
 package io.github.kabanfriends.craftgr.util;
 
 import io.github.kabanfriends.craftgr.CraftGR;
-import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.logging.log4j.Level;
 

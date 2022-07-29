@@ -21,13 +21,14 @@ public class SongHandler {
 
     private static InitState initState = InitState.NOT_INITIALIZED;
 
-    private boolean destroyed;
     private Song song;
     private long songStart;
     private long songEnd;
 
     public void initialize() {
         CraftGR.EXECUTOR.submit(() -> {
+            initState = InitState.INITIALIZING;
+
             ProcessResult result = prepareNewSong();
             if (result == ProcessResult.ERROR) {
                 initState = InitState.FAIL;
@@ -67,7 +68,7 @@ public class SongHandler {
             }
 
             try {
-                Thread.sleep(1);
+                wait(1);
             } catch (InterruptedException e) { }
         }
 
@@ -78,10 +79,6 @@ public class SongHandler {
         } catch (InterruptedException e) { }
 
         this.initialize();
-    }
-
-    public void destroy() {
-        destroyed = true;
     }
 
     private Song getSongFromJson(String url) throws IOException {

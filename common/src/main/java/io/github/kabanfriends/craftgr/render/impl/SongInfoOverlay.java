@@ -228,14 +228,15 @@ public class SongInfoOverlay extends Overlay {
                     HttpGet get = HttpUtil.get(url);
                     ResponseHolder response = new ResponseHolder(CraftGR.getHttpClient().execute(get));
                     InputStream stream = response.getResponse().getEntity().getContent();
+                    DynamicTexture texture = new DynamicTexture(NativeImage.read(stream));
+                    response.close();
 
                     //Wait for texture manager to be initialized
                     while (CraftGR.MC.getTextureManager() == null) {
-                        Thread.sleep(1);
+                        wait(1);
                     }
 
-                    albumArtTexture = CraftGR.MC.getTextureManager().register("craftgr_album", new DynamicTexture(NativeImage.read(stream)));
-                    response.close();
+                    albumArtTexture = CraftGR.MC.getTextureManager().register("craftgr_album", texture);
                 } catch (Exception e) {
                     CraftGR.log(Level.ERROR, "Error while creating album art texture!");
                     e.printStackTrace();
