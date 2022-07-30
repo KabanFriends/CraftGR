@@ -11,7 +11,7 @@ To compile this mod, run the following command:
 The mod jar will be created in `./<forge or fabric>/build/libs/` folder.
 
 ## Attributions
-- CraftGR is an open source project under [GPL-3.0](https://github.com/KabanFriends/CraftGR/blob/master/LICENSE) license
+- CraftGR is an open source project under [LGPL-3.0](https://github.com/KabanFriends/CraftGR/blob/master/LICENSE) license
 - Content provided by [Gensokyo Radio](https://gensokyoradio.net/)
 - Gensokyo Radio is © LunarSpotlight
 - Touhou Project is © Team Shanghai Alice
