@@ -48,7 +48,9 @@ public class AudioPlayerHandler {
                 }
 
                 if (response != null && !response.isClosed()) response.close();
-                initialize();
+                if (state == HandlerState.ACTIVE) {
+                    initialize();
+                }
             }
         });
     }
