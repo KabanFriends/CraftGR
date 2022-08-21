@@ -11,7 +11,7 @@ import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.client.ConfigGuiHandler;
+import net.minecraftforge.fmlclient.ConfigGuiHandler;
 
 @Mod(CraftGR.MOD_ID)
 public class CraftGRForge {

@@ -5,7 +5,7 @@ import io.github.kabanfriends.craftgr.config.GRConfig;
 import io.github.kabanfriends.craftgr.platform.Platform;
 import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraftforge.fml.ModList;
-import net.minecraftforge.client.gui.ModListScreen;
+import net.minecraftforge.fmlclient.gui.screen.ModListScreen;
 
 public class ForgePlatform extends Platform {
 
