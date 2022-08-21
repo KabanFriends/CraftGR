@@ -152,12 +152,12 @@ public class SongHandler {
             JsonPrimitive value = element.getAsJsonPrimitive();
             if (value.isNumber()) {
                 Number number = value.getAsNumber();
-                if (clazz == Byte.class) return (T) Byte.valueOf(number.byteValue());
-                if (clazz == Double.class) return (T) Double.valueOf(number.doubleValue());
-                if (clazz == Float.class) return (T) Float.valueOf(number.floatValue());
-                if (clazz == Long.class) return (T) Long.valueOf(number.longValue());
-                if (clazz == Integer.class) return (T) Integer.valueOf(number.intValue());
-                if (clazz == Short.class) return (T) Short.valueOf(number.shortValue());
+                if (clazz == byte.class) return (T) Byte.valueOf(number.byteValue());
+                if (clazz == double.class) return (T) Double.valueOf(number.doubleValue());
+                if (clazz == float.class) return (T) Float.valueOf(number.floatValue());
+                if (clazz == long.class) return (T) Long.valueOf(number.longValue());
+                if (clazz == int.class) return (T) Integer.valueOf(number.intValue());
+                if (clazz == short.class) return (T) Short.valueOf(number.shortValue());
             } else if (value.isString()) {
                 return (T) value.getAsString();
             }
