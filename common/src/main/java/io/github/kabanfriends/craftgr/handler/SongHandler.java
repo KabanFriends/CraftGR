@@ -100,7 +100,7 @@ public class SongHandler {
 
         response.close();
 
-        JsonObject json = JsonParser.parseString(sb.toString()).getAsJsonObject();
+        JsonObject json = CraftGR.getJsonParser().parse(sb.toString()).getAsJsonObject();
         JsonObject songInfo = json.getAsJsonObject("SONGINFO");
         JsonObject songTimes = json.getAsJsonObject("SONGTIMES");
         JsonObject songData = json.getAsJsonObject("SONGDATA");

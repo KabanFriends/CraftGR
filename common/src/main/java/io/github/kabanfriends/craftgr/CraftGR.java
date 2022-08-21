@@ -1,5 +1,6 @@
 package io.github.kabanfriends.craftgr;
 
+import com.google.gson.JsonParser;
 import io.github.kabanfriends.craftgr.config.GRConfig;
 import io.github.kabanfriends.craftgr.handler.OverlayHandler;
 import io.github.kabanfriends.craftgr.handler.SongHandler;
@@ -31,6 +32,7 @@ public class CraftGR {
     private static Platform platform;
     private static CloseableHttpClient httpClient;
     private static RequestConfig requestConfig;
+    private static JsonParser jsonParser;
 
     public static void init(Platform platform) {
         AutoConfig.register(GRConfig.class, GsonConfigSerializer::new);
@@ -41,6 +43,8 @@ public class CraftGR {
                 .setConnectTimeout(2000)
                 .setSocketTimeout(2000)
                 .build();
+
+        CraftGR.jsonParser = new JsonParser();
 
         OverlayHandler.addOverlay(new SongInfoOverlay());
 
@@ -57,6 +61,10 @@ public class CraftGR {
 
     public static RequestConfig getRequestConfig() {
         return requestConfig;
+    }
+
+    public static JsonParser getJsonParser() {
+        return jsonParser;
     }
 
     public static void log(Level level, String message) {
