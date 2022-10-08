@@ -15,6 +15,8 @@
   "text.autoconfig.craftgr.option.overlayBgColor.@Tooltip": "曲情報オーバーレイの背景の色の設定です。",
   "text.autoconfig.craftgr.option.overlayBarColor": "オーバーレイのシークバー色",
   "text.autoconfig.craftgr.option.overlayBarColor.@Tooltip": "曲情報オーバーレイ下部のシークバーの色の設定です。",
+  "text.autoconfig.craftgr.option.overlayWidth": "オーバーレイの横幅",
+  "text.autoconfig.craftgr.option.overlayWidth.@Tooltip": "曲情報オーバーレイをどのくらいの\n横幅で表示するかの設定です。",
   "text.autoconfig.craftgr.option.overlayScale": "オーバーレイの大きさ",
   "text.autoconfig.craftgr.option.overlayScale.@Tooltip": "曲情報オーバーレイをどのくらいの\n大きさで表示するかの設定です。\n拡大倍率を記入してください。",
 

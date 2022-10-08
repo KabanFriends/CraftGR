@@ -38,7 +38,7 @@ public class GRConfig implements ConfigData {
 
     @ConfigEntry.Gui.Tooltip
     @ConfigEntry.BoundedDiscrete(min = 50, max = 400)
-    public int overlayWidth = 200;
+    public int overlayWidth = 115;
 
     @ConfigEntry.Gui.Tooltip
     public float overlayScale = 1.0f;
