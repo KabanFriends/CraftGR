@@ -1,7 +1,7 @@
 package io.github.kabanfriends.craftgr.config;
 
 import io.github.kabanfriends.craftgr.CraftGR;
-import io.github.kabanfriends.craftgr.render.impl.SongInfoOverlay;
+import io.github.kabanfriends.craftgr.render.overlay.impl.SongInfoOverlay;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
@@ -35,6 +35,10 @@ public class GRConfig implements ConfigData {
     @ConfigEntry.Gui.Tooltip
     @ConfigEntry.ColorPicker
     public int overlayBarColor = 0xa096AE;
+
+    @ConfigEntry.Gui.Tooltip
+    @ConfigEntry.BoundedDiscrete(min = 50, max = 400)
+    public int overlayWidth = 200;
 
     @ConfigEntry.Gui.Tooltip
     public float overlayScale = 1.0f;

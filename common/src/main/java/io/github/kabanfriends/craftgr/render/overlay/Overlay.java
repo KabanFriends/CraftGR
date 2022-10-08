@@ -1,4 +1,4 @@
-package io.github.kabanfriends.craftgr.render;
+package io.github.kabanfriends.craftgr.render.overlay;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 

@@ -4,7 +4,7 @@ import io.github.kabanfriends.craftgr.config.GRConfig;
 import io.github.kabanfriends.craftgr.handler.OverlayHandler;
 import io.github.kabanfriends.craftgr.handler.SongHandler;
 import io.github.kabanfriends.craftgr.platform.Platform;
-import io.github.kabanfriends.craftgr.render.impl.SongInfoOverlay;
+import io.github.kabanfriends.craftgr.render.overlay.impl.SongInfoOverlay;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.minecraft.client.Minecraft;

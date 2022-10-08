@@ -6,7 +6,7 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.config.GRConfig;
-import io.github.kabanfriends.craftgr.render.impl.SongInfoOverlay;
+import io.github.kabanfriends.craftgr.render.overlay.impl.SongInfoOverlay;
 import io.github.kabanfriends.craftgr.song.Song;
 import io.github.kabanfriends.craftgr.util.*;
 import org.apache.http.client.methods.HttpGet;
@@ -52,7 +52,15 @@ public class SongHandler {
         }
         this.song = song;
 
-        SongInfoOverlay.getInstance().createAlbumArtTexture(song);
+        SongInfoOverlay overlay = SongInfoOverlay.getInstance();
+        overlay.createAlbumArtTexture(song);
+
+        if (song.isIntermission()) {
+            overlay.setIntermissionSongTitle();
+        } else {
+            overlay.setSongTitle(song.title);
+        }
+
         return ProcessResult.SUCCESS;
     }
 
@@ -161,7 +169,7 @@ public class SongHandler {
             } else if (value.isString()) {
                 return (T) value.getAsString();
             }
-            throw new UnsupportedOperationException("Unsupported value type!");
+            return defaultValue;
         }
         return defaultValue;
     }

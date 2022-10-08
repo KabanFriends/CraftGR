@@ -3,10 +3,13 @@ package io.github.kabanfriends.craftgr.util;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Matrix4f;
+import io.github.kabanfriends.craftgr.CraftGR;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 
 public class RenderUtil {
+
+    private static final float UI_BASE_SCALE = 1.0f;
 
     public static void setZLevelPre(PoseStack poseStack, int zLevel) {
         RenderSystem.disableDepthTest();
@@ -66,5 +69,11 @@ public class RenderUtil {
         BufferUploader.drawWithShader(bb.end());
         RenderSystem.enableTexture();
         RenderSystem.disableBlend();
+    }
+
+    public static float getUIScale(float uiScale) {
+        double mcScale = CraftGR.MC.getWindow().getGuiScale();
+
+        return (float) ((((double) UI_BASE_SCALE) * (((double) UI_BASE_SCALE) / mcScale)) * uiScale);
     }
 }
