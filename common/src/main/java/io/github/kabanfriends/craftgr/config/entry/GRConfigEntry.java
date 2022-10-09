@@ -1,7 +1,6 @@
 package io.github.kabanfriends.craftgr.config.entry;
 
 import com.google.gson.JsonPrimitive;
-import me.shedaniel.clothconfig2.api.AbstractConfigListEntry;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import me.shedaniel.clothconfig2.impl.builders.AbstractFieldBuilder;
 

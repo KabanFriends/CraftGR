@@ -1,7 +1,6 @@
 package io.github.kabanfriends.craftgr.config.entry.impl;
 
 import com.google.gson.JsonPrimitive;
-import io.github.kabanfriends.craftgr.config.GRConfig;
 import io.github.kabanfriends.craftgr.config.entry.GRConfigEntry;
 import io.github.kabanfriends.craftgr.render.overlay.impl.SongInfoOverlay;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;

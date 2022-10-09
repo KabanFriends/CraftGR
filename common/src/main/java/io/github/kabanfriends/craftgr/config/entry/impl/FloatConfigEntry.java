@@ -3,8 +3,6 @@ package io.github.kabanfriends.craftgr.config.entry.impl;
 import com.google.gson.JsonPrimitive;
 import io.github.kabanfriends.craftgr.config.entry.GRConfigEntry;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
-import me.shedaniel.clothconfig2.gui.entries.FloatListEntry;
-import me.shedaniel.clothconfig2.gui.entries.StringListEntry;
 import me.shedaniel.clothconfig2.impl.builders.FloatFieldBuilder;
 import net.minecraft.network.chat.Component;
 
