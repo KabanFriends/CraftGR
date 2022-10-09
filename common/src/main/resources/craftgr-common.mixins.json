@@ -13,6 +13,5 @@
   "server": [],
   "injectors": {
     "defaultRequire": 1
-  },
-  "refmap": "craftgr-common-refmap.json"
+  }
 }
