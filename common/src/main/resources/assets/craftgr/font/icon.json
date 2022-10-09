@@ -1,0 +1,12 @@
+{
+  "providers": [
+    {
+      "type": "bitmap",
+      "file": "craftgr:audio_muted.png",
+      "ascent": 8,
+      "chars": [
+        "M"
+      ]
+    }
+  ]
+}

@@ -120,7 +120,7 @@ public class SongHandler {
                 getValueWithDefault(songTimes, "SONGSTART", 0L, long.class),
                 getValueWithDefault(songTimes, "SONGEND", System.currentTimeMillis() / 1000L + 4L, long.class),
                 getValueWithDefault(songData, "ALBUMID", 0, int.class),
-                getValueWithDefault(misc, "ALBUMART", "", String.class),
+                getValueWithDefault(misc, "ALBUMART", null, String.class),
                 getValueWithDefault(misc, "OFFSETTIME", 0L, long.class)
         );
 

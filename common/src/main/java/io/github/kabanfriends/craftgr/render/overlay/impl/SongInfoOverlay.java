@@ -5,10 +5,12 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.config.GRConfig;
+import io.github.kabanfriends.craftgr.handler.AudioPlayerHandler;
 import io.github.kabanfriends.craftgr.handler.SongHandler;
 import io.github.kabanfriends.craftgr.render.overlay.Overlay;
 import io.github.kabanfriends.craftgr.render.widget.impl.ScrollingText;
 import io.github.kabanfriends.craftgr.song.Song;
+import io.github.kabanfriends.craftgr.util.HandlerState;
 import io.github.kabanfriends.craftgr.util.HttpUtil;
 import io.github.kabanfriends.craftgr.util.RenderUtil;
 import io.github.kabanfriends.craftgr.util.ResponseHolder;
@@ -19,6 +21,7 @@ import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.screens.*;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.logging.log4j.Level;
@@ -32,8 +35,8 @@ public class SongInfoOverlay extends Overlay {
     public static final int ART_TOP_PADDING = 6;
     public static final int ART_BOTTOM_PADDING = 14;
     public static final int ART_LEFT_PADDING = 6;
-
     public static final int ART_INFO_SPACE_WIDTH = 12;
+    public static final int ART_SIZE = 106;
 
     public static final int INFO_TOP_PADDING = 8;
     public static final int INFO_RIGHT_PADDING = 6;
@@ -43,28 +46,34 @@ public class SongInfoOverlay extends Overlay {
     public static final int TIMER_RIGHT_PADDING = 6;
     public static final int ART_TIMER_SPACE_HEIGHT = 4;
 
-    public static final int PROGRESS_BAR_HEIGHT = 6;
+    public static final int MUTED_ICON_TOP_PADDING = 8;
+    public static final int MUTED_ICON_RIGHT_PADDING = 6;
+    public static final int TITLE_MUTED_ICON_SPACE = 6;
+    public static final int MUTED_ICON_SIZE = 16;
 
-    public static final int ART_SIZE = 106;
+    public static final int PROGRESS_BAR_HEIGHT = 6;
     //</editor-fold>
 
     private static final int ALBUM_ART_FETCH_TRIES = 3;
     private static final int ALBUM_ART_FETCH_DELAY_SECONDS = 5;
 
     private static final ResourceLocation ALBUM_ART_PLACEHOLDER = new ResourceLocation(CraftGR.MOD_ID, "textures/album_placeholder.png");
+    private static final ResourceLocation ICON_FONT = new ResourceLocation(CraftGR.MOD_ID, "icon");
+    private static final Component AUDIO_MUTED_ICON = Component.literal("M").withStyle(Style.EMPTY.withFont(ICON_FONT));
 
     private static SongInfoOverlay INSTANCE;
 
     private ResourceLocation albumArtTexture;
     private ScrollingText songTitleText;
     private boolean expanded;
+    private boolean muted;
 
     public SongInfoOverlay() {
         INSTANCE = this;
 
         expanded = false;
         songTitleText = new ScrollingText(0, 0, Component.empty());
-        songTitleText.setWidth(GRConfig.getValue("overlayWidth"));
+        updateScrollWidth();
     }
 
     @Override
@@ -103,13 +112,14 @@ public class SongInfoOverlay extends Overlay {
 
             RenderUtil.fill(poseStack, x, y, x + width, y + ART_SIZE + ART_TOP_PADDING + ART_BOTTOM_PADDING, GRConfig.<Integer>getValue("overlayBgColor") + 0xFF000000, 0.6f);
 
+            RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
+
             if (!GRConfig.<Boolean>getValue("hideAlbumArt")) {
                 if (albumArtTexture == null) {
                     RenderUtil.bindTexture(ALBUM_ART_PLACEHOLDER);
                 } else {
                     RenderUtil.bindTexture(albumArtTexture);
                 }
-                RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
                 GuiComponent.blit(poseStack, x + ART_LEFT_PADDING, y + ART_TOP_PADDING, 0f, 0f, ART_SIZE, ART_SIZE, ART_SIZE, ART_SIZE);
             }
 
@@ -136,6 +146,18 @@ public class SongInfoOverlay extends Overlay {
                         GuiComponent.drawString(poseStack, CraftGR.MC.font, str, (x + ART_LEFT_PADDING + ART_INFO_SPACE_WIDTH + albumArtWidth) / 2, (y + INFO_TOP_PADDING + (i > 0 ? YEAR_ARTIST_SPACE_HEIGHT : 0) + INFO_LINE_HEIGHT * (i + 1)) / 2, Color.LIGHT_GRAY.getRGB());
                     }
                 }
+            }
+
+            HandlerState state = AudioPlayerHandler.getInstance().getState();
+            if (state == HandlerState.STOPPED || state == HandlerState.FAIL) {
+                if (!muted) {
+                    muted = true;
+                    updateScrollWidth();
+                }
+                GuiComponent.drawString(poseStack, CraftGR.MC.font, AUDIO_MUTED_ICON, (x + (int)width - MUTED_ICON_RIGHT_PADDING - MUTED_ICON_SIZE) / 2, (y + MUTED_ICON_TOP_PADDING) / 2, Color.WHITE.getRGB());
+            } else if (muted) {
+                muted = false;
+                updateScrollWidth();
             }
 
             poseStack.popPose();
@@ -168,14 +190,12 @@ public class SongInfoOverlay extends Overlay {
 
             if (mouseScaledX >= x && mouseScaledX <= x + width && mouseScaledY >= y && mouseScaledY <= y + height) {
                 if (!expanded) {
-                    setScrollWidth(getMaxTextWidth());
                     expanded = true;
+                    updateScrollWidth();
                 }
-            } else {
-                if (expanded) {
-                    setScrollWidth(GRConfig.getValue("overlayWidth"));
-                    expanded = false;
-                }
+            } else if (expanded) {
+                expanded = false;
+                updateScrollWidth();
             }
         }
     }
@@ -307,13 +327,24 @@ public class SongInfoOverlay extends Overlay {
         songTitleText.resetScroll();
     }
 
-    public void setScrollWidth(int width) {
+    public void updateScrollWidth() {
+        int width = GRConfig.getValue("overlayWidth");
+        if (expanded) {
+            width = getMaxTextWidth();
+        }
+        if (muted) {
+            width -= (MUTED_ICON_SIZE + TITLE_MUTED_ICON_SPACE) / 2;
+        }
         songTitleText.setWidth(width);
         songTitleText.resetScroll();
     }
 
     public void createAlbumArtTexture(Song song) {
         albumArtTexture = null;
+        if (song.albumArt == null || song.albumArt.isEmpty()) {
+            return;
+        }
+
         String url = GRConfig.getValue("urlAlbumArt") + song.albumArt;
 
         CraftGR.EXECUTOR.submit(() -> {
@@ -342,11 +373,11 @@ public class SongInfoOverlay extends Overlay {
 
                 if (tries < ALBUM_ART_FETCH_TRIES) {
                     CraftGR.log(Level.INFO, "Retrying to create album art texture in " + ALBUM_ART_FETCH_DELAY_SECONDS + " seconds... (" + (ALBUM_ART_FETCH_TRIES - tries) + " tries left)");
-
-                    try {
-                        Thread.sleep(1000L * ALBUM_ART_FETCH_DELAY_SECONDS);
-                    } catch (InterruptedException e) { }
                 }
+
+                try {
+                    Thread.sleep(ALBUM_ART_FETCH_DELAY_SECONDS * 1000L);
+                } catch (InterruptedException e) { }
             } while (tries < ALBUM_ART_FETCH_TRIES);
         });
     }
