@@ -61,6 +61,7 @@ public class SongInfoOverlay extends Overlay {
 
         expanded = false;
         songTitleText = new ScrollingText(0, 0, Component.empty());
+        songTitleText.setWidth(GRConfig.getValue("overlayWidth"));
     }
 
     @Override

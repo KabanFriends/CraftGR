@@ -80,7 +80,7 @@ public class SongHandler {
             } catch (InterruptedException e) { }
         }
 
-        CraftGR.log(Level.ERROR, "Error in displaying song information! Fetching again in 30 seconds...");
+        CraftGR.log(Level.ERROR, "Error on preparing the song information! Fetching again in 30 seconds...");
         this.song = null;
         try {
             Thread.sleep(30 * 1000L);

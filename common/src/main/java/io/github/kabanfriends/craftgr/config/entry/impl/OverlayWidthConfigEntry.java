@@ -34,7 +34,9 @@ public class OverlayWidthConfigEntry extends GRConfigEntry<Integer> {
     @Override
     public void setValue(Object value) {
         super.setValue(value);
-        SongInfoOverlay.getInstance().setScrollWidth((int)value);
+        if (SongInfoOverlay.getInstance() != null) {
+            SongInfoOverlay.getInstance().setScrollWidth((int)value);
+        }
     }
 
     public AbstractFieldBuilder getBuilder(ConfigEntryBuilder builder) {
