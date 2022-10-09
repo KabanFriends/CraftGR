@@ -24,6 +24,7 @@ public abstract class GRConfigEntry<T> {
 
     public abstract AbstractFieldBuilder getBuilder(ConfigEntryBuilder builder);
 
+    @SuppressWarnings("unchecked")
     public void setValue(Object value) {
         this.value = (T) value;
     }
