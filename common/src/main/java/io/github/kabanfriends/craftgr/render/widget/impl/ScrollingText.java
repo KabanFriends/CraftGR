@@ -10,6 +10,7 @@ import net.minecraft.network.chat.Component;
 
 import java.awt.*;
 
+//Code based on: https://github.com/MC-U-Team/U-Team-Core/blob/1.19.2/src/main/java/info/u_team/u_team_core/gui/elements/ScrollingText.java
 public class ScrollingText extends UIWidget {
 
     protected int width;
