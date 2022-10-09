@@ -5,8 +5,6 @@ import io.github.kabanfriends.craftgr.handler.OverlayHandler;
 import io.github.kabanfriends.craftgr.handler.SongHandler;
 import io.github.kabanfriends.craftgr.platform.Platform;
 import io.github.kabanfriends.craftgr.render.overlay.impl.SongInfoOverlay;
-import me.shedaniel.autoconfig.AutoConfig;
-import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.minecraft.client.Minecraft;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -33,7 +31,7 @@ public class CraftGR {
     private static RequestConfig requestConfig;
 
     public static void init(Platform platform) {
-        AutoConfig.register(GRConfig.class, GsonConfigSerializer::new);
+        GRConfig.init();
 
         CraftGR.platform = platform;
         CraftGR.httpClient = HttpClients.createSystem();

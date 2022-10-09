@@ -2,9 +2,9 @@ package io.github.kabanfriends.craftgr.handler;
 
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.audio.AudioPlayer;
+import io.github.kabanfriends.craftgr.config.GRConfig;
 import io.github.kabanfriends.craftgr.util.HttpUtil;
 import io.github.kabanfriends.craftgr.util.ProcessResult;
-import io.github.kabanfriends.craftgr.config.GRConfig;
 import io.github.kabanfriends.craftgr.util.HandlerState;
 import io.github.kabanfriends.craftgr.util.ResponseHolder;
 import org.apache.http.client.methods.*;
@@ -78,7 +78,7 @@ public class AudioPlayerHandler {
         try {
             if (response != null) response.close();
 
-            HttpGet get = HttpUtil.get(GRConfig.getConfig().url.streamURL);
+            HttpGet get = HttpUtil.get(GRConfig.getValue("urlStream"));
             ResponseHolder response = new ResponseHolder(CraftGR.getHttpClient().execute(get));
             this.response = response;
 

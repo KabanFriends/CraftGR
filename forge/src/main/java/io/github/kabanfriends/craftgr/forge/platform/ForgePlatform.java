@@ -3,7 +3,6 @@ package io.github.kabanfriends.craftgr.forge.platform;
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.config.GRConfig;
 import io.github.kabanfriends.craftgr.platform.Platform;
-import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.client.gui.ModListScreen;
 
@@ -25,7 +24,7 @@ public class ForgePlatform extends Platform {
 
     @Override
     public void openConfigScreen() {
-        CraftGR.MC.setScreen(AutoConfig.getConfigScreen(GRConfig.class, CraftGR.MC.screen).get());
+        CraftGR.MC.setScreen(GRConfig.getConfigScreen());
     }
 
 }

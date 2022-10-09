@@ -83,7 +83,7 @@ public class ScrollingText extends UIWidget {
 
     @Override
     public void render(PoseStack poseStack, int mouseX, int mouseY) {
-        float scale = GRConfig.getConfig().overlayScale * 2;
+        float scale = GRConfig.<Float>getValue("overlayScale") * 2;
 
         int fontX = (int)getMovingX(x / 2f);
         int fontY = (int)y / 2;

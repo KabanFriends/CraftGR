@@ -43,7 +43,7 @@ public class SongHandler {
     private ProcessResult prepareNewSong() {
         Song song;
         try {
-            song = getSongFromJson(GRConfig.getConfig().url.infoJsonURL);
+            song = getSongFromJson(GRConfig.getValue("urlInfoJson"));
         } catch (Exception e) {
             CraftGR.log(Level.ERROR, "Error while fetching song information!");
             e.printStackTrace();
