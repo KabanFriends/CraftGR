@@ -15,7 +15,6 @@ public class ScrollingText extends UIWidget {
 
     protected int width;
     protected float stepSize;
-    protected int speedTime;
     protected int waitTime;
 
     protected float startPos = 0;
@@ -32,7 +31,6 @@ public class ScrollingText extends UIWidget {
 
         this.width = 100;
         this.stepSize = 1;
-        this.speedTime = 20;
         this.waitTime = 4000;
     }
 
@@ -64,14 +62,6 @@ public class ScrollingText extends UIWidget {
 
     public void setStepSize(float stepSize) {
         this.stepSize = stepSize;
-    }
-
-    public int getSpeedTime() {
-        return speedTime;
-    }
-
-    public void setSpeedTime(int speedtime) {
-        speedTime = speedtime;
     }
 
     public int getWaitTime() {
