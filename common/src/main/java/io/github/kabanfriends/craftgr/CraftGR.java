@@ -31,8 +31,6 @@ public class CraftGR {
     private static RequestConfig requestConfig;
 
     public static void init(Platform platform) {
-        GRConfig.init();
-
         CraftGR.platform = platform;
         CraftGR.httpClient = HttpClients.createSystem();
         CraftGR.requestConfig = RequestConfig.custom()
@@ -41,8 +39,9 @@ public class CraftGR {
                 .build();
 
         OverlayHandler.addOverlay(new SongInfoOverlay());
-
         SongHandler.getInstance().initialize();
+
+        GRConfig.init();
     }
 
     public static Platform getPlatform() {
