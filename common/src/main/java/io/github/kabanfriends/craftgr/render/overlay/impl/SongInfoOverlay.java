@@ -120,9 +120,12 @@ public class SongInfoOverlay extends Overlay {
                     String str = strings[i];
                     if (str != null) {
                         if (!expanded) {
-                            str = font.plainSubstrByWidth(str, GRConfig.getConfig().overlayWidth - dotWidth);
-                            if (!str.equals(strings[i])) {
-                                str += "...";
+                            int textWidth = font.width(str);
+                            if (textWidth > GRConfig.getConfig().overlayWidth) {
+                                str = font.plainSubstrByWidth(str, GRConfig.getConfig().overlayWidth - dotWidth);
+                                if (!str.equals(strings[i])) {
+                                    str += "...";
+                                }
                             }
                         }
 
@@ -151,10 +154,7 @@ public class SongInfoOverlay extends Overlay {
 
             songTitleText.setX(x + ART_LEFT_PADDING + albumArtWidth + ART_INFO_SPACE_WIDTH);
             songTitleText.setY(y + INFO_TOP_PADDING);
-
-            if (!currentSong.isIntermission() && currentSong.title != null) {
-                songTitleText.render(poseStack, mouseX, mouseY);
-            }
+            songTitleText.render(poseStack, mouseX, mouseY);
 
             RenderUtil.setZLevelPost(poseStack);
 

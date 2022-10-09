@@ -112,7 +112,7 @@ public class SongHandler {
         JsonObject misc = json.getAsJsonObject("MISC");
 
         Song song = new Song(
-                TitleFixer.fixJapaneseString(getValueWithDefault(songInfo, "TITLE", null, String.class)),
+                TitleFixer.fixJapaneseString(getValueWithDefault(songInfo, "TITLE", "", String.class)),
                 TitleFixer.fixJapaneseString(getValueWithDefault(songInfo, "ARTIST", null, String.class)),
                 TitleFixer.fixJapaneseString(getValueWithDefault(songInfo, "ALBUM", null, String.class)),
                 getValueWithDefault(songInfo, "YEAR", null, String.class),
