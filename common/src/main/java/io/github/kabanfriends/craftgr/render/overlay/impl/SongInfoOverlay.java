@@ -48,6 +48,9 @@ public class SongInfoOverlay extends Overlay {
     public static final int ART_SIZE = 106;
     //</editor-fold>
 
+    private static final int ALBUM_ART_FETCH_TRIES = 3;
+    private static final int ALBUM_ART_FETCH_DELAY_SECONDS = 5;
+
     private static final ResourceLocation ALBUM_ART_PLACEHOLDER = new ResourceLocation(CraftGR.MOD_ID, "textures/album_placeholder.png");
 
     private static SongInfoOverlay INSTANCE;
@@ -314,23 +317,37 @@ public class SongInfoOverlay extends Overlay {
         String url = GRConfig.getValue("urlAlbumArt") + song.albumArt;
 
         CraftGR.EXECUTOR.submit(() -> {
-            try {
-                HttpGet get = HttpUtil.get(url);
-                ResponseHolder response = new ResponseHolder(CraftGR.getHttpClient().execute(get));
-                InputStream stream = response.getResponse().getEntity().getContent();
-                DynamicTexture texture = new DynamicTexture(NativeImage.read(stream));
-                response.close();
+            int tries = 0;
+            do {
+                tries++;
 
-                //Wait for texture manager to be initialized
-                while (CraftGR.MC.getTextureManager() == null) {
-                    Thread.sleep(1);
+                try {
+                    HttpGet get = HttpUtil.get(url);
+                    ResponseHolder response = new ResponseHolder(CraftGR.getHttpClient().execute(get));
+                    InputStream stream = response.getResponse().getEntity().getContent();
+                    DynamicTexture texture = new DynamicTexture(NativeImage.read(stream));
+                    response.close();
+
+                    //Wait for texture manager to be initialized
+                    while (CraftGR.MC.getTextureManager() == null) {
+                        Thread.sleep(1);
+                    }
+
+                    albumArtTexture = CraftGR.MC.getTextureManager().register("craftgr_album", texture);
+                    break;
+                } catch (Exception e) {
+                    CraftGR.log(Level.ERROR, "Error while creating album art texture! (" + url + ")");
+                    e.printStackTrace();
                 }
 
-                albumArtTexture = CraftGR.MC.getTextureManager().register("craftgr_album", texture);
-            } catch (Exception e) {
-                CraftGR.log(Level.ERROR, "Error while creating album art texture!");
-                e.printStackTrace();
-            }
+                if (tries < ALBUM_ART_FETCH_TRIES) {
+                    CraftGR.log(Level.INFO, "Retrying to create album art texture in " + ALBUM_ART_FETCH_DELAY_SECONDS + " seconds... (" + (ALBUM_ART_FETCH_TRIES - tries) + " tries left)");
+
+                    try {
+                        Thread.sleep(1000L * ALBUM_ART_FETCH_DELAY_SECONDS);
+                    } catch (InterruptedException e) { }
+                }
+            } while (tries < ALBUM_ART_FETCH_TRIES);
         });
     }
 
