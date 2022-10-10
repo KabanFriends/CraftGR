@@ -1,6 +1,7 @@
 package io.github.kabanfriends.craftgr.config.entry.impl;
 
 import com.google.gson.JsonPrimitive;
+import io.github.kabanfriends.craftgr.config.compat.ClothCompat;
 import io.github.kabanfriends.craftgr.config.entry.GRConfigEntry;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import me.shedaniel.clothconfig2.impl.builders.TextFieldBuilder;
@@ -21,6 +22,8 @@ public class StringConfigEntry extends GRConfigEntry<String> {
     }
 
     public TextFieldBuilder getBuilder(ConfigEntryBuilder builder) {
-        return builder.startTextField(Component.translatable("text.craftgr.config.option." + getKey()), getValue());
+        TextFieldBuilder field = builder.startTextField(Component.translatable("text.craftgr.config.option." + getKey()), getValue());
+        ClothCompat.getCompat().setDefaultValue(field, getDefaultValue());
+        return field;
     }
 }

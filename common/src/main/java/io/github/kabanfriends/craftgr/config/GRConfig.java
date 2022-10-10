@@ -68,7 +68,6 @@ public class GRConfig {
             for (GRConfigEntry entry : grc.getEntries()) {
 
                 FieldBuilder field = entry.getBuilder(builder.entryBuilder());
-                ClothCompat.getCompat().setDefaultValue(field, entry.getDefaultValue());
                 ClothCompat.getCompat().setTooltip(field, Component.translatable("text.craftgr.config.option." + entry.getKey() + ".tooltip"));
                 ClothCompat.getCompat().setSaveConsumer(field, value -> GRConfig.setValue(entry, value));
                 category.add(field.build());

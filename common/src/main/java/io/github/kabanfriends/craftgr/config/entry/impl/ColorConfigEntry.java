@@ -1,6 +1,7 @@
 package io.github.kabanfriends.craftgr.config.entry.impl;
 
 import com.google.gson.JsonPrimitive;
+import io.github.kabanfriends.craftgr.config.compat.ClothCompat;
 import io.github.kabanfriends.craftgr.config.entry.GRConfigEntry;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import me.shedaniel.clothconfig2.impl.builders.ColorFieldBuilder;
@@ -24,6 +25,8 @@ public class ColorConfigEntry extends GRConfigEntry<Integer> {
     }
 
     public ColorFieldBuilder getBuilder(ConfigEntryBuilder builder) {
-        return builder.startColorField(Component.translatable("text.craftgr.config.option." + getKey()), getValue());
+        ColorFieldBuilder field = builder.startColorField(Component.translatable("text.craftgr.config.option." + getKey()), getValue());
+        ClothCompat.getCompat().setDefaultValue(field, getDefaultValue());
+        return field;
     }
 }
