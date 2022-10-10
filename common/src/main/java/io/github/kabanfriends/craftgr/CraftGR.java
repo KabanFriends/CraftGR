@@ -31,9 +31,10 @@ public class CraftGR {
     private static RequestConfig requestConfig;
 
     public static void init(Platform platform) {
+        CraftGR.platform = platform;
+
         GRConfig.init();
 
-        CraftGR.platform = platform;
         CraftGR.httpClient = HttpClients.createSystem();
         CraftGR.requestConfig = RequestConfig.custom()
                 .setConnectTimeout(2000)

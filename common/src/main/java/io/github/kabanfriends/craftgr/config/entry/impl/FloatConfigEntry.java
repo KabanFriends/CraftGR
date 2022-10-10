@@ -25,7 +25,6 @@ public class FloatConfigEntry extends GRConfigEntry<Float> {
     }
 
     public FloatFieldBuilder getBuilder(ConfigEntryBuilder builder) {
-        return builder.startFloatField(Component.translatable("text.craftgr.config.option." + getKey()), getValue())
-                .setDefaultValue(getDefaultValue());
+        return builder.startFloatField(Component.translatable("text.craftgr.config.option." + getKey()), getValue());
     }
 }

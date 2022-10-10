@@ -3,7 +3,7 @@ package io.github.kabanfriends.craftgr.config.entry.impl;
 import com.google.gson.JsonPrimitive;
 import io.github.kabanfriends.craftgr.config.entry.GRConfigEntry;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
-import me.shedaniel.clothconfig2.impl.builders.AbstractFieldBuilder;
+import me.shedaniel.clothconfig2.impl.builders.FieldBuilder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 
@@ -30,15 +30,13 @@ public class IntegerConfigEntry extends GRConfigEntry<Integer> {
         return new JsonPrimitive(getValue());
     }
 
-    public AbstractFieldBuilder getBuilder(ConfigEntryBuilder builder) {
+    public FieldBuilder getBuilder(ConfigEntryBuilder builder) {
         if (hasRange) {
             return builder.startIntSlider(Component.translatable("text.craftgr.config.option." + getKey()), getValue(), minValue, maxValue)
-                    .setDefaultValue(getDefaultValue())
                     .setTextGetter(value -> Component.literal(value.toString()));
         }
 
-        return builder.startIntField(Component.translatable("text.craftgr.config.option." + getKey()), getValue())
-                .setDefaultValue(getDefaultValue());
+        return builder.startIntField(Component.translatable("text.craftgr.config.option." + getKey()), getValue());
     }
 
     public IntegerConfigEntry setRange(int min, int max) {

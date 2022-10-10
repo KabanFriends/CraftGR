@@ -21,7 +21,6 @@ public class BooleanConfigEntry extends GRConfigEntry<Boolean> {
     }
 
     public BooleanToggleBuilder getBuilder(ConfigEntryBuilder builder) {
-        return builder.startBooleanToggle(Component.translatable("text.craftgr.config.option." + getKey()), getValue())
-                .setDefaultValue(getDefaultValue());
+        return builder.startBooleanToggle(Component.translatable("text.craftgr.config.option." + getKey()), getValue());
     }
 }

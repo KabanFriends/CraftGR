@@ -1,6 +1,6 @@
 package io.github.kabanfriends.craftgr.platform;
 
-public class Platform {
+public abstract class Platform {
 
     private PlatformType type;
 
@@ -8,21 +8,17 @@ public class Platform {
         this.type = type;
     }
 
-    public PlatformType getPlatform() {
+    public PlatformType getPlatformType() {
         return this.type;
     }
 
-    public boolean isModLoaded(String id) {
-        throw new AssertionError("No platform specified!");
-    }
+    public abstract boolean isModLoaded(String id);
 
-    public boolean isInModMenu() {
-        return false;
-    }
+    public abstract String getModVersion(String id);
 
-    public void openConfigScreen() {
-        throw new AssertionError("No platform specified!");
-    }
+    public abstract boolean isInModMenu();
+
+    public abstract void openConfigScreen();
 
     public enum PlatformType {
         FABRIC,

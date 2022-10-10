@@ -12,12 +12,14 @@ public class FabricPlatform extends Platform {
         super(type);
     }
 
-    @Override
     public boolean isModLoaded(String id) {
         return FabricLoader.getInstance().isModLoaded(id);
     }
 
-    @Override
+    public String getModVersion(String id) {
+        return FabricLoader.getInstance().getModContainer(id).get().getMetadata().getVersion().getFriendlyString();
+    }
+
     public boolean isInModMenu() {
         if (CraftGR.getPlatform().isModLoaded("modmenu")) {
             return CraftGR.MC.screen instanceof ModsScreen;
@@ -25,7 +27,6 @@ public class FabricPlatform extends Platform {
         return false;
     }
 
-    @Override
     public void openConfigScreen() {
         CraftGR.MC.setScreen(GRConfig.getConfigScreen());
     }

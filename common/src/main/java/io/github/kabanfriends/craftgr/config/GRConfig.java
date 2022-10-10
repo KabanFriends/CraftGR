@@ -3,13 +3,14 @@ package io.github.kabanfriends.craftgr.config;
 import com.google.gson.*;
 import com.google.gson.stream.JsonWriter;
 import io.github.kabanfriends.craftgr.CraftGR;
+import io.github.kabanfriends.craftgr.config.compat.ClothCompat;
 import io.github.kabanfriends.craftgr.config.entry.GRConfigEntry;
 import io.github.kabanfriends.craftgr.config.entry.impl.*;
 import io.github.kabanfriends.craftgr.config.entry.impl.EnumConfigEntry;
 import io.github.kabanfriends.craftgr.render.overlay.impl.SongInfoOverlay;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
-import me.shedaniel.clothconfig2.impl.builders.AbstractFieldBuilder;
+import me.shedaniel.clothconfig2.impl.builders.FieldBuilder;
 import me.shedaniel.clothconfig2.impl.builders.SubCategoryBuilder;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -66,9 +67,10 @@ public class GRConfig {
 
             for (GRConfigEntry entry : grc.getEntries()) {
 
-                AbstractFieldBuilder field = entry.getBuilder(builder.entryBuilder());
-                field.setTooltip(Component.translatable("text.craftgr.config.option." + entry.getKey() + ".tooltip"));
-                field.setSaveConsumer(value -> GRConfig.setValue(entry, value));
+                FieldBuilder field = entry.getBuilder(builder.entryBuilder());
+                ClothCompat.getCompat().setDefaultValue(field, entry.getDefaultValue());
+                ClothCompat.getCompat().setTooltip(field, Component.translatable("text.craftgr.config.option." + entry.getKey() + ".tooltip"));
+                ClothCompat.getCompat().setSaveConsumer(field, value -> GRConfig.setValue(entry, value));
                 category.add(field.build());
             }
 
@@ -81,6 +83,8 @@ public class GRConfig {
     }
 
     public static void init() {
+        ClothCompat.init();
+
         if (Files.exists(CONFIG_FILE_PATH)) {
             try {
                 Stream<String> stream = Files.lines(CONFIG_FILE_PATH);

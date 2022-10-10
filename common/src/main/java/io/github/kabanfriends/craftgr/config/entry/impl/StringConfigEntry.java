@@ -21,7 +21,6 @@ public class StringConfigEntry extends GRConfigEntry<String> {
     }
 
     public TextFieldBuilder getBuilder(ConfigEntryBuilder builder) {
-        return builder.startTextField(Component.translatable("text.craftgr.config.option." + getKey()), getValue())
-                .setDefaultValue(getDefaultValue());
+        return builder.startTextField(Component.translatable("text.craftgr.config.option." + getKey()), getValue());
     }
 }

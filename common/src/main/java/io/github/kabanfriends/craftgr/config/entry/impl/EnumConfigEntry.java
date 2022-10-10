@@ -55,7 +55,6 @@ public class EnumConfigEntry extends GRConfigEntry<Enum> {
         }
 
         return builder.startSelector(Component.translatable("text.craftgr.config.option." + getKey()), entries, currentEnum)
-                .setDefaultValue(defaultEnum)
                 .setNameProvider(ConfigEnumHolder::getTitle);
     }
 }

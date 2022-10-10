@@ -2,7 +2,7 @@ package io.github.kabanfriends.craftgr.config.entry;
 
 import com.google.gson.JsonPrimitive;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
-import me.shedaniel.clothconfig2.impl.builders.AbstractFieldBuilder;
+import me.shedaniel.clothconfig2.impl.builders.FieldBuilder;
 
 public abstract class GRConfigEntry<T> {
 
@@ -21,7 +21,7 @@ public abstract class GRConfigEntry<T> {
 
     public abstract JsonPrimitive serialize();
 
-    public abstract AbstractFieldBuilder getBuilder(ConfigEntryBuilder builder);
+    public abstract FieldBuilder getBuilder(ConfigEntryBuilder builder);
 
     @SuppressWarnings("unchecked")
     public void setValue(Object value) {

@@ -24,7 +24,6 @@ public class ColorConfigEntry extends GRConfigEntry<Integer> {
     }
 
     public ColorFieldBuilder getBuilder(ConfigEntryBuilder builder) {
-        return builder.startColorField(Component.translatable("text.craftgr.config.option." + getKey()), getValue())
-                .setDefaultValue(getDefaultValue());
+        return builder.startColorField(Component.translatable("text.craftgr.config.option." + getKey()), getValue());
     }
 }

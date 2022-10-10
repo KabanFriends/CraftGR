@@ -4,7 +4,7 @@ import com.google.gson.JsonPrimitive;
 import io.github.kabanfriends.craftgr.config.entry.GRConfigEntry;
 import io.github.kabanfriends.craftgr.render.overlay.impl.SongInfoOverlay;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
-import me.shedaniel.clothconfig2.impl.builders.AbstractFieldBuilder;
+import me.shedaniel.clothconfig2.impl.builders.IntSliderBuilder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 
@@ -38,9 +38,8 @@ public class OverlayWidthConfigEntry extends GRConfigEntry<Integer> {
         }
     }
 
-    public AbstractFieldBuilder getBuilder(ConfigEntryBuilder builder) {
+    public IntSliderBuilder getBuilder(ConfigEntryBuilder builder) {
         return builder.startIntSlider(Component.translatable("text.craftgr.config.option." + getKey()), getValue(), MIN_VALUE, MAX_VALUE)
-                .setDefaultValue(getDefaultValue())
                 .setTextGetter(value -> Component.literal((WIDTH_OFFSET + value * 2) + "px"));
     }
 }

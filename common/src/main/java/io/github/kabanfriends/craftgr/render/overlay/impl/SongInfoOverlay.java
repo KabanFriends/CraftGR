@@ -211,7 +211,7 @@ public class SongInfoOverlay extends Overlay {
 
         if (CraftGR.getPlatform().isInModMenu()) return true;
 
-        if (CraftGR.getPlatform().isModLoaded("cloth-config2") || CraftGR.getPlatform().isModLoaded("cloth-config")) {
+        if (CraftGR.getPlatform().isModLoaded("cloth-config") || CraftGR.getPlatform().isModLoaded("cloth_config")) {
             if (CraftGR.MC.screen instanceof ConfigScreen) return true;
         }
 

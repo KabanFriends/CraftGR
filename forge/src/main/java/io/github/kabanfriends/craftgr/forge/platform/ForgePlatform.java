@@ -12,17 +12,18 @@ public class ForgePlatform extends Platform {
         super(type);
     }
 
-    @Override
     public boolean isModLoaded(String id) {
         return ModList.get().isLoaded(id);
     }
 
-    @Override
+    public String getModVersion(String id) {
+        return ModList.get().getModContainerById(id).get().getModInfo().getVersion().toString();
+    }
+
     public boolean isInModMenu() {
         return CraftGR.MC.screen instanceof ModListScreen;
     }
 
-    @Override
     public void openConfigScreen() {
         CraftGR.MC.setScreen(GRConfig.getConfigScreen());
     }
