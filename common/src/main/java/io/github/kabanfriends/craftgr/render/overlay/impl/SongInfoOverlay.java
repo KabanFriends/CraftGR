@@ -55,7 +55,7 @@ public class SongInfoOverlay extends Overlay {
     //</editor-fold>
 
     private static final int ALBUM_ART_FETCH_TRIES = 3;
-    private static final int ALBUM_ART_FETCH_DELAY_SECONDS = 5;
+    private static final int ALBUM_ART_FETCH_DELAY_SECONDS = 4;
 
     private static final ResourceLocation ALBUM_ART_PLACEHOLDER = new ResourceLocation(CraftGR.MOD_ID, "textures/album_placeholder.png");
     private static final ResourceLocation ICON_FONT = new ResourceLocation(CraftGR.MOD_ID, "icon");
