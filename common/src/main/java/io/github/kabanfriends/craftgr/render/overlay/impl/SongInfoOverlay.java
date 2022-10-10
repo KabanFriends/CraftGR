@@ -271,8 +271,6 @@ public class SongInfoOverlay extends Overlay {
     }
 
     private float[] getOverlaySize() {
-        Song currentSong = SongHandler.getInstance().getCurrentSong();
-
         int albumArtWidth;
         if (GRConfig.getValue("hideAlbumArt")) albumArtWidth = -ART_LEFT_PADDING;
         else albumArtWidth = ART_SIZE;
@@ -331,6 +329,10 @@ public class SongInfoOverlay extends Overlay {
         int width = GRConfig.getValue("overlayWidth");
         if (expanded) {
             width = getMaxTextWidth();
+
+            if (GRConfig.<Integer>getValue("overlayWidth") > width) {
+                width = GRConfig.getValue("overlayWidth");
+            }
         }
         if (muted) {
             width -= (MUTED_ICON_SIZE + TITLE_MUTED_ICON_SPACE) / 2;
