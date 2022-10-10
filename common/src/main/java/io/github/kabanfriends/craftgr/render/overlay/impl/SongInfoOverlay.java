@@ -129,7 +129,12 @@ public class SongInfoOverlay extends Overlay {
             if (!currentSong.isIntermission()) {
                 int dotWidth = font.width("...");
 
-                String[] strings = {"(" + currentSong.year + ")", currentSong.artist, currentSong.album, currentSong.circle};
+                String year = null;
+                if (currentSong.year != null) {
+                    year = "(" + currentSong.year + ")";
+                }
+
+                String[] strings = {year, currentSong.artist, currentSong.album, currentSong.circle};
                 for (int i = 0; i < 4; i++) {
                     String str = strings[i];
                     if (str != null) {
