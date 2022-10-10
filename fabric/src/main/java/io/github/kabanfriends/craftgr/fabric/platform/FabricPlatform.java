@@ -28,7 +28,7 @@ public class FabricPlatform extends Platform {
     }
 
     public void openConfigScreen() {
-        CraftGR.MC.setScreen(GRConfig.getConfigScreen());
+        CraftGR.MC.setScreen(GRConfig.getConfigScreen(CraftGR.MC.screen));
     }
 
 }

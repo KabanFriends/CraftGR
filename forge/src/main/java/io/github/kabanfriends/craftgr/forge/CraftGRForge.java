@@ -20,7 +20,7 @@ public class CraftGRForge {
         MinecraftForge.EVENT_BUS.register(new OverlayEvents());
         MinecraftForge.EVENT_BUS.register(new KeybindEvents());
 
-        ModLoadingContext.get().registerExtensionPoint(ConfigScreenHandler.ConfigScreenFactory.class, () -> new ConfigScreenHandler.ConfigScreenFactory((mc, screen) -> GRConfig.getConfigScreen()));
+        ModLoadingContext.get().registerExtensionPoint(ConfigScreenHandler.ConfigScreenFactory.class, () -> new ConfigScreenHandler.ConfigScreenFactory((mc, screen) -> GRConfig.getConfigScreen(screen)));
     }
 
 }

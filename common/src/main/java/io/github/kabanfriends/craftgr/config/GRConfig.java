@@ -54,11 +54,12 @@ public class GRConfig {
     };
 
     @SuppressWarnings("unchecked")
-    public static Screen getConfigScreen() {
+    public static Screen getConfigScreen(Screen parent) {
         ConfigBuilder builder = ConfigBuilder.create();
 
         Component title = Component.translatable("text.craftgr.config.title");
         builder.setTitle(title);
+        builder.setParentScreen(parent);
         ConfigCategory root = builder.getOrCreateCategory(title);
 
         for (GRConfigCategory grc : categories) {
