@@ -1,6 +1,7 @@
 package io.github.kabanfriends.craftgr.handler;
 
 import io.github.kabanfriends.craftgr.CraftGR;
+import io.github.kabanfriends.craftgr.util.AudioPlayerUtil;
 import io.github.kabanfriends.craftgr.util.HandlerState;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -21,23 +22,15 @@ public class KeyActionHandler {
             message.withStyle(ChatFormatting.WHITE);
 
             CraftGR.MC.player.displayClientMessage(icon.append(message), true);
-        } else {
-            if (state != HandlerState.INITIALIZING) {
-                CraftGR.EXECUTOR.submit(() -> {
-                    handler.initialize();
-                    if (handler.hasAudioPlayer()) {
-                        handler.getAudioPlayer().setVolume(1.0f);
-                        handler.startPlayback();
-                    }
-                });
+        } else if (state != HandlerState.INITIALIZING) {
+            AudioPlayerUtil.startPlaybackAsync();
 
-                MutableComponent icon = Component.literal("♫ ");
-                icon.withStyle(ChatFormatting.GREEN);
-                MutableComponent message = Component.translatable("text.craftgr.message.started");
-                message.withStyle(ChatFormatting.WHITE);
+            MutableComponent icon = Component.literal("♫ ");
+            icon.withStyle(ChatFormatting.GREEN);
+            MutableComponent message = Component.translatable("text.craftgr.message.started");
+            message.withStyle(ChatFormatting.WHITE);
 
-                CraftGR.MC.player.displayClientMessage(icon.append(message), true);
-            }
+            CraftGR.MC.player.displayClientMessage(icon.append(message), true);
         }
     }
 

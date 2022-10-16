@@ -1,17 +1,17 @@
-package io.github.kabanfriends.craftgr.config.entry;
+package io.github.kabanfriends.craftgr.config.value;
 
 import com.google.gson.JsonPrimitive;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import me.shedaniel.clothconfig2.impl.builders.FieldBuilder;
 
-public abstract class GRConfigEntry<T> {
+public abstract class GRConfigValue<T> {
 
     private String key;
 
     private T defaultValue;
     private T value;
 
-    public GRConfigEntry(String key, T value) {
+    public GRConfigValue(String key, T value) {
         this.key = key;
         this.defaultValue = value;
         this.value = value;

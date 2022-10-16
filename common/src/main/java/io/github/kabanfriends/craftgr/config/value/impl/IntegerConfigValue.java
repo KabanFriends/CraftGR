@@ -1,8 +1,8 @@
-package io.github.kabanfriends.craftgr.config.entry.impl;
+package io.github.kabanfriends.craftgr.config.value.impl;
 
 import com.google.gson.JsonPrimitive;
 import io.github.kabanfriends.craftgr.config.compat.ClothCompat;
-import io.github.kabanfriends.craftgr.config.entry.GRConfigEntry;
+import io.github.kabanfriends.craftgr.config.value.GRConfigValue;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import me.shedaniel.clothconfig2.impl.builders.FieldBuilder;
 import me.shedaniel.clothconfig2.impl.builders.IntFieldBuilder;
@@ -10,14 +10,14 @@ import me.shedaniel.clothconfig2.impl.builders.IntSliderBuilder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 
-public class IntegerConfigEntry extends GRConfigEntry<Integer> {
+public class IntegerConfigValue extends GRConfigValue<Integer> {
 
     private boolean hasRange;
 
     private int maxValue;
     private int minValue;
 
-    public IntegerConfigEntry(String key, int value) {
+    public IntegerConfigValue(String key, int value) {
         super(key, value);
     }
 
@@ -46,7 +46,7 @@ public class IntegerConfigEntry extends GRConfigEntry<Integer> {
         return field;
     }
 
-    public IntegerConfigEntry setRange(int min, int max) {
+    public IntegerConfigValue setRange(int min, int max) {
         hasRange = true;
         minValue = min;
         maxValue = max;

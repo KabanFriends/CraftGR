@@ -1,9 +1,9 @@
-package io.github.kabanfriends.craftgr.config.entry.impl;
+package io.github.kabanfriends.craftgr.config.value.impl;
 
 import com.google.gson.JsonPrimitive;
 import io.github.kabanfriends.craftgr.config.ConfigEnumHolder;
 import io.github.kabanfriends.craftgr.config.compat.ClothCompat;
-import io.github.kabanfriends.craftgr.config.entry.GRConfigEntry;
+import io.github.kabanfriends.craftgr.config.value.GRConfigValue;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import me.shedaniel.clothconfig2.impl.builders.SelectorBuilder;
 import net.minecraft.network.chat.Component;
@@ -11,7 +11,7 @@ import net.minecraft.network.chat.Component;
 import java.util.HashMap;
 import java.util.Map;
 
-public class EnumConfigEntry extends GRConfigEntry<Enum> {
+public class EnumConfigValue extends GRConfigValue<Enum> {
 
     private final Class baseClass;
     private final ConfigEnumHolder[] holders;
@@ -19,7 +19,7 @@ public class EnumConfigEntry extends GRConfigEntry<Enum> {
 
     private ConfigEnumHolder defaultHolder;
 
-    public EnumConfigEntry(String key, Enum value) {
+    public EnumConfigValue(String key, Enum value) {
         super(key, value);
         baseClass = getDefaultValue().getDeclaringClass();
 

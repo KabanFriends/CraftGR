@@ -38,7 +38,6 @@ public class Cloth7Compat extends ClothCompat {
             field.setDefaultValue((boolean)value);
             return;
         }
-        throw new UnsupportedOperationException("This field builder is not supported!");
     }
 
     public void setTooltip(FieldBuilder builder, Component tooltip) {
@@ -68,9 +67,7 @@ public class Cloth7Compat extends ClothCompat {
         }
         if (builder instanceof BooleanToggleBuilder field) {
             field.setTooltip(tooltip);
-            return;
         }
-        throw new UnsupportedOperationException("This field builder is not supported!");
     }
 
     @SuppressWarnings("unchecked")
@@ -101,8 +98,6 @@ public class Cloth7Compat extends ClothCompat {
         }
         if (builder instanceof BooleanToggleBuilder field) {
             field.setSaveConsumer(consumer);
-            return;
         }
-        throw new UnsupportedOperationException("This field builder is not supported!");
     }
 }

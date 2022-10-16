@@ -2,6 +2,12 @@
   "text.craftgr.config.title": "CraftGR 設定",
 
   "text.craftgr.config.category.playback": "再生設定",
+  "text.craftgr.config.option.playback": "音楽",
+  "text.craftgr.config.option.playback.tooltip": "Gensokyo Radioの音楽の停止と再生を切り替えます。",
+  "text.craftgr.config.option.playback.stopped": "停止",
+  "text.craftgr.config.option.playback.connecting": "接続中...",
+  "text.craftgr.config.option.playback.playing": "再生中",
+  "text.craftgr.config.option.playback.fail": "§cエラー！",
   "text.craftgr.config.option.volume": "音量",
   "text.craftgr.config.option.volume.tooltip": "Gensokyo Radioの音楽を再生する音量です。",
 

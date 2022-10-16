@@ -1,15 +1,15 @@
-package io.github.kabanfriends.craftgr.config.entry.impl;
+package io.github.kabanfriends.craftgr.config.value.impl;
 
 import com.google.gson.JsonPrimitive;
 import io.github.kabanfriends.craftgr.config.compat.ClothCompat;
-import io.github.kabanfriends.craftgr.config.entry.GRConfigEntry;
+import io.github.kabanfriends.craftgr.config.value.GRConfigValue;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import me.shedaniel.clothconfig2.impl.builders.BooleanToggleBuilder;
 import net.minecraft.network.chat.Component;
 
-public class BooleanConfigEntry extends GRConfigEntry<Boolean> {
+public class BooleanConfigValue extends GRConfigValue<Boolean> {
 
-    public BooleanConfigEntry(String key, boolean value) {
+    public BooleanConfigValue(String key, boolean value) {
         super(key, value);
     }
 

@@ -4,9 +4,9 @@ import com.google.gson.*;
 import com.google.gson.stream.JsonWriter;
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.config.compat.ClothCompat;
-import io.github.kabanfriends.craftgr.config.entry.GRConfigEntry;
-import io.github.kabanfriends.craftgr.config.entry.impl.*;
-import io.github.kabanfriends.craftgr.config.entry.impl.EnumConfigEntry;
+import io.github.kabanfriends.craftgr.config.value.GRConfigValue;
+import io.github.kabanfriends.craftgr.config.value.impl.*;
+import io.github.kabanfriends.craftgr.config.value.impl.EnumConfigValue;
 import io.github.kabanfriends.craftgr.render.overlay.impl.SongInfoOverlay;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
@@ -30,26 +30,27 @@ public class GRConfig {
     private static final Path CONFIG_FILE_PATH = Path.of("config", "craftgr.json");
 
     private static JsonObject configJson;
-    private static Map<String, GRConfigEntry> configMap = new HashMap<>();
+    private static Map<String, GRConfigValue> configMap = new HashMap<>();
 
     private static final GRConfigCategory[] categories = {
             new GRConfigCategory(Component.translatable("text.craftgr.config.category.playback"), false,
-                    new PercentageConfigEntry("volume", 50)
+                    new RadioStateConfigValue("playback"),
+                    new PercentageConfigValue("volume", 50)
             ),
             new GRConfigCategory(Component.translatable("text.craftgr.config.category.overlay"), false,
-                    new EnumConfigEntry("overlayVisibility", SongInfoOverlay.OverlayVisibility.MENU),
-                    new EnumConfigEntry("overlayPosition", SongInfoOverlay.OverlayPosition.TOP_RIGHT),
-                    new BooleanConfigEntry("hideAlbumArt", false),
-                    new BooleanConfigEntry("openAlbum", true),
-                    new OverlayWidthConfigEntry("overlayWidth", 115),
-                    new FloatConfigEntry("overlayScale", 1.0f),
-                    new ColorConfigEntry("overlayBgColor", 0x632279),
-                    new ColorConfigEntry("overlayBarColor", 0xA096AE)
+                    new EnumConfigValue("overlayVisibility", SongInfoOverlay.OverlayVisibility.MENU),
+                    new EnumConfigValue("overlayPosition", SongInfoOverlay.OverlayPosition.TOP_RIGHT),
+                    new BooleanConfigValue("hideAlbumArt", false),
+                    new BooleanConfigValue("openAlbum", true),
+                    new OverlayWidthConfigValue("overlayWidth", 115),
+                    new FloatConfigValue("overlayScale", 1.0f),
+                    new ColorConfigValue("overlayBgColor", 0x632279),
+                    new ColorConfigValue("overlayBarColor", 0xA096AE)
             ),
             new GRConfigCategory(Component.translatable("text.craftgr.config.category.url"), false,
-                    new StringConfigEntry("urlStream", "https://stream.gensokyoradio.net/1/"),
-                    new StringConfigEntry("urlInfoJson", "https://gensokyoradio.net/api/station/playing/"),
-                    new StringConfigEntry("urlAlbumArt", "https://gensokyoradio.net/images/albums/500/")
+                    new StringConfigValue("urlStream", "https://stream.gensokyoradio.net/1/"),
+                    new StringConfigValue("urlInfoJson", "https://gensokyoradio.net/api/station/playing/"),
+                    new StringConfigValue("urlAlbumArt", "https://gensokyoradio.net/images/albums/500/")
             )
     };
 
@@ -66,7 +67,7 @@ public class GRConfig {
             SubCategoryBuilder category = builder.entryBuilder().startSubCategory(grc.getTitle());
             category.setExpanded(grc.getExpanded());
 
-            for (GRConfigEntry entry : grc.getEntries()) {
+            for (GRConfigValue entry : grc.getValues()) {
 
                 FieldBuilder field = entry.getBuilder(builder.entryBuilder());
                 ClothCompat.getCompat().setTooltip(field, Component.translatable("text.craftgr.config.option." + entry.getKey() + ".tooltip"));
@@ -102,15 +103,18 @@ public class GRConfig {
         }
 
         for (GRConfigCategory grc : categories) {
-            for (GRConfigEntry entry : grc.getEntries()) {
-                configMap.put(entry.getKey(), entry);
+            for (GRConfigValue value : grc.getValues()) {
+                configMap.put(value.getKey(), value);
                 try {
-                    if (configJson.has(entry.getKey())) {
-                        JsonPrimitive value = configJson.getAsJsonPrimitive(entry.getKey());
-                        entry.setValue(entry.deserialize(value));
+                    if (configJson.has(value.getKey())) {
+                        JsonPrimitive jsonValue = configJson.getAsJsonPrimitive(value.getKey());
+                        Object realValue = value.deserialize(jsonValue);
+                        if (realValue != null) {
+                            value.setValue(realValue);
+                        }
                     }
                 } catch (Exception e) {
-                    CraftGR.log(Level.ERROR, "Failed to read config value for " + entry.getKey() + "!");
+                    CraftGR.log(Level.ERROR, "Failed to read config value for " + value.getKey() + "!");
                     e.printStackTrace();
                 }
             }
@@ -136,7 +140,7 @@ public class GRConfig {
         }
     }
 
-    public static GRConfigEntry getConfigEntry(String key) {
+    public static GRConfigValue getConfigEntry(String key) {
         return configMap.get(key);
     }
 
@@ -149,7 +153,7 @@ public class GRConfig {
         setValue(GRConfig.getConfigEntry(key), value);
     }
 
-    public static void setValue(GRConfigEntry entry, Object value) {
+    public static void setValue(GRConfigValue entry, Object value) {
         if (entry.getValue().equals(value)) {
             return;
         }
@@ -158,7 +162,10 @@ public class GRConfig {
         if (entry.getValue().equals(entry.getDefaultValue())) {
             configJson.remove(entry.getKey());
         } else {
-            configJson.add(entry.getKey(), entry.serialize());
+            JsonPrimitive jsonValue = entry.serialize();
+            if (jsonValue != null) {
+                configJson.add(entry.getKey(), jsonValue);
+            }
         }
     }
 }

@@ -1,15 +1,15 @@
-package io.github.kabanfriends.craftgr.config.entry.impl;
+package io.github.kabanfriends.craftgr.config.value.impl;
 
 import com.google.gson.JsonPrimitive;
 import io.github.kabanfriends.craftgr.config.compat.ClothCompat;
-import io.github.kabanfriends.craftgr.config.entry.GRConfigEntry;
+import io.github.kabanfriends.craftgr.config.value.GRConfigValue;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import me.shedaniel.clothconfig2.impl.builders.ColorFieldBuilder;
 import net.minecraft.network.chat.Component;
 
-public class ColorConfigEntry extends GRConfigEntry<Integer> {
+public class ColorConfigValue extends GRConfigValue<Integer> {
 
-    public ColorConfigEntry(String key, Integer value) {
+    public ColorConfigValue(String key, Integer value) {
         super(key, value);
     }
 

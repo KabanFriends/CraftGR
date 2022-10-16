@@ -1,15 +1,15 @@
-package io.github.kabanfriends.craftgr.config.entry.impl;
+package io.github.kabanfriends.craftgr.config.value.impl;
 
 import com.google.gson.JsonPrimitive;
 import io.github.kabanfriends.craftgr.config.compat.ClothCompat;
-import io.github.kabanfriends.craftgr.config.entry.GRConfigEntry;
+import io.github.kabanfriends.craftgr.config.value.GRConfigValue;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import me.shedaniel.clothconfig2.impl.builders.TextFieldBuilder;
 import net.minecraft.network.chat.Component;
 
-public class StringConfigEntry extends GRConfigEntry<String> {
+public class StringConfigValue extends GRConfigValue<String> {
 
-    public StringConfigEntry(String key, String value) {
+    public StringConfigValue(String key, String value) {
         super(key, value);
     }
 
