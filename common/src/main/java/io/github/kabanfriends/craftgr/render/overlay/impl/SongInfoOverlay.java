@@ -16,6 +16,7 @@ import io.github.kabanfriends.craftgr.util.RenderUtil;
 import io.github.kabanfriends.craftgr.util.ResponseHolder;
 import me.shedaniel.clothconfig2.api.ConfigScreen;
 import net.minecraft.Util;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.screens.*;
@@ -25,6 +26,8 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.logging.log4j.Level;
+import org.lwjgl.glfw.GLFW;
+import org.lwjgl.system.MemoryUtil;
 
 import java.awt.*;
 import java.io.InputStream;
@@ -366,12 +369,15 @@ public class SongInfoOverlay extends Overlay {
                     DynamicTexture texture = new DynamicTexture(NativeImage.read(stream));
                     response.close();
 
-                    //Wait for texture manager to be initialized
-                    while (CraftGR.MC.getTextureManager() == null) {
-                        Thread.sleep(1);
+                    //Wait for the GLFW context and the texture manager
+                    while (GLFW.glfwGetCurrentContext() != MemoryUtil.NULL || CraftGR.MC.getTextureManager() == null) {
                     }
 
-                    albumArtTexture = CraftGR.MC.getTextureManager().register("craftgr_album", texture);
+                    //OptiFine compatibility: registering only works on the right thread?
+                    Minecraft.getInstance().execute(() -> {
+                        albumArtTexture = CraftGR.MC.getTextureManager().register("craftgr_album", texture);
+                    });
+
                     break;
                 } catch (Exception e) {
                     CraftGR.log(Level.ERROR, "Error while creating album art texture! (" + url + ")");
