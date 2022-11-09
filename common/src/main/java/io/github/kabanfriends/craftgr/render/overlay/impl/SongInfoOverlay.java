@@ -369,10 +369,6 @@ public class SongInfoOverlay extends Overlay {
                     DynamicTexture texture = new DynamicTexture(NativeImage.read(stream));
                     response.close();
 
-                    //Wait for the GLFW context and the texture manager
-                    while (GLFW.glfwGetCurrentContext() != MemoryUtil.NULL || CraftGR.MC.getTextureManager() == null) {
-                    }
-
                     //OptiFine compatibility: registering only works on the right thread?
                     Minecraft.getInstance().execute(() -> {
                         albumArtTexture = CraftGR.MC.getTextureManager().register("craftgr_album", texture);

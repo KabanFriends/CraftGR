@@ -40,7 +40,9 @@ public class CraftGR {
                 .setConnectTimeout(2000)
                 .setSocketTimeout(2000)
                 .build();
+    }
 
+    public static void lateInit() {
         OverlayHandler.addOverlay(new SongInfoOverlay());
         SongHandler.getInstance().initialize();
     }

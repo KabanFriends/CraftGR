@@ -24,7 +24,8 @@
     ],
     "client": [
       "io.github.kabanfriends.craftgr.fabric.events.KeybindEvents",
-      "io.github.kabanfriends.craftgr.fabric.events.OverlayEvents"
+      "io.github.kabanfriends.craftgr.fabric.events.OverlayEvents",
+      "io.github.kabanfriends.craftgr.fabric.events.LifecycleEvents"
     ],
     "server": []
   },
