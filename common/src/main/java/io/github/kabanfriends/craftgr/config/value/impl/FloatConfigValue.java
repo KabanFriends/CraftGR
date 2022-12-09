@@ -1,7 +1,6 @@
 package io.github.kabanfriends.craftgr.config.value.impl;
 
 import com.google.gson.JsonPrimitive;
-import io.github.kabanfriends.craftgr.config.compat.ClothCompat;
 import io.github.kabanfriends.craftgr.config.value.GRConfigValue;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import me.shedaniel.clothconfig2.impl.builders.FloatFieldBuilder;
@@ -27,7 +26,7 @@ public class FloatConfigValue extends GRConfigValue<Float> {
 
     public FloatFieldBuilder getBuilder(ConfigEntryBuilder builder) {
         FloatFieldBuilder field =builder.startFloatField(Component.translatable("text.craftgr.config.option." + getKey()), getValue());
-        ClothCompat.getCompat().setDefaultValue(field, getDefaultValue());
+        field.setDefaultValue(getDefaultValue());
         return field;
     }
 }

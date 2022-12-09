@@ -1,7 +1,6 @@
 package io.github.kabanfriends.craftgr.config.value.impl;
 
 import com.google.gson.JsonPrimitive;
-import io.github.kabanfriends.craftgr.config.compat.ClothCompat;
 import io.github.kabanfriends.craftgr.config.value.GRConfigValue;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import me.shedaniel.clothconfig2.impl.builders.BooleanToggleBuilder;
@@ -23,7 +22,7 @@ public class BooleanConfigValue extends GRConfigValue<Boolean> {
 
     public BooleanToggleBuilder getBuilder(ConfigEntryBuilder builder) {
         BooleanToggleBuilder field = builder.startBooleanToggle(Component.translatable("text.craftgr.config.option." + getKey()), getValue());
-        ClothCompat.getCompat().setDefaultValue(field, getDefaultValue());
+        field.setDefaultValue(getDefaultValue());
         return field;
     }
 }

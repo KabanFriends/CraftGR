@@ -2,7 +2,6 @@ package io.github.kabanfriends.craftgr.config.value.impl;
 
 import com.google.gson.JsonPrimitive;
 import io.github.kabanfriends.craftgr.config.ConfigEnumHolder;
-import io.github.kabanfriends.craftgr.config.compat.ClothCompat;
 import io.github.kabanfriends.craftgr.config.value.GRConfigValue;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import me.shedaniel.clothconfig2.impl.builders.SelectorBuilder;
@@ -60,7 +59,7 @@ public class EnumConfigValue extends GRConfigValue<Enum> {
     public SelectorBuilder getBuilder(ConfigEntryBuilder builder) {
         SelectorBuilder field = builder.startSelector(Component.translatable("text.craftgr.config.option." + getKey()), holders, holderByName.get(getValue().name()))
                 .setNameProvider(ConfigEnumHolder::getTitle);
-        ClothCompat.getCompat().setDefaultValue(field, defaultHolder);
+        field.setDefaultValue(defaultHolder);
         return field;
     }
 }

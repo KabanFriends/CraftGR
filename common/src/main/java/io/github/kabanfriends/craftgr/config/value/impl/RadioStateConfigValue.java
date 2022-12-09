@@ -4,7 +4,6 @@ import com.google.gson.JsonPrimitive;
 import io.github.kabanfriends.craftgr.config.entry.builder.RadioStateBuilder;
 import io.github.kabanfriends.craftgr.config.value.GRConfigValue;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
-import me.shedaniel.clothconfig2.impl.builders.FieldBuilder;
 import net.minecraft.network.chat.Component;
 
 public class RadioStateConfigValue extends GRConfigValue {
@@ -24,7 +23,7 @@ public class RadioStateConfigValue extends GRConfigValue {
     }
 
     @Override
-    public FieldBuilder getBuilder(ConfigEntryBuilder builder) {
+    public RadioStateBuilder getBuilder(ConfigEntryBuilder builder) {
         return new RadioStateBuilder(Component.translatable("text.craftgr.config.option." + getKey()));
     }
 }

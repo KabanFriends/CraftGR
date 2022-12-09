@@ -1,7 +1,6 @@
 package io.github.kabanfriends.craftgr.config.value.impl;
 
 import com.google.gson.JsonPrimitive;
-import io.github.kabanfriends.craftgr.config.compat.ClothCompat;
 import io.github.kabanfriends.craftgr.config.value.GRConfigValue;
 import io.github.kabanfriends.craftgr.render.overlay.impl.SongInfoOverlay;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
@@ -42,7 +41,7 @@ public class OverlayWidthConfigValue extends GRConfigValue<Integer> {
     public IntSliderBuilder getBuilder(ConfigEntryBuilder builder) {
         IntSliderBuilder field = builder.startIntSlider(Component.translatable("text.craftgr.config.option." + getKey()), getValue(), MIN_VALUE, MAX_VALUE)
                 .setTextGetter(value -> Component.literal((WIDTH_OFFSET + value * 2) + "px"));
-        ClothCompat.getCompat().setDefaultValue(field, getDefaultValue());
+        field.setDefaultValue(getDefaultValue());
         return field;
     }
 }

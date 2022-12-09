@@ -1,10 +1,9 @@
 package io.github.kabanfriends.craftgr.config.value.impl;
 
 import com.google.gson.JsonPrimitive;
-import io.github.kabanfriends.craftgr.config.compat.ClothCompat;
 import io.github.kabanfriends.craftgr.config.value.GRConfigValue;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
-import me.shedaniel.clothconfig2.impl.builders.FieldBuilder;
+import me.shedaniel.clothconfig2.impl.builders.AbstractFieldBuilder;
 import me.shedaniel.clothconfig2.impl.builders.IntFieldBuilder;
 import me.shedaniel.clothconfig2.impl.builders.IntSliderBuilder;
 import net.minecraft.network.chat.Component;
@@ -33,16 +32,16 @@ public class IntegerConfigValue extends GRConfigValue<Integer> {
         return new JsonPrimitive(getValue());
     }
 
-    public FieldBuilder getBuilder(ConfigEntryBuilder builder) {
+    public AbstractFieldBuilder getBuilder(ConfigEntryBuilder builder) {
         if (hasRange) {
             IntSliderBuilder field = builder.startIntSlider(Component.translatable("text.craftgr.config.option." + getKey()), getValue(), minValue, maxValue)
                     .setTextGetter(value -> Component.literal(value.toString()));
-            ClothCompat.getCompat().setDefaultValue(field, getDefaultValue());
+            field.setDefaultValue(getDefaultValue());
             return field;
         }
 
         IntFieldBuilder field = builder.startIntField(Component.translatable("text.craftgr.config.option." + getKey()), getValue());
-        ClothCompat.getCompat().setDefaultValue(field, getDefaultValue());
+        field.setDefaultValue(getDefaultValue());
         return field;
     }
 

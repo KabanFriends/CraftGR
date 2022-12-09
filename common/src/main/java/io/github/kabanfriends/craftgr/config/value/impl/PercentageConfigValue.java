@@ -1,7 +1,6 @@
 package io.github.kabanfriends.craftgr.config.value.impl;
 
 import com.google.gson.JsonPrimitive;
-import io.github.kabanfriends.craftgr.config.compat.ClothCompat;
 import io.github.kabanfriends.craftgr.config.value.GRConfigValue;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import me.shedaniel.clothconfig2.impl.builders.IntSliderBuilder;
@@ -28,7 +27,7 @@ public class PercentageConfigValue extends GRConfigValue<Integer> {
     public IntSliderBuilder getBuilder(ConfigEntryBuilder builder) {
         IntSliderBuilder field = builder.startIntSlider(Component.translatable("text.craftgr.config.option." + getKey()), getValue(), MIN_VALUE, MAX_VALUE)
                 .setTextGetter(value -> Component.literal(value + "%"));
-        ClothCompat.getCompat().setDefaultValue(field, getDefaultValue());
+        field.setDefaultValue(getDefaultValue());
         return field;
     }
 }
