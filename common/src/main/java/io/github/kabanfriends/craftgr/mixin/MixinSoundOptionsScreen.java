@@ -1,22 +1,33 @@
 package io.github.kabanfriends.craftgr.mixin;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.serialization.Codec;
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.config.GRConfig;
 import io.github.kabanfriends.craftgr.handler.AudioPlayerHandler;
+import io.github.kabanfriends.craftgr.mixinaccess.SoundOptionsScreenMixinAccess;
 import net.minecraft.client.OptionInstance;
+import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.ImageButton;
+import net.minecraft.client.gui.components.OptionsList;
 import net.minecraft.client.gui.screens.SoundOptionsScreen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(SoundOptionsScreen.class)
-public class MixinSoundOptionsScreen extends MixinOptionsSubScreen {
+public class MixinSoundOptionsScreen extends MixinOptionsSubScreen implements SoundOptionsScreenMixinAccess {
+
+    @Shadow
+    private OptionsList list;
+
+    private AbstractWidget volumeSlider;
+    private AbstractWidget configButton;
 
     private static final ResourceLocation CONFIG_BUTTON = new ResourceLocation(CraftGR.MOD_ID, "textures/button_config.png");
 
@@ -42,17 +53,35 @@ public class MixinSoundOptionsScreen extends MixinOptionsSubScreen {
     }
 
     @Inject(method = "init()V", at = @At("RETURN"))
-    protected void init(CallbackInfo callbackInfo) {
+    private void init(CallbackInfo ci) {
         PLAYBACK_VOLUME.set(GRConfig.<Integer>getValue("volume") / 100.0D);
 
-        this.addRenderableWidget(PLAYBACK_VOLUME.createButton(CraftGR.MC.options, this.width / 2 - 155 + 160, this.height / 6 - 12 + 22 * (11 >> 1), 150 - 24));
-        this.addRenderableWidget(new ImageButton(this.width / 2 - 155 + 160 + 150 - 20, this.height / 6 - 12 + 22 * (11 >> 1), 20, 20, 0, 0, 20, CONFIG_BUTTON, 20, 40, (button) -> {
+        volumeSlider = PLAYBACK_VOLUME.createButton(CraftGR.MC.options, this.width / 2 - 155 + 160, this.height / 6 - 12 + 22 * (11 >> 1), 150 - 24);
+        configButton = new ImageButton(this.width / 2 - 155 + 160 + 150 - 20, this.height / 6 - 12 + 22 * (11 >> 1), 20, 20, 0, 0, 20, CONFIG_BUTTON, 20, 40, (button) -> {
             CraftGR.getPlatform().openConfigScreen();
-        }));
+        });
+
+        this.addWidget(volumeSlider);
+        this.addWidget(configButton);
     }
 
     @Override
     public void saveConfig(CallbackInfo ci) {
         GRConfig.save();
+    }
+
+    @Override
+    public OptionsList getOptionsList() {
+        return list;
+    }
+
+    @Override
+    public AbstractWidget getVolumeSlider() {
+        return volumeSlider;
+    }
+
+    @Override
+    public AbstractWidget getConfigButton() {
+        return configButton;
     }
 }

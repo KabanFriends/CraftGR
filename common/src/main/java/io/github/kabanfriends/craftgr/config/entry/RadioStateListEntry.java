@@ -26,7 +26,7 @@ public class RadioStateListEntry extends TooltipListEntry {
 
     public RadioStateListEntry(Component fieldName, Supplier<Optional<Component[]>> tooltipSupplier) {
         super(fieldName, tooltipSupplier, false);
-        this.buttonWidget = new Button(0, 0, 150, 20, Component.empty(), widget -> {
+        this.buttonWidget = Button.builder(Component.empty(), widget -> {
             widget.active = false;
 
             AudioPlayerHandler handler = AudioPlayerHandler.getInstance();
@@ -37,7 +37,7 @@ public class RadioStateListEntry extends TooltipListEntry {
             } else if (state != HandlerState.INITIALIZING) {
                 AudioPlayerUtil.startPlaybackAsync();
             }
-        });
+        }).bounds(0, 0, 150, 20).build();
         this.widgets = Lists.newArrayList(buttonWidget);
     }
 
@@ -66,8 +66,8 @@ public class RadioStateListEntry extends TooltipListEntry {
         super.render(matrices, index, y, x, entryWidth, entryHeight, mouseX, mouseY, isHovered, delta);
         Window window = Minecraft.getInstance().getWindow();
         this.buttonWidget.active = isEditable() && isButtonActive();
-        this.buttonWidget.x = x + entryWidth - 150;
-        this.buttonWidget.y = y;
+        this.buttonWidget.setX(x + entryWidth - 150);
+        this.buttonWidget.setY(y);
         this.buttonWidget.setMessage(getButtonText());
         Component displayedFieldName = getDisplayedFieldName();
         if (Minecraft.getInstance().font.isBidirectional()) {
