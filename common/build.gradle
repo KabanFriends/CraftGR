@@ -9,7 +9,7 @@ dependencies {
 }
 
 architectury {
-    common("fabric", "forge")
+    common(rootProject.enabled_platforms.split(","))
 }
 
 publishing {

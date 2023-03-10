@@ -58,7 +58,6 @@ public class RenderUtil {
 
         BufferBuilder bb = Tesselator.getInstance().getBuilder();
         RenderSystem.enableBlend();
-        RenderSystem.disableTexture();
         RenderSystem.defaultBlendFunc();
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
         bb.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
@@ -67,7 +66,6 @@ public class RenderUtil {
         bb.vertex(matrix4f, maxX, minY, 0.0F).color(r, g, b, a).endVertex();
         bb.vertex(matrix4f, minX, minY, 0.0F).color(r, g, b, a).endVertex();
         BufferUploader.drawWithShader(bb.end());
-        RenderSystem.enableTexture();
         RenderSystem.disableBlend();
     }
 
