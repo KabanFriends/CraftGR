@@ -26,12 +26,14 @@ public class MixinGameRenderer {
 
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;popPose()V", ordinal = 0))
     public void onRender(float f, long l, boolean bl, CallbackInfo ci) {
-        if (GRConfig.getValue("overlayVisibility") != SongInfoOverlay.OverlayVisibility.NONE) {
-            CraftGR.MC.getProfiler().push("CraftGR Song Overlay");
-            int mouseX = (int)(CraftGR.MC.mouseHandler.xpos() * (double)CraftGR.MC.getWindow().getGuiScaledWidth() / (double)CraftGR.MC.getWindow().getScreenWidth());
-            int mouseY = (int)(CraftGR.MC.mouseHandler.ypos() * (double)CraftGR.MC.getWindow().getGuiScaledHeight() / (double)CraftGR.MC.getWindow().getScreenHeight());
-            OverlayHandler.renderAll(poseStack, mouseX, mouseY);
-            CraftGR.MC.getProfiler().pop();
+        if (!CraftGR.MC.options.hideGui || CraftGR.MC.screen != null) {
+            if (CraftGR.renderSongOverlay && GRConfig.getValue("overlayVisibility") != SongInfoOverlay.OverlayVisibility.NONE) {
+                CraftGR.MC.getProfiler().push("CraftGR Song Overlay");
+                int mouseX = (int)(CraftGR.MC.mouseHandler.xpos() * (double)CraftGR.MC.getWindow().getGuiScaledWidth() / (double)CraftGR.MC.getWindow().getScreenWidth());
+                int mouseY = (int)(CraftGR.MC.mouseHandler.ypos() * (double)CraftGR.MC.getWindow().getGuiScaledHeight() / (double)CraftGR.MC.getWindow().getScreenHeight());
+                OverlayHandler.renderAll(poseStack, mouseX, mouseY);
+                CraftGR.MC.getProfiler().pop();
+            }
         }
     }
 }

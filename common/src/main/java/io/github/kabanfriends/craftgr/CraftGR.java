@@ -26,6 +26,8 @@ public class CraftGR {
     public static final Minecraft MC = Minecraft.getInstance();
     public static final ExecutorService EXECUTOR = Executors.newCachedThreadPool();
 
+    public static boolean renderSongOverlay;
+
     private static Platform platform;
     private static CloseableHttpClient httpClient;
     private static RequestConfig requestConfig;

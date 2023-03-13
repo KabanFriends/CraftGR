@@ -31,7 +31,7 @@ public class MixinTitleScreen {
     }
 
     @Inject(method = "render", at = @At("HEAD"))
-    private void render(PoseStack poseStack, int mouseX, int mouseY, float delta, CallbackInfo ci) {
+    private void onRender(PoseStack poseStack, int mouseX, int mouseY, float delta, CallbackInfo ci) {
         AudioPlayerHandler handler = AudioPlayerHandler.getInstance();
 
         //Initialize audio player
@@ -57,6 +57,14 @@ public class MixinTitleScreen {
                     handler.getAudioPlayer().setVolume(Mth.clamp(value, 0.0f, 1.0f));
                 }
             }
+        }
+    }
+
+    @Inject(method = "render", at = @At(value="INVOKE", target = "Lnet/minecraft/client/gui/screens/Screen;render(Lcom/mojang/blaze3d/vertex/PoseStack;IIF)V"))
+    public void onRenderScreen(PoseStack poseStack, int i, int j, float f, CallbackInfo ci) {
+        //Start rendering the song overlay
+        if (!CraftGR.renderSongOverlay) {
+            CraftGR.renderSongOverlay = true;
         }
     }
 }
