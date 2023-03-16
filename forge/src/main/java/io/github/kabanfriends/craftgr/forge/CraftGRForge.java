@@ -2,9 +2,9 @@ package io.github.kabanfriends.craftgr.forge;
 
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.config.GRConfig;
-import io.github.kabanfriends.craftgr.forge.events.KeybindEvents;
-import io.github.kabanfriends.craftgr.forge.events.OverlayEvents;
-import io.github.kabanfriends.craftgr.forge.events.TickEvents;
+import io.github.kabanfriends.craftgr.forge.event.KeybindEvents;
+import io.github.kabanfriends.craftgr.forge.event.OverlayEvents;
+import io.github.kabanfriends.craftgr.forge.event.TickEvents;
 import io.github.kabanfriends.craftgr.forge.platform.ForgePlatform;
 import io.github.kabanfriends.craftgr.platform.Platform;
 import net.minecraftforge.common.MinecraftForge;
