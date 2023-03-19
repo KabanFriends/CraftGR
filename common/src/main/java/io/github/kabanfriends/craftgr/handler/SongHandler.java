@@ -5,7 +5,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
 import io.github.kabanfriends.craftgr.CraftGR;
-import io.github.kabanfriends.craftgr.config.GRConfig;
 import io.github.kabanfriends.craftgr.render.overlay.impl.SongInfoOverlay;
 import io.github.kabanfriends.craftgr.song.Song;
 import io.github.kabanfriends.craftgr.util.*;
@@ -43,7 +42,7 @@ public class SongHandler {
     private ProcessResult prepareNewSong() {
         Song song;
         try {
-            song = getSongFromJson(GRConfig.getValue("urlInfoJson"));
+            song = getSongFromJson(CraftGR.getConfig().getValue("urlInfoJson"));
         } catch (Exception e) {
             CraftGR.log(Level.ERROR, "Error while fetching song information!");
             e.printStackTrace();

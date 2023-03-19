@@ -1,9 +1,7 @@
 package io.github.kabanfriends.craftgr.mixin;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.serialization.Codec;
 import io.github.kabanfriends.craftgr.CraftGR;
-import io.github.kabanfriends.craftgr.config.GRConfig;
 import io.github.kabanfriends.craftgr.handler.AudioPlayerHandler;
 import io.github.kabanfriends.craftgr.mixinaccess.SoundOptionsScreenMixinAccess;
 import net.minecraft.client.OptionInstance;
@@ -42,7 +40,7 @@ public class MixinSoundOptionsScreen extends MixinOptionsSubScreen implements So
             Codec.doubleRange(0.0D, 1.0D),
             0.0D,
             (value) -> {
-                GRConfig.setValue("volume", (int)((double)value * 100.0D));
+                CraftGR.getConfig().setValue("volume", (int)((double)value * 100.0D));
                 if (AudioPlayerHandler.getInstance().isPlaying()) {
                     AudioPlayerHandler.getInstance().getAudioPlayer().setVolume(1.0f);
                 }
@@ -54,7 +52,7 @@ public class MixinSoundOptionsScreen extends MixinOptionsSubScreen implements So
 
     @Inject(method = "init()V", at = @At("RETURN"))
     private void init(CallbackInfo ci) {
-        PLAYBACK_VOLUME.set(GRConfig.<Integer>getValue("volume") / 100.0D);
+        PLAYBACK_VOLUME.set(CraftGR.getConfig().<Integer>getValue("volume") / 100.0D);
 
         volumeSlider = PLAYBACK_VOLUME.createButton(CraftGR.MC.options, this.width / 2 - 155 + 160, this.height / 6 - 12 + 22 * (11 >> 1), 150 - 24);
         configButton = new ImageButton(this.width / 2 - 155 + 160 + 150 - 20, this.height / 6 - 12 + 22 * (11 >> 1), 20, 20, 0, 0, 20, CONFIG_BUTTON, 20, 40, (button) -> {
@@ -67,7 +65,7 @@ public class MixinSoundOptionsScreen extends MixinOptionsSubScreen implements So
 
     @Override
     public void saveConfig(CallbackInfo ci) {
-        GRConfig.save();
+        CraftGR.getConfig().save();
     }
 
     @Override

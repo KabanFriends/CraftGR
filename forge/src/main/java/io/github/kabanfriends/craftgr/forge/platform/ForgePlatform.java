@@ -1,8 +1,8 @@
 package io.github.kabanfriends.craftgr.forge.platform;
 
 import io.github.kabanfriends.craftgr.CraftGR;
-import io.github.kabanfriends.craftgr.config.GRConfig;
 import io.github.kabanfriends.craftgr.platform.Platform;
+import me.shedaniel.clothconfig2.api.ConfigScreen;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.client.gui.ModListScreen;
 
@@ -25,7 +25,20 @@ public class ForgePlatform extends Platform {
     }
 
     public void openConfigScreen() {
-        CraftGR.MC.setScreen(GRConfig.getConfigScreen(CraftGR.MC.screen));
+        CraftGR.MC.setScreen(CraftGR.getConfig().getConfigScreen(CraftGR.MC.screen));
     }
 
+    public boolean hasConfigMod() {
+        if (isModLoaded("cloth-config") || isModLoaded("cloth_config")) {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isInConfigScreen() {
+        if (CraftGR.MC.screen instanceof ConfigScreen) {
+            return true;
+        }
+        return false;
+    }
 }

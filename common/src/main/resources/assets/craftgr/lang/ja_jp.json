@@ -26,6 +26,8 @@
   "text.craftgr.config.option.overlayPosition.BOTTOM_RIGHT": "右下",
   "text.craftgr.config.option.openAlbum": "オーバーレイをクリックでアルバム情報を表示",
   "text.craftgr.config.option.openAlbum.tooltip": "曲情報オーバーレイをクリックした際に\nその曲のアルバム情報をブラウザで開くか\nどうかの設定です。",
+  "text.craftgr.config.option.hoverToExpand": "ホバー時に全部表示",
+  "text.craftgr.config.option.hoverToExpand.tooltip": "曲名等が入り切らないとき、マウスカーソルを\nオーバーレイに重ねて表示部分の幅を広げるか\nどうかの設定です。",
   "text.craftgr.config.option.hideAlbumArt": "アルバムカバー画像を隠す",
   "text.craftgr.config.option.hideAlbumArt.tooltip": "曲情報オーバーレイにアルバムの\nカバー画像を表示するかどうかの\n設定です。",
   "text.craftgr.config.option.overlayBgColor": "オーバーレイの背景色",

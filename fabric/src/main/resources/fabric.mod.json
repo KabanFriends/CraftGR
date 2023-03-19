@@ -23,9 +23,9 @@
       "io.github.kabanfriends.craftgr.fabric.config.ModMenuIntegration"
     ],
     "client": [
-      "io.github.kabanfriends.craftgr.fabric.events.KeybindEvents",
-      "io.github.kabanfriends.craftgr.fabric.events.OverlayEvents",
-      "io.github.kabanfriends.craftgr.fabric.events.LifecycleEvents"
+      "io.github.kabanfriends.craftgr.fabric.event.KeybindEvents",
+      "io.github.kabanfriends.craftgr.fabric.event.OverlayEvents",
+      "io.github.kabanfriends.craftgr.fabric.event.LifecycleEvents"
     ],
     "server": []
   },
@@ -37,7 +37,7 @@
     "fabric": "*",
     "minecraft": "1.19.x",
     "fabric-key-binding-api-v1": "*",
-    "cloth-config": ">=9.0.0"
+    "yet-another-config-lib": ">=2.3.0"
   },
   "custom": {
     "modmenu:clientsideOnly": true

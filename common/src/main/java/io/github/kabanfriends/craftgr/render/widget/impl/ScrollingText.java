@@ -3,7 +3,6 @@ package io.github.kabanfriends.craftgr.render.widget.impl;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.kabanfriends.craftgr.CraftGR;
-import io.github.kabanfriends.craftgr.config.GRConfig;
 import io.github.kabanfriends.craftgr.render.widget.UIWidget;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.network.chat.Component;
@@ -74,7 +73,7 @@ public class ScrollingText extends UIWidget {
 
     @Override
     public void render(PoseStack poseStack, int mouseX, int mouseY) {
-        float scale = GRConfig.<Float>getValue("overlayScale") * 2;
+        float scale = CraftGR.getConfig().<Float>getValue("overlayScale") * 2;
 
         int fontX = (int)getMovingX(x / 2f);
         int fontY = (int)y / 2;

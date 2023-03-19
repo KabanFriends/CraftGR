@@ -4,9 +4,9 @@ import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.kabanfriends.craftgr.CraftGR;
-import io.github.kabanfriends.craftgr.config.GRConfig;
 import io.github.kabanfriends.craftgr.handler.AudioPlayerHandler;
 import io.github.kabanfriends.craftgr.handler.SongHandler;
+import io.github.kabanfriends.craftgr.platform.Platform;
 import io.github.kabanfriends.craftgr.render.overlay.Overlay;
 import io.github.kabanfriends.craftgr.render.widget.impl.ScrollingText;
 import io.github.kabanfriends.craftgr.song.Song;
@@ -14,7 +14,6 @@ import io.github.kabanfriends.craftgr.util.HandlerState;
 import io.github.kabanfriends.craftgr.util.HttpUtil;
 import io.github.kabanfriends.craftgr.util.RenderUtil;
 import io.github.kabanfriends.craftgr.util.ResponseHolder;
-import me.shedaniel.clothconfig2.api.ConfigScreen;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -26,8 +25,6 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.logging.log4j.Level;
-import org.lwjgl.glfw.GLFW;
-import org.lwjgl.system.MemoryUtil;
 
 import java.awt.*;
 import java.io.InputStream;
@@ -81,7 +78,7 @@ public class SongInfoOverlay extends Overlay {
 
     @Override
     public void render(PoseStack poseStack, int mouseX, int mouseY) {
-        OverlayVisibility visibility = GRConfig.getValue("overlayVisibility");
+        OverlayVisibility visibility = CraftGR.getConfig().getValue("overlayVisibility");
 
         if (CraftGR.MC.screen == null) {
             if (visibility != SongInfoOverlay.OverlayVisibility.ALWAYS) return;
@@ -95,17 +92,17 @@ public class SongInfoOverlay extends Overlay {
         if (currentSong != null) {
             Font font = CraftGR.MC.font;
 
-            float scale = GRConfig.getValue("overlayScale");
+            float scale = CraftGR.getConfig().getValue("overlayScale");
 
             int albumArtWidth;
-            if (GRConfig.getValue("hideAlbumArt")) albumArtWidth = -ART_LEFT_PADDING;
+            if (CraftGR.getConfig().getValue("hideAlbumArt")) albumArtWidth = -ART_LEFT_PADDING;
             else albumArtWidth = ART_SIZE;
 
             float[] size = getOverlaySize();
             float width = size[0];
             float height = size[1];
 
-            float[] coord = getOverlayCoordinate(GRConfig.getValue("overlayPosition"), width, height);
+            float[] coord = getOverlayCoordinate(CraftGR.getConfig().getValue("overlayPosition"), width, height);
             int x = (int) coord[0];
             int y = (int) coord[1];
 
@@ -113,11 +110,11 @@ public class SongInfoOverlay extends Overlay {
             RenderUtil.setZLevelPre(poseStack, 400);
             poseStack.scale(RenderUtil.getUIScale(scale), RenderUtil.getUIScale(scale), RenderUtil.getUIScale(scale));
 
-            RenderUtil.fill(poseStack, x, y, x + width, y + ART_SIZE + ART_TOP_PADDING + ART_BOTTOM_PADDING, GRConfig.<Integer>getValue("overlayBgColor") + 0xFF000000, 0.6f);
+            RenderUtil.fill(poseStack, x, y, x + width, y + ART_SIZE + ART_TOP_PADDING + ART_BOTTOM_PADDING, CraftGR.getConfig().<Color>getValue("overlayBgColor").getRGB(), 0.6f);
 
             RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
 
-            if (!GRConfig.<Boolean>getValue("hideAlbumArt")) {
+            if (!CraftGR.getConfig().<Boolean>getValue("hideAlbumArt")) {
                 if (albumArtTexture == null) {
                     RenderUtil.bindTexture(ALBUM_ART_PLACEHOLDER);
                 } else {
@@ -143,8 +140,8 @@ public class SongInfoOverlay extends Overlay {
                     if (str != null) {
                         if (!expanded) {
                             int textWidth = font.width(str);
-                            if (textWidth > GRConfig.<Integer>getValue("overlayWidth")) {
-                                str = font.plainSubstrByWidth(str, GRConfig.<Integer>getValue("overlayWidth") - dotWidth);
+                            if (textWidth > CraftGR.getConfig().<Integer>getValue("overlayWidth")) {
+                                str = font.plainSubstrByWidth(str, CraftGR.getConfig().<Integer>getValue("overlayWidth") - dotWidth);
                                 if (!str.equals(strings[i])) {
                                     str += "...";
                                 }
@@ -170,8 +167,11 @@ public class SongInfoOverlay extends Overlay {
 
             poseStack.popPose();
 
+            int bgColor = CraftGR.getConfig().<Color>getValue("overlayBgColor").getRGB();
+            int barColor = CraftGR.getConfig().<Color>getValue("overlayBarColor").getRGB();
+
             if (currentSong.isIntermission()) {
-                RenderUtil.fill(poseStack, x, y + ART_SIZE + ART_TOP_PADDING + ART_BOTTOM_PADDING, x + width, y + height, GRConfig.<Integer>getValue("overlayBgColor") + 0xFF000000, 0.6f);
+                RenderUtil.fill(poseStack, x, y + ART_SIZE + ART_TOP_PADDING + ART_BOTTOM_PADDING, x + width, y + height, bgColor, 0.6f);
             } else {
                 long duration = currentSong.songEnd - currentSong.songStart;
                 long played = System.currentTimeMillis() / 1000L - SongHandler.getInstance().getSongStart();
@@ -182,8 +182,8 @@ public class SongInfoOverlay extends Overlay {
                 int timerWidth = font.width(getTimer((int) duration));
                 GuiComponent.drawString(poseStack, CraftGR.MC.font, getTimer((int) duration), x + (int) width - timerWidth - TIMER_RIGHT_PADDING, y + ART_TOP_PADDING + ART_SIZE + ART_TIMER_SPACE_HEIGHT, Color.WHITE.getRGB());
 
-                RenderUtil.fill(poseStack, x, y + ART_TOP_PADDING + ART_SIZE + ART_BOTTOM_PADDING, x + (float) played / duration * width, y + height, GRConfig.<Integer>getValue("overlayBarColor") + 0xFF000000, 0.6f);
-                RenderUtil.fill(poseStack, x + (float) played / duration * width, y + ART_TOP_PADDING + ART_SIZE + ART_BOTTOM_PADDING, x + width, y + height, GRConfig.<Integer>getValue("overlayBgColor") + 0xFF000000, 0.6f);
+                RenderUtil.fill(poseStack, x, y + ART_TOP_PADDING + ART_SIZE + ART_BOTTOM_PADDING, x + (float) played / duration * width, y + height, barColor, 0.6f);
+                RenderUtil.fill(poseStack, x + (float) played / duration * width, y + ART_TOP_PADDING + ART_SIZE + ART_BOTTOM_PADDING, x + width, y + height, bgColor, 0.6f);
             }
 
             songTitleText.setX(x + ART_LEFT_PADDING + albumArtWidth + ART_INFO_SPACE_WIDTH);
@@ -196,7 +196,7 @@ public class SongInfoOverlay extends Overlay {
             float mouseScaledX = mouseX / RenderUtil.getUIScale(scale);
             float mouseScaledY = mouseY / RenderUtil.getUIScale(scale);
 
-            if (mouseScaledX >= x && mouseScaledX <= x + width && mouseScaledY >= y && mouseScaledY <= y + height) {
+            if (CraftGR.getConfig().<Boolean>getValue("hoverToExpand") && (mouseScaledX >= x && mouseScaledX <= x + width && mouseScaledY >= y && mouseScaledY <= y + height)) {
                 if (!expanded) {
                     expanded = true;
                     updateScrollWidth();
@@ -220,20 +220,20 @@ public class SongInfoOverlay extends Overlay {
         if (CraftGR.getPlatform().isInModMenu()) return true;
 
         if (CraftGR.getPlatform().isModLoaded("cloth-config") || CraftGR.getPlatform().isModLoaded("cloth_config")) {
-            if (CraftGR.MC.screen instanceof ConfigScreen) return true;
+            if (CraftGR.getPlatform().isInConfigScreen()) return true;
         }
 
-        OverlayVisibility visibility = GRConfig.getValue("overlayVisibility");
+        OverlayVisibility visibility = CraftGR.getConfig().getValue("overlayVisibility");
 
         if (visibility == OverlayVisibility.NONE) return true;
         if (visibility == OverlayVisibility.CHAT && !(CraftGR.MC.screen instanceof ChatScreen)) return true;
 
         Song currentSong = SongHandler.getInstance().getCurrentSong();
 
-        if (currentSong != null && GRConfig.<Boolean>getValue("openAlbum")) {
+        if (currentSong != null && CraftGR.getConfig().<Boolean>getValue("openAlbum")) {
             if (currentSong.isIntermission()) return true;
 
-            float scale = GRConfig.getValue("overlayScale");
+            float scale = CraftGR.getConfig().getValue("overlayScale");
 
             float scaledX = mouseX / RenderUtil.getUIScale(scale);
             float scaledY = mouseY / RenderUtil.getUIScale(scale);
@@ -242,7 +242,7 @@ public class SongInfoOverlay extends Overlay {
             float width = size[0];
             float height = size[1];
 
-            float[] coord = getOverlayCoordinate(GRConfig.getValue("overlayPosition"), width, height);
+            float[] coord = getOverlayCoordinate(CraftGR.getConfig().getValue("overlayPosition"), width, height);
             int x = (int) coord[0];
             int y = (int) coord[1];
 
@@ -262,25 +262,32 @@ public class SongInfoOverlay extends Overlay {
     }
 
     private float[] getOverlayCoordinate(OverlayPosition position, float width, float height) {
-        float offset = 10 / GRConfig.<Float>getValue("overlayScale");
-        float x = CraftGR.MC.getWindow().getWidth() / GRConfig.<Float>getValue("overlayScale") - width - offset;
-        float y = CraftGR.MC.getWindow().getHeight() / GRConfig.<Float>getValue("overlayScale") - height - offset;
+        float offset = 10 / CraftGR.getConfig().<Float>getValue("overlayScale");
+        float x = CraftGR.MC.getWindow().getWidth() / CraftGR.getConfig().<Float>getValue("overlayScale") - width - offset;
+        float y = CraftGR.MC.getWindow().getHeight() / CraftGR.getConfig().<Float>getValue("overlayScale") - height - offset;
+
+        Platform platform = CraftGR.getPlatform();
+        if (platform.getPlatformType() == Platform.PlatformType.FABRIC && platform.hasConfigMod() && platform.isInConfigScreen()) {
+            float overlayScale = CraftGR.getConfig().<Float>getValue("overlayScale");
+            float guiScale = (float)CraftGR.MC.getWindow().getGuiScale();
+            return new float[] {guiScale * 8 / overlayScale, guiScale * 32 / overlayScale};
+        }
 
         switch (position) {
             case TOP_RIGHT:
-                return new float[]{x, offset};
+                return new float[] {x, offset};
             case BOTTOM_LEFT:
-                return new float[]{offset, y};
+                return new float[] {offset, y};
             case BOTTOM_RIGHT:
-                return new float[]{x, y};
+                return new float[] {x, y};
             default:
-                return new float[]{offset, offset};
+                return new float[] {offset, offset};
         }
     }
 
     private float[] getOverlaySize() {
         int albumArtWidth;
-        if (GRConfig.getValue("hideAlbumArt")) albumArtWidth = -ART_LEFT_PADDING;
+        if (CraftGR.getConfig().getValue("hideAlbumArt")) albumArtWidth = -ART_LEFT_PADDING;
         else albumArtWidth = ART_SIZE;
 
         float width;
@@ -289,13 +296,13 @@ public class SongInfoOverlay extends Overlay {
         if (expanded) {
             int maxWidth = getMaxTextWidth();
 
-            if (GRConfig.<Integer>getValue("overlayWidth") > maxWidth) {
-                maxWidth = GRConfig.getValue("overlayWidth");
+            if (CraftGR.getConfig().<Integer>getValue("overlayWidth") > maxWidth) {
+                maxWidth = CraftGR.getConfig().getValue("overlayWidth");
             }
 
             width = ART_LEFT_PADDING + albumArtWidth + ART_INFO_SPACE_WIDTH + maxWidth * 2 + INFO_RIGHT_PADDING;
         } else {
-            width = ART_LEFT_PADDING + albumArtWidth + ART_INFO_SPACE_WIDTH + GRConfig.<Integer>getValue("overlayWidth") * 2 + INFO_RIGHT_PADDING;
+            width = ART_LEFT_PADDING + albumArtWidth + ART_INFO_SPACE_WIDTH + CraftGR.getConfig().<Integer>getValue("overlayWidth") * 2 + INFO_RIGHT_PADDING;
         }
 
         return new float[]{width, height};
@@ -334,12 +341,12 @@ public class SongInfoOverlay extends Overlay {
     }
 
     public void updateScrollWidth() {
-        int width = GRConfig.getValue("overlayWidth");
+        int width = CraftGR.getConfig().getValue("overlayWidth");
         if (expanded) {
             width = getMaxTextWidth();
 
-            if (GRConfig.<Integer>getValue("overlayWidth") > width) {
-                width = GRConfig.getValue("overlayWidth");
+            if (CraftGR.getConfig().<Integer>getValue("overlayWidth") > width) {
+                width = CraftGR.getConfig().getValue("overlayWidth");
             }
         }
         if (muted) {
@@ -355,7 +362,7 @@ public class SongInfoOverlay extends Overlay {
             return;
         }
 
-        String url = GRConfig.getValue("urlAlbumArt") + song.albumArt;
+        String url = CraftGR.getConfig().getValue("urlAlbumArt") + song.albumArt;
 
         CraftGR.EXECUTOR.submit(() -> {
             int tries = 0;

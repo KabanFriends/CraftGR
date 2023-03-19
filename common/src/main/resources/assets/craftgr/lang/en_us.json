@@ -26,6 +26,8 @@
   "text.craftgr.config.option.overlayPosition.BOTTOM_RIGHT": "Bottom right",
   "text.craftgr.config.option.openAlbum": "Click Overlay to Open Album Info",
   "text.craftgr.config.option.openAlbum.tooltip": "Whether to open the album info webpage\nor not when clicking the song overlay.",
+  "text.craftgr.config.option.hoverToExpand": "Hover Song Info To Expand",
+  "text.craftgr.config.option.hoverToExpand.tooltip": "Whether to expand the overlay width\nto show the full song info when hovered\nwith the mouse cursor.",
   "text.craftgr.config.option.hideAlbumArt": "Hide Album Cover",
   "text.craftgr.config.option.hideAlbumArt.tooltip": "Whether to hide the album cover image\nor not in the song info overlay.",
   "text.craftgr.config.option.overlayBgColor": "Overlay Background Color",

@@ -1,7 +1,6 @@
 package io.github.kabanfriends.craftgr.audio;
 
 import io.github.kabanfriends.craftgr.CraftGR;
-import io.github.kabanfriends.craftgr.config.GRConfig;
 import io.github.kabanfriends.craftgr.util.ProcessResult;
 import javazoom.jl.decoder.*;
 import net.minecraft.sounds.SoundSource;
@@ -49,14 +48,14 @@ public class AudioPlayer {
             AL10.alSourcei(this.source.get(0), AL10.AL_LOOPING, AL10.AL_FALSE);
             AL10.alSourcef(this.source.get(0), AL10.AL_PITCH, 1.0f);
 
-            AL10.alSourcef(this.source.get(0), AL10.AL_GAIN, this.volume * (GRConfig.<Integer>getValue("volume") / 100f) * CraftGR.MC.options.getSoundSourceVolume(SoundSource.MASTER));
+            AL10.alSourcef(this.source.get(0), AL10.AL_GAIN, this.volume * (CraftGR.getConfig().<Integer>getValue("volume") / 100f) * CraftGR.MC.options.getSoundSourceVolume(SoundSource.MASTER));
             alError();
 
             this.playing = true;
             ProcessResult result = ProcessResult.SUCCESS;
 
             while (this.playing && result == ProcessResult.SUCCESS) {
-                AL10.alSourcef(this.source.get(0), AL10.AL_GAIN, this.volume * (GRConfig.<Integer>getValue("volume") / 100f) * CraftGR.MC.options.getSoundSourceVolume(SoundSource.MASTER));
+                AL10.alSourcef(this.source.get(0), AL10.AL_GAIN, this.volume * (CraftGR.getConfig().<Integer>getValue("volume") / 100f) * CraftGR.MC.options.getSoundSourceVolume(SoundSource.MASTER));
                 result = decodeFrame();
             }
 
@@ -147,7 +146,7 @@ public class AudioPlayer {
     public void setVolume(float f) {
         this.volume = f;
         if (this.playing && this.source != null) {
-            float volume = f * (GRConfig.<Integer>getValue("volume") / 100f) * CraftGR.MC.options.getSoundSourceVolume(SoundSource.MASTER);
+            float volume = f * (CraftGR.getConfig().<Integer>getValue("volume") / 100f) * CraftGR.MC.options.getSoundSourceVolume(SoundSource.MASTER);
             AL10.alSourcef(this.source.get(0), AL10.AL_GAIN, volume);
         }
     }
