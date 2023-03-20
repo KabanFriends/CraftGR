@@ -29,7 +29,7 @@ public class ForgePlatform extends Platform {
     }
 
     public boolean isInConfigScreen() {
-        if (isModLoaded("cloth-config") || isModLoaded("cloth_config")) {
+        if (!isModLoaded("cloth-config") && !isModLoaded("cloth_config")) {
             return false;
         }
         if (CraftGR.MC.screen instanceof ConfigScreen) {

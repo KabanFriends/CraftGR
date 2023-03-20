@@ -36,7 +36,7 @@ public class FabricPlatform extends Platform {
     }
 
     public boolean isInConfigScreen() {
-        if (isModLoaded("yet-another-config-lib")) {
+        if (!isModLoaded("yet-another-config-lib")) {
             return false;
         }
         if (CraftGR.MC.screen instanceof RequireRestartScreen) {
