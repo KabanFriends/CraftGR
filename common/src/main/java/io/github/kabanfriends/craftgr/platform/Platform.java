@@ -24,8 +24,6 @@ public abstract class Platform {
 
     public abstract void openConfigScreen();
 
-    public abstract boolean hasConfigMod();
-
     public abstract boolean isInConfigScreen();
 
     public enum PlatformType {

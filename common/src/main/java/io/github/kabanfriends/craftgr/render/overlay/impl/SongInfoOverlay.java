@@ -217,11 +217,7 @@ public class SongInfoOverlay extends Overlay {
         if (CraftGR.MC.screen instanceof ConnectScreen) return true;
         if (CraftGR.MC.screen instanceof GenericDirtMessageScreen) return true;
 
-        if (CraftGR.getPlatform().isInModMenu()) return true;
-
-        if (CraftGR.getPlatform().isModLoaded("cloth-config") || CraftGR.getPlatform().isModLoaded("cloth_config")) {
-            if (CraftGR.getPlatform().isInConfigScreen()) return true;
-        }
+        if (CraftGR.getPlatform().isInModMenu() || CraftGR.getPlatform().isInConfigScreen()) return true;
 
         OverlayVisibility visibility = CraftGR.getConfig().getValue("overlayVisibility");
 
@@ -267,7 +263,7 @@ public class SongInfoOverlay extends Overlay {
         float y = CraftGR.MC.getWindow().getHeight() / CraftGR.getConfig().<Float>getValue("overlayScale") - height - offset;
 
         Platform platform = CraftGR.getPlatform();
-        if (platform.getPlatformType() == Platform.PlatformType.FABRIC && platform.hasConfigMod() && platform.isInConfigScreen()) {
+        if (platform.getPlatformType() == Platform.PlatformType.FABRIC && platform.isInConfigScreen()) {
             float overlayScale = CraftGR.getConfig().<Float>getValue("overlayScale");
             float guiScale = (float)CraftGR.MC.getWindow().getGuiScale();
             return new float[] {guiScale * 8 / overlayScale, guiScale * 32 / overlayScale};

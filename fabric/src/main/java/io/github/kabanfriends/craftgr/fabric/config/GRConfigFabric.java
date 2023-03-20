@@ -13,13 +13,17 @@ import net.minecraft.network.chat.Component;
 
 public class GRConfigFabric extends GRConfig {
 
+    public static final String TITLE_KEY = "text.craftgr.config.title";
+
     @Override
     public Screen getConfigScreen(Screen parent) {
+        Component title = Component.translatable(TITLE_KEY);
+
         YetAnotherConfigLib.Builder config = YetAnotherConfigLib.createBuilder();
-        config.title(Component.translatable("text.craftgr.config.title"));
+        config.title(title);
 
         ConfigCategory.Builder category = ConfigCategory.createBuilder();
-        category.name(Component.translatable("text.craftgr.config.title"));
+        category.name(title);
 
         for (GRConfigCategory grc : GRConfigOptions.categories) {
             OptionGroup.Builder group = OptionGroup.createBuilder();

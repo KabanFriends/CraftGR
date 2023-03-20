@@ -28,14 +28,10 @@ public class ForgePlatform extends Platform {
         CraftGR.MC.setScreen(CraftGR.getConfig().getConfigScreen(CraftGR.MC.screen));
     }
 
-    public boolean hasConfigMod() {
-        if (isModLoaded("cloth-config") || isModLoaded("cloth_config")) {
-            return true;
-        }
-        return false;
-    }
-
     public boolean isInConfigScreen() {
+        if (isModLoaded("cloth-config") || isModLoaded("cloth_config")) {
+            return false;
+        }
         if (CraftGR.MC.screen instanceof ConfigScreen) {
             return true;
         }

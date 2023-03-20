@@ -4,8 +4,11 @@ import com.terraformersmc.modmenu.gui.ModsScreen;
 import dev.isxander.yacl.gui.RequireRestartScreen;
 import dev.isxander.yacl.gui.YACLScreen;
 import io.github.kabanfriends.craftgr.CraftGR;
+import io.github.kabanfriends.craftgr.fabric.config.GRConfigFabric;
 import io.github.kabanfriends.craftgr.platform.Platform;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.network.chat.ComponentContents;
+import net.minecraft.network.chat.contents.TranslatableContents;
 
 public class FabricPlatform extends Platform {
 
@@ -32,16 +35,20 @@ public class FabricPlatform extends Platform {
         CraftGR.MC.setScreen(CraftGR.getConfig().getConfigScreen(CraftGR.MC.screen));
     }
 
-    public boolean hasConfigMod() {
+    public boolean isInConfigScreen() {
         if (isModLoaded("yet-another-config-lib")) {
+            return false;
+        }
+        if (CraftGR.MC.screen instanceof RequireRestartScreen) {
             return true;
         }
-        return false;
-    }
-
-    public boolean isInConfigScreen() {
-        if (CraftGR.MC.screen instanceof YACLScreen || CraftGR.MC.screen instanceof RequireRestartScreen) {
-            return true;
+        if (CraftGR.MC.screen instanceof YACLScreen screen) {
+            ComponentContents contents = screen.config.title().getContents();
+            if (contents instanceof TranslatableContents translatable) {
+                if (translatable.getKey().equals(GRConfigFabric.TITLE_KEY)) {
+                    return true;
+                }
+            }
         }
         return false;
     }
