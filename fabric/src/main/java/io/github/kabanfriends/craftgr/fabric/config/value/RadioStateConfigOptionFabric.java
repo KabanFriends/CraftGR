@@ -34,7 +34,7 @@ public class RadioStateConfigOptionFabric extends RadioStateConfigOption impleme
                         });
                     }
                 })
-                .binding(false, RadioStateConfigOptionFabric::getToggleState, (value) -> {})
+                .binding(true, RadioStateConfigOptionFabric::getToggleState, (value) -> {})
                 .controller(TickBoxController::new)
                 .build();
     }
