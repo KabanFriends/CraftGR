@@ -266,7 +266,7 @@ public class SongInfoOverlay extends Overlay {
         if (platform.getPlatformType() == Platform.PlatformType.FABRIC && platform.isInConfigScreen()) {
             float overlayScale = CraftGR.getConfig().<Float>getValue("overlayScale");
             float guiScale = (float)CraftGR.MC.getWindow().getGuiScale();
-            return new float[] {guiScale * 8 / overlayScale, guiScale * 32 / overlayScale};
+            return new float[] {guiScale * 8 / overlayScale, guiScale * 28 / overlayScale};
         }
 
         switch (position) {
