@@ -1,6 +1,6 @@
 package io.github.kabanfriends.craftgr.render.widget;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 
 public abstract class UIWidget {
 
@@ -28,5 +28,5 @@ public abstract class UIWidget {
         this.y = y;
     }
 
-    public abstract void render(PoseStack poseStack, int mouseX, int mouseY);
+    public abstract void render(GuiGraphics graphics, int mouseX, int mouseY);
 }

@@ -1,6 +1,5 @@
 package io.github.kabanfriends.craftgr.mixin;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.serialization.Codec;
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.config.GRConfig;
@@ -53,7 +52,7 @@ public class MixinSoundOptionsScreen extends MixinOptionsSubScreen implements So
     }
 
     @Inject(method = "init()V", at = @At("RETURN"))
-    private void init(CallbackInfo ci) {
+    private void craftgr$initSoundOptionsScreen(CallbackInfo ci) {
         PLAYBACK_VOLUME.set(GRConfig.<Integer>getValue("volume") / 100.0D);
 
         volumeSlider = PLAYBACK_VOLUME.createButton(CraftGR.MC.options, this.width / 2 - 155 + 160, this.height / 6 - 12 + 22 * (11 >> 1), 150 - 24);
@@ -66,7 +65,7 @@ public class MixinSoundOptionsScreen extends MixinOptionsSubScreen implements So
     }
 
     @Override
-    public void saveConfig(CallbackInfo ci) {
+    public void craftgr$saveConfig(CallbackInfo ci) {
         GRConfig.save();
     }
 

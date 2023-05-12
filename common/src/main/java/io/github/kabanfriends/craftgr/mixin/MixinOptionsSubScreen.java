@@ -16,7 +16,7 @@ public class MixinOptionsSubScreen extends Screen {
     }
 
     @Inject(method = "removed()V", at = @At("RETURN"))
-    public void saveConfig(CallbackInfo ci) {
+    public void craftgr$saveConfig(CallbackInfo ci) {
     }
 
 }

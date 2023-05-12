@@ -1,10 +1,10 @@
 package io.github.kabanfriends.craftgr.mixin;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.handler.AudioPlayerHandler;
 import io.github.kabanfriends.craftgr.util.HandlerState;
 import net.minecraft.Util;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.util.Mth;
 import org.spongepowered.asm.mixin.Mixin;
@@ -18,7 +18,7 @@ public class MixinTitleScreen {
     private static long musicFadeStart;
 
     @Inject(method = "removed", at = @At("HEAD"))
-    private void onClose(CallbackInfo info) {
+    private void craftgr$onTitleClose(CallbackInfo info) {
         musicFadeStart = 1L;
         AudioPlayerHandler handler = AudioPlayerHandler.getInstance();
 
@@ -31,7 +31,7 @@ public class MixinTitleScreen {
     }
 
     @Inject(method = "render", at = @At("HEAD"))
-    private void onRender(PoseStack poseStack, int mouseX, int mouseY, float delta, CallbackInfo ci) {
+    private void craftgr$onTitleRender(GuiGraphics graphics, int mouseX, int mouseY, float delta, CallbackInfo ci) {
         AudioPlayerHandler handler = AudioPlayerHandler.getInstance();
 
         //Initialize audio player
@@ -60,8 +60,8 @@ public class MixinTitleScreen {
         }
     }
 
-    @Inject(method = "render", at = @At(value="INVOKE", target = "Lnet/minecraft/client/gui/screens/Screen;render(Lcom/mojang/blaze3d/vertex/PoseStack;IIF)V"))
-    public void onRenderScreen(PoseStack poseStack, int i, int j, float f, CallbackInfo ci) {
+    @Inject(method = "render", at = @At(value="INVOKE", target = "Lnet/minecraft/client/gui/screens/Screen;render(Lnet/minecraft/client/gui/GuiGraphics;IIF)V"))
+    public void craftgr$onRenderScreen(GuiGraphics graphics, int i, int j, float f, CallbackInfo ci) {
         //Start rendering the song overlay
         if (!CraftGR.renderSongOverlay) {
             CraftGR.renderSongOverlay = true;

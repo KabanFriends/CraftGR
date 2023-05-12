@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MixinSoundEngine {
 
     @Inject(method = "reload()V", at = @At("HEAD"))
-    public void stopAudio(CallbackInfo ci) {
+    public void craftgr$stopAudio(CallbackInfo ci) {
         AudioPlayerHandler handler = AudioPlayerHandler.getInstance();
 
         if (handler.getState() == HandlerState.ACTIVE) {
@@ -22,7 +22,7 @@ public class MixinSoundEngine {
     }
 
     @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/sounds/SoundBufferLibrary;preload(Ljava/util/Collection;)Ljava/util/concurrent/CompletableFuture;", shift = At.Shift.AFTER), method = "loadLibrary()V")
-    public void startAudio(CallbackInfo ci) {
+    public void craftgr$startAudio(CallbackInfo ci) {
         AudioPlayerHandler handler = AudioPlayerHandler.getInstance();
 
         if (handler.getState() == HandlerState.RELOADING) {

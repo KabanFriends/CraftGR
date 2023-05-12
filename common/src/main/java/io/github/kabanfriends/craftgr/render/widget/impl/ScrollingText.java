@@ -5,7 +5,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.config.GRConfig;
 import io.github.kabanfriends.craftgr.render.widget.UIWidget;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 
 import java.awt.*;
@@ -73,7 +73,7 @@ public class ScrollingText extends UIWidget {
     }
 
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY) {
+    public void render(GuiGraphics graphics, int mouseX, int mouseY) {
         float scale = GRConfig.<Float>getValue("overlayScale") * 2;
 
         int fontX = (int)getMovingX(x / 2f);
@@ -85,8 +85,11 @@ public class ScrollingText extends UIWidget {
         int scissorW = (int)(width * scale);
         int scissorH = (int)(CraftGR.MC.font.lineHeight * scale);
 
+        PoseStack poseStack = graphics.pose();
+
         RenderSystem.enableScissor(scissorX, (CraftGR.MC.getWindow().getHeight() - scissorY - scissorH), scissorW, scissorH);
 
+        // Debugging code
         /*
         poseStack.pushPose();
         poseStack.last().pose().setIdentity();
@@ -96,7 +99,7 @@ public class ScrollingText extends UIWidget {
 
         poseStack.pushPose();
         poseStack.scale(2, 2, 2);
-        GuiComponent.drawString(poseStack, CraftGR.MC.font, component, fontX, fontY, Color.WHITE.getRGB());
+        graphics.drawString(CraftGR.MC.font, component, fontX, fontY, Color.WHITE.getRGB());
         poseStack.popPose();
 
         RenderSystem.disableScissor();

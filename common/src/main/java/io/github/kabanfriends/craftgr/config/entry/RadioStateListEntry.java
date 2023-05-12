@@ -61,8 +61,10 @@ public class RadioStateListEntry extends TooltipListEntry {
         throw new UnsupportedOperationException("Cannot get default value of a RadioStateListEntry!");
     }
 
+    //TODO: Update to GuiGraphics
     @Override
     public void render(PoseStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean isHovered, float delta) {
+        /*
         super.render(matrices, index, y, x, entryWidth, entryHeight, mouseX, mouseY, isHovered, delta);
         Window window = Minecraft.getInstance().getWindow();
         this.buttonWidget.active = isEditable() && isButtonActive();
@@ -76,6 +78,7 @@ public class RadioStateListEntry extends TooltipListEntry {
             Minecraft.getInstance().font.drawShadow(matrices, displayedFieldName.getVisualOrderText(), x, y + 6, getPreferredTextColor());
         }
         buttonWidget.render(matrices, mouseX, mouseY, delta);
+        */
     }
 
     @Override

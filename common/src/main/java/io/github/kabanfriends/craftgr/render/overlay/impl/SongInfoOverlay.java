@@ -18,7 +18,7 @@ import me.shedaniel.clothconfig2.api.ConfigScreen;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.*;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.network.chat.Component;
@@ -26,8 +26,6 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.logging.log4j.Level;
-import org.lwjgl.glfw.GLFW;
-import org.lwjgl.system.MemoryUtil;
 
 import java.awt.*;
 import java.io.InputStream;
@@ -80,7 +78,7 @@ public class SongInfoOverlay extends Overlay {
     }
 
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY) {
+    public void render(GuiGraphics graphics, int mouseX, int mouseY) {
         OverlayVisibility visibility = GRConfig.getValue("overlayVisibility");
 
         if (CraftGR.MC.screen == null) {
@@ -110,6 +108,8 @@ public class SongInfoOverlay extends Overlay {
             int y = (int) coord[1];
 
             //Rendering
+            PoseStack poseStack = graphics.pose();
+
             RenderUtil.setZLevelPre(poseStack, 400);
             poseStack.scale(RenderUtil.getUIScale(scale), RenderUtil.getUIScale(scale), RenderUtil.getUIScale(scale));
 
@@ -118,12 +118,7 @@ public class SongInfoOverlay extends Overlay {
             RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
 
             if (!GRConfig.<Boolean>getValue("hideAlbumArt")) {
-                if (albumArtTexture == null) {
-                    RenderUtil.bindTexture(ALBUM_ART_PLACEHOLDER);
-                } else {
-                    RenderUtil.bindTexture(albumArtTexture);
-                }
-                GuiComponent.blit(poseStack, x + ART_LEFT_PADDING, y + ART_TOP_PADDING, 0f, 0f, ART_SIZE, ART_SIZE, ART_SIZE, ART_SIZE);
+                graphics.blit(albumArtTexture == null ? ALBUM_ART_PLACEHOLDER : albumArtTexture, x + ART_LEFT_PADDING, y + ART_TOP_PADDING, 0f, 0f, ART_SIZE, ART_SIZE, ART_SIZE, ART_SIZE);
             }
 
             poseStack.pushPose();
@@ -151,7 +146,7 @@ public class SongInfoOverlay extends Overlay {
                             }
                         }
 
-                        GuiComponent.drawString(poseStack, CraftGR.MC.font, str, (x + ART_LEFT_PADDING + ART_INFO_SPACE_WIDTH + albumArtWidth) / 2, (y + INFO_TOP_PADDING + (i > 0 ? YEAR_ARTIST_SPACE_HEIGHT : 0) + INFO_LINE_HEIGHT * (i + 1)) / 2, Color.LIGHT_GRAY.getRGB());
+                        graphics.drawString(CraftGR.MC.font, str, (x + ART_LEFT_PADDING + ART_INFO_SPACE_WIDTH + albumArtWidth) / 2, (y + INFO_TOP_PADDING + (i > 0 ? YEAR_ARTIST_SPACE_HEIGHT : 0) + INFO_LINE_HEIGHT * (i + 1)) / 2, Color.LIGHT_GRAY.getRGB());
                     }
                 }
             }
@@ -162,7 +157,7 @@ public class SongInfoOverlay extends Overlay {
                     muted = true;
                     updateScrollWidth();
                 }
-                GuiComponent.drawString(poseStack, CraftGR.MC.font, AUDIO_MUTED_ICON, (x + (int)width - MUTED_ICON_RIGHT_PADDING - MUTED_ICON_SIZE) / 2, (y + MUTED_ICON_TOP_PADDING) / 2, Color.WHITE.getRGB());
+                graphics.drawString(CraftGR.MC.font, AUDIO_MUTED_ICON, (x + (int)width - MUTED_ICON_RIGHT_PADDING - MUTED_ICON_SIZE) / 2, (y + MUTED_ICON_TOP_PADDING) / 2, Color.WHITE.getRGB());
             } else if (muted) {
                 muted = false;
                 updateScrollWidth();
@@ -177,10 +172,10 @@ public class SongInfoOverlay extends Overlay {
                 long played = System.currentTimeMillis() / 1000L - SongHandler.getInstance().getSongStart();
                 if (played > duration) played = duration;
 
-                GuiComponent.drawString(poseStack, CraftGR.MC.font, getTimer((int) played), x + ART_LEFT_PADDING, y + ART_TOP_PADDING + ART_SIZE + ART_TIMER_SPACE_HEIGHT, Color.WHITE.getRGB());
+                graphics.drawString(CraftGR.MC.font, getTimer((int) played), x + ART_LEFT_PADDING, y + ART_TOP_PADDING + ART_SIZE + ART_TIMER_SPACE_HEIGHT, Color.WHITE.getRGB());
 
                 int timerWidth = font.width(getTimer((int) duration));
-                GuiComponent.drawString(poseStack, CraftGR.MC.font, getTimer((int) duration), x + (int) width - timerWidth - TIMER_RIGHT_PADDING, y + ART_TOP_PADDING + ART_SIZE + ART_TIMER_SPACE_HEIGHT, Color.WHITE.getRGB());
+                graphics.drawString(CraftGR.MC.font, getTimer((int) duration), x + (int) width - timerWidth - TIMER_RIGHT_PADDING, y + ART_TOP_PADDING + ART_SIZE + ART_TIMER_SPACE_HEIGHT, Color.WHITE.getRGB());
 
                 RenderUtil.fill(poseStack, x, y + ART_TOP_PADDING + ART_SIZE + ART_BOTTOM_PADDING, x + (float) played / duration * width, y + height, GRConfig.<Integer>getValue("overlayBarColor") + 0xFF000000, 0.6f);
                 RenderUtil.fill(poseStack, x + (float) played / duration * width, y + ART_TOP_PADDING + ART_SIZE + ART_BOTTOM_PADDING, x + width, y + height, GRConfig.<Integer>getValue("overlayBgColor") + 0xFF000000, 0.6f);
@@ -188,7 +183,7 @@ public class SongInfoOverlay extends Overlay {
 
             songTitleText.setX(x + ART_LEFT_PADDING + albumArtWidth + ART_INFO_SPACE_WIDTH);
             songTitleText.setY(y + INFO_TOP_PADDING);
-            songTitleText.render(poseStack, mouseX, mouseY);
+            songTitleText.render(graphics, mouseX, mouseY);
 
             RenderUtil.setZLevelPost(poseStack);
 
