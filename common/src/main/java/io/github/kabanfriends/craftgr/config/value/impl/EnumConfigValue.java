@@ -43,7 +43,7 @@ public class EnumConfigValue extends GRConfigValue<Enum> {
         if (value instanceof Enum e) {
             super.setValue(e);
         } else if (value instanceof ConfigEnumHolder holder) {
-            super.setValue(holder.getValue());
+            super.setValue(holder.value());
         }
     }
 
@@ -58,7 +58,7 @@ public class EnumConfigValue extends GRConfigValue<Enum> {
 
     public SelectorBuilder getBuilder(ConfigEntryBuilder builder) {
         SelectorBuilder field = builder.startSelector(Component.translatable("text.craftgr.config.option." + getKey()), holders, holderByName.get(getValue().name()))
-                .setNameProvider(ConfigEnumHolder::getTitle);
+                .setNameProvider(ConfigEnumHolder::title);
         field.setDefaultValue(defaultHolder);
         return field;
     }
