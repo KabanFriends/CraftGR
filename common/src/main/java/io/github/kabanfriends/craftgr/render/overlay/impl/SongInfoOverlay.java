@@ -3,6 +3,7 @@ package io.github.kabanfriends.craftgr.render.overlay.impl;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import dev.isxander.yacl.gui.YACLScreen;
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.config.GRConfig;
 import io.github.kabanfriends.craftgr.handler.AudioPlayerHandler;
@@ -14,7 +15,6 @@ import io.github.kabanfriends.craftgr.util.HandlerState;
 import io.github.kabanfriends.craftgr.util.HttpUtil;
 import io.github.kabanfriends.craftgr.util.RenderUtil;
 import io.github.kabanfriends.craftgr.util.ResponseHolder;
-import me.shedaniel.clothconfig2.api.ConfigScreen;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -220,7 +220,7 @@ public class SongInfoOverlay extends Overlay {
         if (CraftGR.getPlatform().isInModMenu()) return true;
 
         if (CraftGR.getPlatform().isModLoaded("cloth-config") || CraftGR.getPlatform().isModLoaded("cloth_config")) {
-            if (CraftGR.MC.screen instanceof ConfigScreen) return true;
+            if (CraftGR.MC.screen instanceof YACLScreen) return true;
         }
 
         OverlayVisibility visibility = GRConfig.getValue("overlayVisibility");
@@ -265,6 +265,12 @@ public class SongInfoOverlay extends Overlay {
         float offset = 10 / GRConfig.<Float>getValue("overlayScale");
         float x = CraftGR.MC.getWindow().getWidth() / GRConfig.<Float>getValue("overlayScale") - width - offset;
         float y = CraftGR.MC.getWindow().getHeight() / GRConfig.<Float>getValue("overlayScale") - height - offset;
+
+        if (CraftGR.MC.screen instanceof YACLScreen) {
+            float overlayScale = GRConfig.<Float>getValue("overlayScale");
+            float guiScale = (float)CraftGR.MC.getWindow().getGuiScale();
+            return new float[] {guiScale * 8 / overlayScale, guiScale * 28 / overlayScale};
+        }
 
         switch (position) {
             case TOP_RIGHT:

@@ -2,20 +2,19 @@ package io.github.kabanfriends.craftgr.config;
 
 import com.google.gson.*;
 import com.google.gson.stream.JsonWriter;
+import dev.isxander.yacl.api.ConfigCategory;
+import dev.isxander.yacl.api.OptionGroup;
+import dev.isxander.yacl.api.YetAnotherConfigLib;
 import io.github.kabanfriends.craftgr.CraftGR;
-import io.github.kabanfriends.craftgr.config.entry.builder.RadioStateBuilder;
-import io.github.kabanfriends.craftgr.config.value.GRConfigValue;
-import io.github.kabanfriends.craftgr.config.value.impl.*;
-import io.github.kabanfriends.craftgr.config.value.impl.EnumConfigValue;
+import io.github.kabanfriends.craftgr.config.entry.GRConfigEntry;
+import io.github.kabanfriends.craftgr.config.entry.impl.*;
+import io.github.kabanfriends.craftgr.config.entry.impl.EnumConfigEntry;
 import io.github.kabanfriends.craftgr.render.overlay.impl.SongInfoOverlay;
-import me.shedaniel.clothconfig2.api.ConfigBuilder;
-import me.shedaniel.clothconfig2.api.ConfigCategory;
-import me.shedaniel.clothconfig2.impl.builders.AbstractFieldBuilder;
-import me.shedaniel.clothconfig2.impl.builders.SubCategoryBuilder;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import org.apache.logging.log4j.Level;
 
+import java.awt.*;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -29,57 +28,59 @@ public class GRConfig {
     private static final Path CONFIG_DIR_PATH = Path.of("config");
     private static final Path CONFIG_FILE_PATH = Path.of("config", "craftgr.json");
 
+    public static final String TITLE_KEY = "text.craftgr.config.title";
+
     private static JsonObject configJson;
-    private static Map<String, GRConfigValue> configMap = new HashMap<>();
+    private static Map<String, GRConfigEntry> configMap = new HashMap<>();
 
     private static final GRConfigCategory[] categories = {
             new GRConfigCategory(Component.translatable("text.craftgr.config.category.playback"), false,
-                    new RadioStateConfigValue("playback"),
-                    new PercentageConfigValue("volume", 50)
+                    new RadioStateConfigEntry("playback"),
+                    new PercentageConfigEntry("volume", 50)
             ),
             new GRConfigCategory(Component.translatable("text.craftgr.config.category.overlay"), false,
-                    new EnumConfigValue("overlayVisibility", SongInfoOverlay.OverlayVisibility.MENU),
-                    new EnumConfigValue("overlayPosition", SongInfoOverlay.OverlayPosition.TOP_RIGHT),
-                    new BooleanConfigValue("hideAlbumArt", false),
-                    new BooleanConfigValue("openAlbum", true),
-                    new OverlayWidthConfigValue("overlayWidth", 115),
-                    new FloatConfigValue("overlayScale", 1.0f),
-                    new ColorConfigValue("overlayBgColor", 0x632279),
-                    new ColorConfigValue("overlayBarColor", 0xA096AE)
+                    new EnumConfigEntry("overlayVisibility", SongInfoOverlay.OverlayVisibility.MENU),
+                    new EnumConfigEntry("overlayPosition", SongInfoOverlay.OverlayPosition.TOP_RIGHT),
+                    new BooleanConfigEntry("hideAlbumArt", false),
+                    new BooleanConfigEntry("openAlbum", true),
+                    new OverlayWidthConfigEntry("overlayWidth", 115),
+                    new FloatConfigEntry("overlayScale", 1.0f),
+                    new ColorConfigEntry("overlayBgColor", new Color(99, 34, 121)),
+                    new ColorConfigEntry("overlayBarColor", new Color(160, 150, 174))
             ),
             new GRConfigCategory(Component.translatable("text.craftgr.config.category.url"), false,
-                    new StringConfigValue("urlStream", "https://stream.gensokyoradio.net/1/"),
-                    new StringConfigValue("urlInfoJson", "https://gensokyoradio.net/api/station/playing/"),
-                    new StringConfigValue("urlAlbumArt", "https://gensokyoradio.net/images/albums/500/")
+                    new StringConfigEntry("urlStream", "https://stream.gensokyoradio.net/1/"),
+                    new StringConfigEntry("urlInfoJson", "https://gensokyoradio.net/api/station/playing/"),
+                    new StringConfigEntry("urlAlbumArt", "https://gensokyoradio.net/images/albums/500/")
             )
     };
 
     @SuppressWarnings("unchecked")
     public static Screen getConfigScreen(Screen parent) {
-        ConfigBuilder builder = ConfigBuilder.create();
+        Component title = Component.translatable(TITLE_KEY);
 
-        Component title = Component.translatable("text.craftgr.config.title");
-        builder.setTitle(title);
-        builder.setParentScreen(parent);
-        ConfigCategory root = builder.getOrCreateCategory(title);
+        YetAnotherConfigLib.Builder config = YetAnotherConfigLib.createBuilder();
+        config.title(title);
+
+        ConfigCategory.Builder category = ConfigCategory.createBuilder();
+        category.name(title);
 
         for (GRConfigCategory grc : categories) {
-            SubCategoryBuilder category = builder.entryBuilder().startSubCategory(grc.getTitle());
-            category.setExpanded(grc.getExpanded());
+            OptionGroup.Builder group = OptionGroup.createBuilder();
+            group.name(grc.getTitle());
+            group.collapsed(!grc.getExpanded());
 
-            for (GRConfigValue entry : grc.getValues()) {
-                AbstractFieldBuilder field = entry.getBuilder(builder.entryBuilder());
-                field.setTooltip(Component.translatable("text.craftgr.config.option." + entry.getKey() + ".tooltip"));
-                field.setSaveConsumer(value -> GRConfig.setValue(entry, value));
-                category.add(field.build());
+            for (GRConfigEntry entry : grc.getEntries()) {
+                group.option(entry.getOption());
             }
 
-            root.addEntry(category.build());
+            category.group(group.build());
         }
 
-        builder.setSavingRunnable(GRConfig::save);
+        config.category(category.build());
+        config.save(GRConfig::save);
 
-        return builder.build();
+        return config.build().generateScreen(parent);
     }
 
     public static void init() {
@@ -100,7 +101,7 @@ public class GRConfig {
         }
 
         for (GRConfigCategory grc : categories) {
-            for (GRConfigValue value : grc.getValues()) {
+            for (GRConfigEntry value : grc.getEntries()) {
                 configMap.put(value.getKey(), value);
                 try {
                     if (configJson.has(value.getKey())) {
@@ -137,7 +138,7 @@ public class GRConfig {
         }
     }
 
-    public static GRConfigValue getConfigEntry(String key) {
+    public static GRConfigEntry getConfigEntry(String key) {
         return configMap.get(key);
     }
 
@@ -150,7 +151,7 @@ public class GRConfig {
         setValue(GRConfig.getConfigEntry(key), value);
     }
 
-    public static void setValue(GRConfigValue entry, Object value) {
+    public static void setValue(GRConfigEntry entry, Object value) {
         if (entry.getValue().equals(value)) {
             return;
         }
