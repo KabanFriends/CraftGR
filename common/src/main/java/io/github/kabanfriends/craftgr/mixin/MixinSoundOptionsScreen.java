@@ -43,7 +43,7 @@ public class MixinSoundOptionsScreen extends MixinOptionsSubScreen implements So
             (value) -> {
                 GRConfig.setValue("volume", (int)((double)value * 100.0D));
                 if (AudioPlayerHandler.getInstance().isPlaying()) {
-                    AudioPlayerHandler.getInstance().getAudioPlayer().setVolume(1.0f);
+                    AudioPlayerHandler.getInstance().getAudioPlayer().setBaseVolume(1.0f);
                 }
             });
 

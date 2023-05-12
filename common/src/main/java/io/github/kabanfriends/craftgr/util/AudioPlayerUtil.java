@@ -11,7 +11,7 @@ public class AudioPlayerUtil {
         CraftGR.EXECUTOR.submit(() -> {
             handler.initialize();
             if (handler.hasAudioPlayer()) {
-                handler.getAudioPlayer().setVolume(1.0f);
+                handler.getAudioPlayer().setBaseVolume(1.0f);
                 handler.startPlayback();
             }
         });

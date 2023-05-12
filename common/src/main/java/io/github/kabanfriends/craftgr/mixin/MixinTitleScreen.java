@@ -26,7 +26,7 @@ public class MixinTitleScreen {
             if (!handler.getAudioPlayer().isPlaying()) {
                 handler.startPlayback();
             }
-            handler.getAudioPlayer().setVolume(1.0f);
+            handler.getAudioPlayer().setBaseVolume(1.0f);
         }
     }
 
@@ -39,7 +39,7 @@ public class MixinTitleScreen {
             CraftGR.EXECUTOR.submit(() -> {
                 handler.initialize();
                 if (CraftGR.MC.screen instanceof TitleScreen) {
-                    handler.getAudioPlayer().setVolume(0.0f);
+                    handler.getAudioPlayer().setBaseVolume(0.0f);
                 }
                 handler.startPlayback();
             });
@@ -54,7 +54,7 @@ public class MixinTitleScreen {
                     }
 
                     float value = (float) (Util.getMillis() - musicFadeStart) / 2000.0F;
-                    handler.getAudioPlayer().setVolume(Mth.clamp(value, 0.0f, 1.0f));
+                    handler.getAudioPlayer().setBaseVolume(Mth.clamp(value, 0.0f, 1.0f));
                 }
             }
         }
