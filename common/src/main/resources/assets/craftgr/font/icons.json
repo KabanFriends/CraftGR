@@ -2,10 +2,10 @@
   "providers": [
     {
       "type": "bitmap",
-      "file": "craftgr:audio_muted.png",
+      "file": "craftgr:icons.png",
       "ascent": 8,
       "chars": [
-        "M"
+        "MR"
       ]
     }
   ]

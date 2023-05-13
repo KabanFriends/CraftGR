@@ -6,12 +6,22 @@ import io.github.kabanfriends.craftgr.handler.AudioPlayerHandler;
 public class AudioPlayerUtil {
 
     public static void startPlaybackAsync() {
+        startPlaybackAsync(1.0f);
+    }
+
+    public static void startPlaybackAsync(float baseVolume) {
         AudioPlayerHandler handler = AudioPlayerHandler.getInstance();
 
         CraftGR.EXECUTOR.submit(() -> {
             handler.initialize();
+            if (handler.getState() == HandlerState.FAIL) {
+                MessageUtil.sendConnectionErrorMessage();
+                return;
+            }
+
             if (handler.hasAudioPlayer()) {
-                handler.getAudioPlayer().setBaseVolume(1.0f);
+                MessageUtil.sendAudioStartedMessage();
+                handler.getAudioPlayer().setBaseVolume(baseVolume);
                 handler.startPlayback();
             }
         });

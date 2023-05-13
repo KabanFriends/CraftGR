@@ -6,6 +6,9 @@ import io.github.kabanfriends.craftgr.handler.SongHandler;
 import io.github.kabanfriends.craftgr.platform.Platform;
 import io.github.kabanfriends.craftgr.render.overlay.impl.SongInfoOverlay;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
+import net.minecraft.resources.ResourceLocation;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -25,6 +28,15 @@ public class CraftGR {
 
     public static final Minecraft MC = Minecraft.getInstance();
     public static final ExecutorService EXECUTOR = Executors.newCachedThreadPool();
+
+    public static final Component AUDIO_MUTED_ICON;
+    public static final Component RECONNECT_ICON;
+
+    static {
+        ResourceLocation iconFont = new ResourceLocation(CraftGR.MOD_ID, "icons");
+        AUDIO_MUTED_ICON = Component.literal("M").withStyle(Style.EMPTY.withFont(iconFont));
+        RECONNECT_ICON = Component.literal("R").withStyle(Style.EMPTY.withFont(iconFont));
+    }
 
     public static boolean renderSongOverlay;
 

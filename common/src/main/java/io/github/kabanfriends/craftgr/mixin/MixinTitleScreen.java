@@ -2,6 +2,7 @@ package io.github.kabanfriends.craftgr.mixin;
 
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.handler.AudioPlayerHandler;
+import io.github.kabanfriends.craftgr.util.AudioPlayerUtil;
 import io.github.kabanfriends.craftgr.util.HandlerState;
 import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
@@ -15,6 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(TitleScreen.class)
 public class MixinTitleScreen {
 
+    private static boolean fading;
     private static long musicFadeStart;
 
     @Inject(method = "removed", at = @At("HEAD"))
@@ -24,7 +26,7 @@ public class MixinTitleScreen {
 
         if (handler.getState() == HandlerState.ACTIVE || handler.getState() == HandlerState.READY) {
             if (!handler.getAudioPlayer().isPlaying()) {
-                handler.startPlayback();
+                CraftGR.EXECUTOR.submit(handler::startPlayback);
             }
             handler.getAudioPlayer().setBaseVolume(1.0f);
         }
@@ -36,25 +38,22 @@ public class MixinTitleScreen {
 
         //Initialize audio player
         if (handler.getState() == HandlerState.NOT_INITIALIZED) {
-            CraftGR.EXECUTOR.submit(() -> {
-                handler.initialize();
-                if (CraftGR.MC.screen instanceof TitleScreen) {
-                    handler.getAudioPlayer().setBaseVolume(0.0f);
-                }
-                handler.startPlayback();
-            });
+            AudioPlayerUtil.startPlaybackAsync(0.0f);
         }
 
-        if (handler.hasAudioPlayer()) {
-            if (handler.getState() == HandlerState.ACTIVE) {
-                //Audio fade in
-                if (handler.isPlaying()) {
-                    if (musicFadeStart == 0L) {
-                        musicFadeStart = Util.getMillis();
-                    }
+        if (handler.getState() == HandlerState.ACTIVE && handler.hasAudioPlayer() && handler.isPlaying()) {
+            //Audio fade in
+            if (musicFadeStart == 0L) {
+                fading = true;
+                musicFadeStart = Util.getMillis();
+            }
 
-                    float value = (float) (Util.getMillis() - musicFadeStart) / 2000.0F;
-                    handler.getAudioPlayer().setBaseVolume(Mth.clamp(value, 0.0f, 1.0f));
+            if (fading) {
+                float value = (float) (Util.getMillis() - musicFadeStart) / 2000.0F;
+                handler.getAudioPlayer().setBaseVolume(Mth.clamp(value, 0.0f, 1.0f));
+
+                if (value >= 1.0f) {
+                    fading = false;
                 }
             }
         }

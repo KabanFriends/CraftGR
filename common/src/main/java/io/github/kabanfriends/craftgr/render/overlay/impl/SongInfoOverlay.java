@@ -22,7 +22,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.*;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.logging.log4j.Level;
@@ -59,8 +58,6 @@ public class SongInfoOverlay extends Overlay {
     private static final int ALBUM_ART_FETCH_DELAY_SECONDS = 4;
 
     private static final ResourceLocation ALBUM_ART_PLACEHOLDER = new ResourceLocation(CraftGR.MOD_ID, "textures/album_placeholder.png");
-    private static final ResourceLocation ICON_FONT = new ResourceLocation(CraftGR.MOD_ID, "icon");
-    private static final Component AUDIO_MUTED_ICON = Component.literal("M").withStyle(Style.EMPTY.withFont(ICON_FONT));
 
     private static SongInfoOverlay INSTANCE;
 
@@ -157,7 +154,7 @@ public class SongInfoOverlay extends Overlay {
                     muted = true;
                     updateScrollWidth();
                 }
-                graphics.drawString(CraftGR.MC.font, AUDIO_MUTED_ICON, (x + (int)width - MUTED_ICON_RIGHT_PADDING - MUTED_ICON_SIZE) / 2, (y + MUTED_ICON_TOP_PADDING) / 2, Color.WHITE.getRGB());
+                graphics.drawString(CraftGR.MC.font, CraftGR.AUDIO_MUTED_ICON, (x + (int)width - MUTED_ICON_RIGHT_PADDING - MUTED_ICON_SIZE) / 2, (y + MUTED_ICON_TOP_PADDING) / 2, Color.WHITE.getRGB());
             } else if (muted) {
                 muted = false;
                 updateScrollWidth();

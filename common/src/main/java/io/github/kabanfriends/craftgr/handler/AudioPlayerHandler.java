@@ -3,10 +3,7 @@ package io.github.kabanfriends.craftgr.handler;
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.audio.AudioPlayer;
 import io.github.kabanfriends.craftgr.config.GRConfig;
-import io.github.kabanfriends.craftgr.util.HttpUtil;
-import io.github.kabanfriends.craftgr.util.ProcessResult;
-import io.github.kabanfriends.craftgr.util.HandlerState;
-import io.github.kabanfriends.craftgr.util.ResponseHolder;
+import io.github.kabanfriends.craftgr.util.*;
 import org.apache.http.client.methods.*;
 import org.apache.logging.log4j.Level;
 
@@ -22,7 +19,7 @@ public class AudioPlayerHandler {
     private boolean playing = false;
 
     public void startPlayback() {
-        if (!(state == HandlerState.STOPPED || state == HandlerState.READY)) {
+        if (state == HandlerState.FAIL) {
             CraftGR.log(Level.ERROR, "Cannot start audio playback due to an initialization failure!");
             return;
         }
@@ -30,29 +27,27 @@ public class AudioPlayerHandler {
         this.playing = true;
         state = HandlerState.ACTIVE;
 
-        CraftGR.EXECUTOR.submit(() -> {
-            while (true) {
-                ProcessResult result = this.player.play();
+        ProcessResult result = this.player.play();
 
-                switch (result) {
-                    case ERROR:
-                        CraftGR.log(Level.ERROR, "Error during audio playback! Restarting in 5 seconds...");
+        switch (result) {
+            case ERROR:
+                CraftGR.log(Level.ERROR, "Error during audio playback! Restarting in 5 seconds...");
 
-                        try {
-                            Thread.sleep(5L * 1000L);
-                        } catch (InterruptedException e) { }
-                        break;
-                    case STOP:
-                        CraftGR.log(Level.INFO, "Audio playback has stopped!");
-                        return;
-                }
+                try {
+                    Thread.sleep(5L * 1000L);
+                } catch (InterruptedException e) { }
+                break;
+            case STOP:
+                CraftGR.log(Level.INFO, "Audio playback has stopped!");
+                return;
+        }
 
-                if (response != null && !response.isClosed()) response.close();
-                if (state == HandlerState.ACTIVE) {
-                    initialize();
-                }
-            }
-        });
+        if (response != null && !response.isClosed()) response.close();
+
+        if (state == HandlerState.ACTIVE) {
+            MessageUtil.sendReconnectingMessage();
+            AudioPlayerUtil.startPlaybackAsync();
+        }
     }
 
     public void stopPlayback() {
@@ -60,7 +55,6 @@ public class AudioPlayerHandler {
     }
 
     public void stopPlayback(boolean reloading) {
-        CraftGR.log(Level.INFO, "Stopping audio playback...");
         if (player != null) player.stop();
         if (response != null && !response.isClosed()) response.close();
 
@@ -72,7 +66,7 @@ public class AudioPlayerHandler {
     }
 
     public void initialize() {
-        CraftGR.log(Level.INFO, "Initializing the audio player...");
+        CraftGR.log(Level.INFO, "Connecting to the audio stream...");
         state = HandlerState.INITIALIZING;
 
         try {
@@ -92,7 +86,7 @@ public class AudioPlayerHandler {
             state = HandlerState.READY;
             CraftGR.log(Level.INFO, "Audio player is ready!");
         } catch (Exception err) {
-            CraftGR.log(Level.ERROR, "Error when initializing the audio player:");
+            CraftGR.log(Level.ERROR, "Error while connecting to the audio stream:");
             err.printStackTrace();
 
             state = HandlerState.FAIL;

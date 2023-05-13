@@ -89,7 +89,7 @@ public class ScrollingText extends UIWidget {
 
         RenderSystem.enableScissor(scissorX, (CraftGR.MC.getWindow().getHeight() - scissorY - scissorH), scissorW, scissorH);
 
-        // Debugging code
+        //Debugging code
         /*
         poseStack.pushPose();
         poseStack.last().pose().setIdentity();
