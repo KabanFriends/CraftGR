@@ -2,12 +2,12 @@ package io.github.kabanfriends.craftgr.config.entry;
 
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.platform.Window;
-import com.mojang.blaze3d.vertex.PoseStack;
+import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.handler.AudioPlayerHandler;
 import io.github.kabanfriends.craftgr.util.AudioPlayerUtil;
 import io.github.kabanfriends.craftgr.util.HandlerState;
 import me.shedaniel.clothconfig2.gui.entries.TooltipListEntry;
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -63,22 +63,20 @@ public class RadioStateListEntry extends TooltipListEntry {
 
     //TODO: Update to GuiGraphics
     @Override
-    public void render(PoseStack matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean isHovered, float delta) {
-        /*
-        super.render(matrices, index, y, x, entryWidth, entryHeight, mouseX, mouseY, isHovered, delta);
-        Window window = Minecraft.getInstance().getWindow();
+    public void render(GuiGraphics graphics, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean isHovered, float delta) {
+        super.render(graphics, index, y, x, entryWidth, entryHeight, mouseX, mouseY, isHovered, delta);
+        Window window = CraftGR.MC.getWindow();
         this.buttonWidget.active = isEditable() && isButtonActive();
         this.buttonWidget.setX(x + entryWidth - 150);
         this.buttonWidget.setY(y);
         this.buttonWidget.setMessage(getButtonText());
         Component displayedFieldName = getDisplayedFieldName();
-        if (Minecraft.getInstance().font.isBidirectional()) {
-            Minecraft.getInstance().font.drawShadow(matrices, displayedFieldName.getVisualOrderText(), window.getGuiScaledWidth() - x - Minecraft.getInstance().font.width(displayedFieldName), y + 6, 16777215);
+        if (CraftGR.MC.font.isBidirectional()) {
+            graphics.drawString(CraftGR.MC.font, displayedFieldName.getVisualOrderText(), window.getGuiScaledWidth() - x - CraftGR.MC.font.width(displayedFieldName), y + 6, 16777215);
         } else {
-            Minecraft.getInstance().font.drawShadow(matrices, displayedFieldName.getVisualOrderText(), x, y + 6, getPreferredTextColor());
+            graphics.drawString(CraftGR.MC.font, displayedFieldName.getVisualOrderText(), x, y + 6, getPreferredTextColor());
         }
-        buttonWidget.render(matrices, mouseX, mouseY, delta);
-        */
+        buttonWidget.render(graphics, mouseX, mouseY, delta);
     }
 
     @Override
