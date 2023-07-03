@@ -31,7 +31,7 @@ public class MessageUtil {
     public static void sendReconnectingMessage() {
         if (CraftGR.MC.player == null) return;
 
-        MutableComponent icon = CraftGR.RECONNECT_ICON.copy().append(" ");
+        MutableComponent icon = Component.empty().append(CraftGR.RECONNECT_ICON).append(" ");
         icon.withStyle(ChatFormatting.GOLD);
         MutableComponent message = Component.translatable("text.craftgr.message.reconnecting");
         message.withStyle(ChatFormatting.WHITE);
