@@ -4,8 +4,8 @@ import io.github.kabanfriends.craftgr.config.entry.RadioStateListEntry;
 import me.shedaniel.clothconfig2.impl.builders.AbstractFieldBuilder;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
