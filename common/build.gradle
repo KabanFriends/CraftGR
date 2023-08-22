@@ -3,12 +3,12 @@ dependencies {
     // Do NOT use other classes from fabric loader
     modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
 
-    modImplementation "me.shedaniel.cloth:cloth-config:${project.cloth_config_version}"
+    modImplementation "me.shedaniel.cloth:cloth-config:${rootProject.cloth_config_version}"
 
-    implementation "javazoom:jlayer:1.0.1"
+    implementation "javazoom:jlayer:${rootProject.jlayer_version}"
 }
 
 architectury {
-    common(rootProject.enabled_platforms.split(","))
+    common(rootProject.platforms)
 }
 

@@ -1,5 +1,5 @@
 plugins {
-    id "com.github.johnrengelman.shadow" version "7.0.0"
+    id "com.github.johnrengelman.shadow" version "8.1.1"
 }
 
 loom {
@@ -27,38 +27,33 @@ dependencies {
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }
 
-    modApi("me.shedaniel.cloth:cloth-config-forge:9.0.94")
+    modApi("me.shedaniel.cloth:cloth-config-forge:${rootProject.cloth_config_version}")
 
-    shadowCommon("javazoom:jlayer:1.0.1") { transitive = false }
+    shadowCommon("javazoom:jlayer:${rootProject.jlayer_version}") { transitive = false }
 
-    implementation "javazoom:jlayer:1.0.1"
-    implementation "com.googlecode.soundlibs:tritonus-share:0.3.7-2"
-    implementation "com.googlecode.soundlibs:mp3spi:1.9.5-1"
+    implementation "javazoom:jlayer:${rootProject.jlayer_version}"
 }
 
 processResources {
-    inputs.property "version", project.version
+    inputs.property "version", rootProject.version
 
     filesMatching("META-INF/mods.toml") {
-        expand "version": project.version
+        expand "version": rootProject.version
     }
 }
 
 shadowJar {
     exclude "fabric.mod.json"
+    exclude "architectury.common.json"
 
     configurations = [project.configurations.shadowCommon]
-    classifier "dev-shadow"
+    archiveClassifier.set "dev-shadow"
 }
 
 remapJar {
     input.set shadowJar.archiveFile
     dependsOn shadowJar
-    classifier null
-}
-
-jar {
-    classifier "dev"
+    archiveClassifier.set "mc${rootProject.minecraft_version}-forge"
 }
 
 sourcesJar {
