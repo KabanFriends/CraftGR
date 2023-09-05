@@ -91,50 +91,49 @@ public class SongHandler {
 
     private Song getSongFromJson(String url) throws IOException {
         HttpGet get = HttpUtil.get(url);
-        ResponseHolder response = new ResponseHolder(CraftGR.getHttpClient().execute(get));
 
-        InputStream stream = response.getResponse().getEntity().getContent();
+        try (
+                ResponseHolder response = new ResponseHolder(CraftGR.getHttpClient().execute(get));
+                InputStream stream = response.getResponse().getEntity().getContent();
+                BufferedReader r = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8))
+        ) {
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = r.readLine()) != null) {
+                sb.append(line);
+            }
 
-        BufferedReader r = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
+            JsonObject json = JsonParser.parseString(sb.toString()).getAsJsonObject();
+            JsonObject songInfo = json.getAsJsonObject("SONGINFO");
+            JsonObject songTimes = json.getAsJsonObject("SONGTIMES");
+            JsonObject songData = json.getAsJsonObject("SONGDATA");
+            JsonObject misc = json.getAsJsonObject("MISC");
 
-        StringBuilder sb = new StringBuilder();
-        String line;
-        while ((line = r.readLine()) != null) {
-            sb.append(line);
+            Song song = new Song(
+                    TitleFixer.fixJapaneseString(getValueWithDefault(songInfo, "TITLE", "", String.class)),
+                    TitleFixer.fixJapaneseString(getValueWithDefault(songInfo, "ARTIST", null, String.class)),
+                    TitleFixer.fixJapaneseString(getValueWithDefault(songInfo, "ALBUM", null, String.class)),
+                    getValueWithDefault(songInfo, "YEAR", null, String.class),
+                    TitleFixer.fixJapaneseString(getValueWithDefault(songInfo, "CIRCLE", null, String.class)),
+                    getValueWithDefault(songTimes, "SONGSTART", 0L, long.class),
+                    getValueWithDefault(songTimes, "SONGEND", System.currentTimeMillis() / 1000L + 4L, long.class),
+                    getValueWithDefault(songData, "ALBUMID", 0, int.class),
+                    getValueWithDefault(misc, "ALBUMART", null, String.class),
+                    getValueWithDefault(misc, "OFFSETTIME", 0L, long.class)
+            );
+
+            long played = song.offsetTime - song.songStart;
+            long duration = song.songEnd - song.songStart;
+            this.songStart = System.currentTimeMillis() / 1000L - played;
+            this.songEnd = this.songStart + duration;
+
+            if (song.offsetTime >= song.songEnd) {
+                song.setIntermission(true);
+                song.albumArt = "";
+            }
+
+            return song;
         }
-
-        response.close();
-
-        JsonObject json = JsonParser.parseString(sb.toString()).getAsJsonObject();
-        JsonObject songInfo = json.getAsJsonObject("SONGINFO");
-        JsonObject songTimes = json.getAsJsonObject("SONGTIMES");
-        JsonObject songData = json.getAsJsonObject("SONGDATA");
-        JsonObject misc = json.getAsJsonObject("MISC");
-
-        Song song = new Song(
-                TitleFixer.fixJapaneseString(getValueWithDefault(songInfo, "TITLE", "", String.class)),
-                TitleFixer.fixJapaneseString(getValueWithDefault(songInfo, "ARTIST", null, String.class)),
-                TitleFixer.fixJapaneseString(getValueWithDefault(songInfo, "ALBUM", null, String.class)),
-                getValueWithDefault(songInfo, "YEAR", null, String.class),
-                TitleFixer.fixJapaneseString(getValueWithDefault(songInfo, "CIRCLE", null, String.class)),
-                getValueWithDefault(songTimes, "SONGSTART", 0L, long.class),
-                getValueWithDefault(songTimes, "SONGEND", System.currentTimeMillis() / 1000L + 4L, long.class),
-                getValueWithDefault(songData, "ALBUMID", 0, int.class),
-                getValueWithDefault(misc, "ALBUMART", null, String.class),
-                getValueWithDefault(misc, "OFFSETTIME", 0L, long.class)
-        );
-
-        long played = song.offsetTime - song.songStart;
-        long duration = song.songEnd - song.songStart;
-        this.songStart = System.currentTimeMillis() / 1000L - played;
-        this.songEnd = this.songStart + duration;
-
-        if (song.offsetTime >= song.songEnd) {
-            song.setIntermission(true);
-            song.albumArt = "";
-        }
-
-        return song;
     }
 
     public Song getCurrentSong() {

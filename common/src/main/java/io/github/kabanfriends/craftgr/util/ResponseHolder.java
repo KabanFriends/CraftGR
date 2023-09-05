@@ -6,7 +6,7 @@ import org.apache.logging.log4j.Level;
 
 import java.io.IOException;
 
-public class ResponseHolder {
+public class ResponseHolder implements AutoCloseable {
 
     private final CloseableHttpResponse response;
 

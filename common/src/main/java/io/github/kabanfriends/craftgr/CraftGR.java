@@ -57,7 +57,7 @@ public class CraftGR {
     }
 
     public static void lateInit() {
-        OverlayHandler.addOverlay(new SongInfoOverlay());
+        OverlayHandler.addOverlay(new SongInfoOverlay(MC.getTextureManager()));
         SongHandler.getInstance().initialize();
     }
 

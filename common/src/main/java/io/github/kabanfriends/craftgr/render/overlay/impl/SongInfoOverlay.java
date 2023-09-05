@@ -16,17 +16,22 @@ import io.github.kabanfriends.craftgr.util.RenderUtil;
 import io.github.kabanfriends.craftgr.util.ResponseHolder;
 import me.shedaniel.clothconfig2.api.ConfigScreen;
 import net.minecraft.Util;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.*;
 import net.minecraft.client.renderer.texture.DynamicTexture;
+import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.logging.log4j.Level;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 
 public class SongInfoOverlay extends Overlay {
@@ -54,23 +59,31 @@ public class SongInfoOverlay extends Overlay {
     public static final int PROGRESS_BAR_HEIGHT = 6;
     //</editor-fold>
 
+    private static final int ALBUM_ART_TEXTURE_SIZE = 512;
+
     private static final int ALBUM_ART_FETCH_TRIES = 3;
     private static final int ALBUM_ART_FETCH_DELAY_SECONDS = 4;
 
-    private static final ResourceLocation ALBUM_ART_PLACEHOLDER = new ResourceLocation(CraftGR.MOD_ID, "textures/album_placeholder.png");
+    private static final ResourceLocation ALBUM_ART_PLACEHOLDER_LOCATION = new ResourceLocation(CraftGR.MOD_ID, "textures/album_placeholder.png");
+    private static final ResourceLocation ALBUM_ART_LOCATION = new ResourceLocation(CraftGR.MOD_ID, "album");
 
-    private static SongInfoOverlay INSTANCE;
+    private static SongInfoOverlay instance;
 
-    private ResourceLocation albumArtTexture;
+    private final TextureManager textureManager;
+
+    private DynamicTexture albumArtTexture;
     private ScrollingText songTitleText;
+    private boolean hasAlbumArt;
     private boolean expanded;
     private boolean muted;
 
-    public SongInfoOverlay() {
-        INSTANCE = this;
+    public SongInfoOverlay(TextureManager textureManager) {
+        SongInfoOverlay.instance = this;
 
-        expanded = false;
-        songTitleText = new ScrollingText(0, 0, Component.empty());
+        this.textureManager = textureManager;
+        this.expanded = false;
+        this.songTitleText = new ScrollingText(0, 0, Component.empty());
+
         updateScrollWidth();
     }
 
@@ -115,7 +128,7 @@ public class SongInfoOverlay extends Overlay {
             RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
 
             if (!GRConfig.<Boolean>getValue("hideAlbumArt")) {
-                graphics.blit(albumArtTexture == null ? ALBUM_ART_PLACEHOLDER : albumArtTexture, x + ART_LEFT_PADDING, y + ART_TOP_PADDING, 0f, 0f, ART_SIZE, ART_SIZE, ART_SIZE, ART_SIZE);
+                graphics.blit(hasAlbumArt ? ALBUM_ART_LOCATION : ALBUM_ART_PLACEHOLDER_LOCATION, x + ART_LEFT_PADDING, y + ART_TOP_PADDING, 0f, 0f, ART_SIZE, ART_SIZE, ART_SIZE, ART_SIZE);
             }
 
             poseStack.pushPose();
@@ -342,45 +355,73 @@ public class SongInfoOverlay extends Overlay {
     }
 
     public void createAlbumArtTexture(Song song) {
-        albumArtTexture = null;
+        hasAlbumArt = false;
         if (song.albumArt == null || song.albumArt.isEmpty()) {
             return;
         }
 
         String url = GRConfig.getValue("urlAlbumArt") + song.albumArt;
 
-        CraftGR.EXECUTOR.submit(() -> {
-            int tries = 0;
-            do {
-                tries++;
+        int tries = 0;
+        do {
+            tries++;
 
-                try {
-                    HttpGet get = HttpUtil.get(url);
-                    ResponseHolder response = new ResponseHolder(CraftGR.getHttpClient().execute(get));
-                    InputStream stream = response.getResponse().getEntity().getContent();
-                    DynamicTexture texture = new DynamicTexture(NativeImage.read(stream));
-                    response.close();
+            try {
+                HttpGet get = HttpUtil.get(url);
 
-                    //OptiFine compatibility: registering only works on the right thread?
-                    Minecraft.getInstance().execute(() -> {
-                        albumArtTexture = CraftGR.MC.getTextureManager().register("craftgr_album", texture);
+                try (
+                        ResponseHolder response = new ResponseHolder(CraftGR.getHttpClient().execute(get));
+                        InputStream stream = resizeImage(response.getResponse().getEntity().getContent())
+                ) {
+                    NativeImage image = NativeImage.read(stream);
+
+                    if (albumArtTexture == null) {
+                        albumArtTexture = new DynamicTexture(image);
+                    } else {
+                        albumArtTexture.setPixels(image);
+                        albumArtTexture.upload();
+                    }
+
+                    // OptiFine compatibility: RenderSystem works only in the main thread
+                    CraftGR.MC.execute(() -> {
+                        textureManager.register(ALBUM_ART_LOCATION, albumArtTexture);
+                        hasAlbumArt = true;
                     });
-
-                    break;
-                } catch (Exception e) {
-                    CraftGR.log(Level.ERROR, "Error while creating album art texture! (" + url + ")");
-                    e.printStackTrace();
                 }
+                break;
+            } catch (Exception e) {
+                CraftGR.log(Level.ERROR, "Error while creating album art texture! (" + url + ")");
+                e.printStackTrace();
 
-                if (tries < ALBUM_ART_FETCH_TRIES) {
-                    CraftGR.log(Level.INFO, "Retrying to create album art texture in " + ALBUM_ART_FETCH_DELAY_SECONDS + " seconds... (" + (ALBUM_ART_FETCH_TRIES - tries) + " tries left)");
+                if (albumArtTexture != null) {
+                    textureManager.release(ALBUM_ART_LOCATION);
+                    albumArtTexture.close();
+                    albumArtTexture = null;
                 }
+            }
 
-                try {
-                    Thread.sleep(ALBUM_ART_FETCH_DELAY_SECONDS * 1000L);
-                } catch (InterruptedException e) { }
-            } while (tries < ALBUM_ART_FETCH_TRIES);
-        });
+            if (tries < ALBUM_ART_FETCH_TRIES) {
+                CraftGR.log(Level.INFO, "Retrying to create album art texture in " + ALBUM_ART_FETCH_DELAY_SECONDS + " seconds... (" + (ALBUM_ART_FETCH_TRIES - tries) + " tries left)");
+            }
+
+            try {
+                Thread.sleep(ALBUM_ART_FETCH_DELAY_SECONDS * 1000L);
+            } catch (InterruptedException e) { }
+        } while (tries < ALBUM_ART_FETCH_TRIES);
+    }
+
+    public InputStream resizeImage(InputStream input) throws IOException {
+        try (input) {
+            Image image = ImageIO.read(input);
+
+            BufferedImage resizedImage = new BufferedImage(ALBUM_ART_TEXTURE_SIZE, ALBUM_ART_TEXTURE_SIZE, BufferedImage.TYPE_INT_RGB);
+            Graphics graphics = resizedImage.createGraphics();
+            graphics.drawImage(image, 0,0, ALBUM_ART_TEXTURE_SIZE, ALBUM_ART_TEXTURE_SIZE, null);
+
+            ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+            ImageIO.write(resizedImage, "jpg", outStream);
+            return new ByteArrayInputStream(outStream.toByteArray());
+        }
     }
 
     public enum OverlayPosition {
@@ -405,6 +446,6 @@ public class SongInfoOverlay extends Overlay {
     }
 
     public static SongInfoOverlay getInstance() {
-        return INSTANCE;
+        return instance;
     }
 }
