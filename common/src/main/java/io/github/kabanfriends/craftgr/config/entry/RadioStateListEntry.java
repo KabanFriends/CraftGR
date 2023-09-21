@@ -60,8 +60,7 @@ public class RadioStateListEntry extends TooltipListEntry {
     public Optional<String> getDefaultValue() {
         throw new UnsupportedOperationException("Cannot get default value of a RadioStateListEntry!");
     }
-
-    //TODO: Update to GuiGraphics
+    
     @Override
     public void render(GuiGraphics graphics, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean isHovered, float delta) {
         super.render(graphics, index, y, x, entryWidth, entryHeight, mouseX, mouseY, isHovered, delta);
