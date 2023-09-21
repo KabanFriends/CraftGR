@@ -1,0 +1,12 @@
+{
+    "sources": [
+        {
+            "type": "single",
+            "resource": "craftgr:config"
+        },
+        {
+            "type": "single",
+            "resource": "craftgr:config_highlighted"
+        }
+    ]
+}

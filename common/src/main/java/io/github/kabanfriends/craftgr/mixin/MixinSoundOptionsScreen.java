@@ -9,6 +9,7 @@ import net.minecraft.client.OptionInstance;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.OptionsList;
+import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.SoundOptionsScreen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
@@ -28,7 +29,10 @@ public class MixinSoundOptionsScreen extends MixinOptionsSubScreen implements So
     private AbstractWidget volumeSlider;
     private AbstractWidget configButton;
 
-    private static final ResourceLocation CONFIG_BUTTON = new ResourceLocation(CraftGR.MOD_ID, "textures/button_config.png");
+    private static final WidgetSprites BUTTON_SPRITES = new WidgetSprites(
+            new ResourceLocation(CraftGR.MOD_ID, "config"),
+            new ResourceLocation(CraftGR.MOD_ID, "config_highlighted")
+    );
 
     private static final OptionInstance<Double> PLAYBACK_VOLUME = new OptionInstance<>(
             "text.craftgr.gui.options.volume",
@@ -56,7 +60,7 @@ public class MixinSoundOptionsScreen extends MixinOptionsSubScreen implements So
         PLAYBACK_VOLUME.set(GRConfig.<Integer>getValue("volume") / 100.0D);
 
         volumeSlider = PLAYBACK_VOLUME.createButton(CraftGR.MC.options, this.width / 2 - 155 + 160, this.height / 6 - 12 + 22 * (11 >> 1), 150 - 24);
-        configButton = new ImageButton(this.width / 2 - 155 + 160 + 150 - 20, this.height / 6 - 12 + 22 * (11 >> 1), 20, 20, 0, 0, 20, CONFIG_BUTTON, 20, 40, (button) -> {
+        configButton = new ImageButton(this.width / 2 - 155 + 160 + 150 - 20, this.height / 6 - 12 + 22 * (11 >> 1), 20, 20, BUTTON_SPRITES, (button) -> {
             CraftGR.getPlatform().openConfigScreen();
         });
 
