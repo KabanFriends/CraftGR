@@ -46,6 +46,7 @@
   "text.craftgr.config.option.urlAlbumArt.tooltip": "Base URL to get the album images from.",
 
   "text.craftgr.gui.options.volume": "Gensokyo Radio",
+  "text.craftgr.gui.config.tooltip": "Configure...",
 
   "text.craftgr.message.connecting": "Connecting...",
   "text.craftgr.message.reconnecting": "Reconnecting...",

@@ -6,10 +6,7 @@ import io.github.kabanfriends.craftgr.config.GRConfig;
 import io.github.kabanfriends.craftgr.handler.AudioPlayerHandler;
 import io.github.kabanfriends.craftgr.mixinaccess.SoundOptionsScreenMixinAccess;
 import net.minecraft.client.OptionInstance;
-import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.client.gui.components.ImageButton;
-import net.minecraft.client.gui.components.OptionsList;
-import net.minecraft.client.gui.components.WidgetSprites;
+import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.screens.SoundOptionsScreen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
@@ -60,9 +57,15 @@ public class MixinSoundOptionsScreen extends MixinOptionsSubScreen implements So
         PLAYBACK_VOLUME.set(GRConfig.<Integer>getValue("volume") / 100.0D);
 
         volumeSlider = PLAYBACK_VOLUME.createButton(CraftGR.MC.options, this.width / 2 - 155 + 160, this.height / 6 - 12 + 22 * (11 >> 1), 150 - 24);
-        configButton = new ImageButton(this.width / 2 - 155 + 160 + 150 - 20, this.height / 6 - 12 + 22 * (11 >> 1), 20, 20, BUTTON_SPRITES, (button) -> {
-            CraftGR.getPlatform().openConfigScreen();
-        });
+        configButton = new ImageButton(
+                this.width / 2 - 155 + 160 + 150 - 20,
+                this.height / 6 - 12 + 22 * (11 >> 1),
+                20,
+                20,
+                BUTTON_SPRITES,
+                (button) -> CraftGR.getPlatform().openConfigScreen()
+        );
+        configButton.setTooltip(Tooltip.create(Component.translatable("text.craftgr.gui.config.tooltip")));
 
         this.addWidget(volumeSlider);
         this.addWidget(configButton);
