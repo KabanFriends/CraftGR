@@ -53,13 +53,13 @@ public class SongHandler {
         this.song = song;
 
         SongInfoOverlay overlay = SongInfoOverlay.getInstance();
-        overlay.createAlbumArtTexture(song);
 
         if (song.isIntermission()) {
             overlay.setIntermissionSongTitle();
         } else {
             overlay.setSongTitle(song.title);
         }
+        overlay.createAlbumArtTexture(song);
 
         return ProcessResult.SUCCESS;
     }
