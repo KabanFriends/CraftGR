@@ -22,8 +22,6 @@ public abstract class MixinAbstractSelectionList {
 
     @Shadow protected int headerHeight;
 
-    @Shadow protected int y0;
-
     @Inject(method = "renderList", at = @At("HEAD"))
     private void craftgr$renderSelectionList(GuiGraphics graphics, int i, int j, float f, CallbackInfo ci) {
         if (CraftGR.MC.screen instanceof SoundOptionsScreen screen) {
@@ -35,7 +33,7 @@ public abstract class MixinAbstractSelectionList {
                 AbstractWidget configButton = access.getConfigButton();
 
                 //AbstractSelectionList#getRowTop
-                int y = y0 + 4 - (int)getScrollAmount() + 5 * itemHeight + headerHeight;
+                int y = instance.getY() + 4 - (int)getScrollAmount() + 5 * itemHeight + headerHeight;
                 volumeSlider.setY(y);
                 configButton.setY(y);
 

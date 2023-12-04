@@ -16,12 +16,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(TitleScreen.class)
 public class MixinTitleScreen {
 
-    private static boolean fading;
-    private static long musicFadeStart;
+    private static boolean audioFading;
+    private static long audioFadeStart;
 
     @Inject(method = "removed", at = @At("HEAD"))
     private void craftgr$onTitleClose(CallbackInfo info) {
-        musicFadeStart = 1L;
+        audioFadeStart = 1L;
         AudioPlayerHandler handler = AudioPlayerHandler.getInstance();
 
         if (handler.getState() == HandlerState.ACTIVE || handler.getState() == HandlerState.READY) {
@@ -43,17 +43,17 @@ public class MixinTitleScreen {
 
         if (handler.getState() == HandlerState.ACTIVE && handler.hasAudioPlayer() && handler.isPlaying()) {
             //Audio fade in
-            if (musicFadeStart == 0L) {
-                fading = true;
-                musicFadeStart = Util.getMillis();
+            if (audioFadeStart == 0L) {
+                audioFading = true;
+                audioFadeStart = Util.getMillis();
             }
 
-            if (fading) {
-                float value = (float) (Util.getMillis() - musicFadeStart) / 2000.0F;
+            if (audioFading) {
+                float value = (float) (Util.getMillis() - audioFadeStart) / 2000.0F;
                 handler.getAudioPlayer().setBaseVolume(Mth.clamp(value, 0.0f, 1.0f));
 
                 if (value >= 1.0f) {
-                    fading = false;
+                    audioFading = false;
                 }
             }
         }
