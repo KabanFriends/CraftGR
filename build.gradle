@@ -1,7 +1,6 @@
 plugins {
     id "architectury-plugin" version "3.4-SNAPSHOT"
-    id "dev.architectury.loom" version "1.3-SNAPSHOT" apply false
-    id "io.github.juuxel.loom-vineflower" version "1.11.0" apply false
+    id "dev.architectury.loom" version "1.4-SNAPSHOT" apply false
     id "io.github.pacifistmc.forgix" version "1.2.6"
 }
 
@@ -27,11 +26,15 @@ forgix {
         projectName = "forge"
         jarLocation = "build/libs/${project.archives_base_name}-${project.mod_version}-mc${project.minecraft_version}-forge.jar"
     }
+
+    custom {
+        projectName = "neoforge"
+        jarLocation = "build/libs/${project.archives_base_name}-${project.mod_version}-mc${project.minecraft_version}-neoforge.jar"
+    }
 }
 
 subprojects {
     apply plugin: "dev.architectury.loom"
-    apply plugin: "io.github.juuxel.loom-vineflower"
 
     loom {
         silentMojangMappingsLicense()
@@ -41,6 +44,7 @@ subprojects {
         mavenCentral()
         maven { url "https://jitpack.io" }
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        maven { url "https://maven.neoforged.net/releases/" }
         maven { url "https://maven.terraformersmc.com/" }
         maven { url "https://maven.shedaniel.me/" }
     }
