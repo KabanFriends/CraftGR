@@ -12,3 +12,6 @@ include("fabric")
 include("forge")
 
 rootProject.name = "CraftGR"
+include 'neoforge'
+include 'fabric-like'
+
