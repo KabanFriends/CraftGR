@@ -17,14 +17,14 @@ songs from [Gensokyo Radio](https://gensokyoradio.net/) and displays a HUD with 
 ![Preview 1](https://github.com/KabanFriends/CraftGR/assets/45000995/922045d8-68d8-4ef8-9d20-bc235bc7bf68)
 ![Preview 2](https://github.com/KabanFriends/CraftGR/assets/45000995/c83d2e95-f2bc-4fc7-8467-8ec36b183550)
 
-## Compiling
+# Compiling
 To compile this mod, run the following command:
 ```shell
 ./gradlew build
 ```
 The mod JAR file compatible with Fabric & Forge will be created in the `./build/libs/merged` directory.
 
-## Attributions
+# Attributions
 - CraftGR is an open source project under [LGPL-3.0](https://github.com/KabanFriends/CraftGR/blob/master/LICENSE) license
 - Content provided by [Gensokyo Radio](https://gensokyoradio.net/)
 - Gensokyo Radio is © LunarSpotlight Media
