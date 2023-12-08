@@ -93,7 +93,7 @@ public class SongInfoOverlay extends Overlay {
 
         if (CraftGR.MC.screen == null) {
             if (visibility != SongInfoOverlay.OverlayVisibility.ALWAYS) return;
-        }else {
+        } else {
             if (visibility == SongInfoOverlay.OverlayVisibility.NONE) return;
             if (visibility == SongInfoOverlay.OverlayVisibility.CHAT && !(CraftGR.MC.screen instanceof ChatScreen)) return;
         }
@@ -105,9 +105,7 @@ public class SongInfoOverlay extends Overlay {
 
             float scale = GRConfig.getValue("overlayScale");
 
-            int albumArtWidth;
-            if (GRConfig.getValue("hideAlbumArt")) albumArtWidth = -ART_LEFT_PADDING;
-            else albumArtWidth = ART_SIZE;
+            int albumArtWidth = GRConfig.getValue("hideAlbumArt") ? -ART_LEFT_PADDING : ART_SIZE;
 
             float[] size = getOverlaySize();
             float width = size[0];
