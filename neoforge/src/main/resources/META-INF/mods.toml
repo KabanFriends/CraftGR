@@ -1,0 +1,36 @@
+modLoader = "javafml"
+loaderVersion = "[@FORGE_LOADER_MAJOR@,)"
+issueTrackerURL = "https://github.com/KabanFriends/CraftGR/issues"
+license = "LGPL-3.0"
+
+[[mods]]
+modId = "craftgr"
+version = "${version}"
+displayName = "CraftGR"
+authors = "KabanFriends"
+description = '''
+Plays Gensokyo Radio in Minecraft
+with a cool HUD overlay
+'''
+logoFile = "icon.png"
+
+[[dependencies.craftgr]]
+modId = "forge"
+mandatory = true
+versionRange = "[@FORGE_LOADER_MAJOR@,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.craftgr]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[@MINECRAFT@,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.craftgr]]
+modId = "cloth_config"
+mandatory = true
+versionRange="[12.0.110,)"
+ordering = "NONE"
+side = "BOTH"

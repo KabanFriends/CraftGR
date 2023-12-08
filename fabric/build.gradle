@@ -1,5 +1,5 @@
 plugins {
-    id "com.github.johnrengelman.shadow" version "7.0.0"
+    id "com.github.johnrengelman.shadow" version "8.1.1"
 }
 
 architectury {
@@ -22,42 +22,36 @@ dependencies {
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
 
-    implementation "javazoom:jlayer:1.0.1"
-    implementation "com.googlecode.soundlibs:tritonus-share:0.3.7-2"
-    implementation "com.googlecode.soundlibs:mp3spi:1.9.5-1"
+    implementation "javazoom:jlayer:${rootProject.jlayer_version}"
 
-    include "dev.isxander.yacl:yet-another-config-lib-fabric:${project.yacl_version}"
-    include "javazoom:jlayer:1.0.1"
-    include "com.googlecode.soundlibs:tritonus-share:0.3.7-2"
-    include "com.googlecode.soundlibs:mp3spi:1.9.5-1"
+    modImplementation "dev.isxander.yacl:yet-another-config-lib-fabric:${project.yacl_version}"
+    modApi("com.terraformersmc:modmenu:${rootProject.mod_menu_version}") { transitive(false) }
 
-    modApi("com.terraformersmc:modmenu:${project.mod_menu_version}") { transitive(false) }
+    include "javazoom:jlayer:${rootProject.jlayer_version}"
 
-    modLocalRuntime("com.terraformersmc:modmenu:${project.mod_menu_version}") { transitive(false) }
+    modLocalRuntime("com.terraformersmc:modmenu:${rootProject.mod_menu_version}") { transitive(false) }
     modLocalRuntime "dev.isxander.yacl:yet-another-config-lib-fabric:${project.yacl_version}"
 }
 
 processResources {
-    inputs.property "version", project.version
+    inputs.property "version", rootProject.version
 
     filesMatching("fabric.mod.json") {
-        expand "version": project.version
+        expand "version": rootProject.version
     }
 }
 
 shadowJar {
+    exclude "architectury.common.json"
+
     configurations = [project.configurations.shadowCommon]
-    classifier "dev-shadow"
+    archiveClassifier.set "dev-shadow"
 }
 
 remapJar {
     input.set shadowJar.archiveFile
     dependsOn shadowJar
-    classifier null
-}
-
-jar {
-    classifier "dev"
+    archiveClassifier.set "mc${rootProject.minecraft_version}-fabric"
 }
 
 sourcesJar {
@@ -69,19 +63,5 @@ sourcesJar {
 components.java {
     withVariantsFromConfiguration(project.configurations.shadowRuntimeElements) {
         skip()
-    }
-}
-
-publishing {
-    publications {
-        mavenFabric(MavenPublication) {
-            artifactId = rootProject.archives_base_name + "-" + project.name
-            from components.java
-        }
-    }
-
-    // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
-    repositories {
-        // Add repositories to publish to here.
     }
 }

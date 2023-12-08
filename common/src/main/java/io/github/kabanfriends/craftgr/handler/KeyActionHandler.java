@@ -1,11 +1,8 @@
 package io.github.kabanfriends.craftgr.handler;
 
-import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.util.AudioPlayerUtil;
 import io.github.kabanfriends.craftgr.util.HandlerState;
-import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
+import io.github.kabanfriends.craftgr.util.MessageUtil;
 
 public class KeyActionHandler {
 
@@ -15,22 +12,10 @@ public class KeyActionHandler {
 
         if (state == HandlerState.ACTIVE) {
             handler.stopPlayback();
-
-            MutableComponent icon = Component.literal("❌ ");
-            icon.withStyle(ChatFormatting.RED);
-            MutableComponent message = Component.translatable("text.craftgr.message.stopped");
-            message.withStyle(ChatFormatting.WHITE);
-
-            CraftGR.MC.player.displayClientMessage(icon.append(message), true);
-        } else if (state != HandlerState.INITIALIZING) {
+            MessageUtil.sendAudioStoppedMessage();
+        } else if (state != HandlerState.INITIALIZING && state != HandlerState.RELOADING) {
+            MessageUtil.sendConnectingMessage();
             AudioPlayerUtil.startPlaybackAsync();
-
-            MutableComponent icon = Component.literal("♫ ");
-            icon.withStyle(ChatFormatting.GREEN);
-            MutableComponent message = Component.translatable("text.craftgr.message.started");
-            message.withStyle(ChatFormatting.WHITE);
-
-            CraftGR.MC.player.displayClientMessage(icon.append(message), true);
         }
     }
 

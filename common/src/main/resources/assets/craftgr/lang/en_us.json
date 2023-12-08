@@ -2,13 +2,13 @@
   "text.craftgr.config.title": "CraftGR Config",
 
   "text.craftgr.config.category.playback": "Playback Settings",
-  "text.craftgr.config.option.playback": "Audio Playback",
+  "text.craftgr.config.option.playback": "Radio Playback",
   "text.craftgr.config.option.playback.tooltip": "Toggles whether the music is playing or stopped.",
   "text.craftgr.config.option.playback.stopped": "Stopped",
   "text.craftgr.config.option.playback.connecting": "Connecting...",
   "text.craftgr.config.option.playback.playing": "Playing",
   "text.craftgr.config.option.playback.fail": "§cError!",
-  "text.craftgr.config.option.volume": "Audio Volume",
+  "text.craftgr.config.option.volume": "Radio Volume",
   "text.craftgr.config.option.volume.tooltip": "Playback volume of Gensokyo Radio music.",
 
   "text.craftgr.config.category.overlay": "Overlay Settings",
@@ -46,9 +46,13 @@
   "text.craftgr.config.option.urlAlbumArt.tooltip": "Base URL to get the album images from.",
 
   "text.craftgr.gui.options.volume": "Gensokyo Radio",
+  "text.craftgr.gui.config.tooltip": "Configure...",
 
-  "text.craftgr.message.stopped": "Stopped audio playback",
-  "text.craftgr.message.started": "Started audio playback",
+  "text.craftgr.message.connecting": "Connecting...",
+  "text.craftgr.message.reconnecting": "Reconnecting...",
+  "text.craftgr.message.connectionError": "Connection failed!",
+  "text.craftgr.message.started": "Started radio playback",
+  "text.craftgr.message.stopped": "Stopped radio playback",
 
   "text.craftgr.song.intermission": "Intermission",
 

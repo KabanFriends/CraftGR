@@ -1,7 +1,7 @@
 package io.github.kabanfriends.craftgr.handler;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.kabanfriends.craftgr.render.overlay.Overlay;
+import net.minecraft.client.gui.GuiGraphics;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,13 +14,13 @@ public class OverlayHandler {
         overlayList.add(overlay);
     }
 
-    public static void render(Overlay overlay, PoseStack poseStack, int mouseX, int mouseY) {
-        overlay.render(poseStack, mouseX, mouseY);
+    public static void render(Overlay overlay, GuiGraphics graphics, int mouseX, int mouseY) {
+        overlay.render(graphics, mouseX, mouseY);
     }
 
-    public static void renderAll(PoseStack poseStack, int mouseX, int mouseY) {
+    public static void renderAll(GuiGraphics graphics, int mouseX, int mouseY) {
         for (Overlay overlay : overlayList) {
-            render(overlay, poseStack, mouseX, mouseY);
+            render(overlay, graphics, mouseX, mouseY);
         }
     }
 

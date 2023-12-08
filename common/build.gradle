@@ -5,23 +5,10 @@ dependencies {
 
     modImplementation "dev.isxander.yacl:yet-another-config-lib-fabric:${project.yacl_version}"
 
-    implementation "javazoom:jlayer:1.0.1"
+    implementation "javazoom:jlayer:${rootProject.jlayer_version}"
 }
 
 architectury {
-    common(rootProject.enabled_platforms.split(","))
+    common(rootProject.platforms)
 }
 
-publishing {
-    publications {
-        mavenCommon(MavenPublication) {
-            artifactId = rootProject.archives_base_name
-            from components.java
-        }
-    }
-
-    // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
-    repositories {
-        // Add repositories to publish to here.
-    }
-}

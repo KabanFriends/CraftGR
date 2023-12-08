@@ -1,10 +1,11 @@
 package io.github.kabanfriends.craftgr.mixin;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.handler.AudioPlayerHandler;
+import io.github.kabanfriends.craftgr.util.AudioPlayerUtil;
 import io.github.kabanfriends.craftgr.util.HandlerState;
 import net.minecraft.Util;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.util.Mth;
 import org.spongepowered.asm.mixin.Mixin;
@@ -15,53 +16,51 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(TitleScreen.class)
 public class MixinTitleScreen {
 
-    private static long musicFadeStart;
+    private static boolean audioFading;
+    private static long audioFadeStart;
 
     @Inject(method = "removed", at = @At("HEAD"))
-    private void onClose(CallbackInfo info) {
-        musicFadeStart = 1L;
+    private void craftgr$onTitleClose(CallbackInfo info) {
+        audioFadeStart = 1L;
         AudioPlayerHandler handler = AudioPlayerHandler.getInstance();
 
         if (handler.getState() == HandlerState.ACTIVE || handler.getState() == HandlerState.READY) {
             if (!handler.getAudioPlayer().isPlaying()) {
-                handler.startPlayback();
+                CraftGR.EXECUTOR.submit(handler::startPlayback);
             }
-            handler.getAudioPlayer().setVolume(1.0f);
+            handler.getAudioPlayer().setBaseVolume(1.0f);
         }
     }
 
     @Inject(method = "render", at = @At("HEAD"))
-    private void onRender(PoseStack poseStack, int mouseX, int mouseY, float delta, CallbackInfo ci) {
+    private void craftgr$onTitleRender(GuiGraphics graphics, int mouseX, int mouseY, float delta, CallbackInfo ci) {
         AudioPlayerHandler handler = AudioPlayerHandler.getInstance();
 
         //Initialize audio player
         if (handler.getState() == HandlerState.NOT_INITIALIZED) {
-            CraftGR.EXECUTOR.submit(() -> {
-                handler.initialize();
-                if (CraftGR.MC.screen instanceof TitleScreen) {
-                    handler.getAudioPlayer().setVolume(0.0f);
-                }
-                handler.startPlayback();
-            });
+            AudioPlayerUtil.startPlaybackAsync(0.0f);
         }
 
-        if (handler.hasAudioPlayer()) {
-            if (handler.getState() == HandlerState.ACTIVE) {
-                //Audio fade in
-                if (handler.isPlaying()) {
-                    if (musicFadeStart == 0L) {
-                        musicFadeStart = Util.getMillis();
-                    }
+        if (handler.getState() == HandlerState.ACTIVE && handler.hasAudioPlayer() && handler.isPlaying()) {
+            //Audio fade in
+            if (audioFadeStart == 0L) {
+                audioFading = true;
+                audioFadeStart = Util.getMillis();
+            }
 
-                    float value = (float) (Util.getMillis() - musicFadeStart) / 2000.0F;
-                    handler.getAudioPlayer().setVolume(Mth.clamp(value, 0.0f, 1.0f));
+            if (audioFading) {
+                float value = (float) (Util.getMillis() - audioFadeStart) / 2000.0F;
+                handler.getAudioPlayer().setBaseVolume(Mth.clamp(value, 0.0f, 1.0f));
+
+                if (value >= 1.0f) {
+                    audioFading = false;
                 }
             }
         }
     }
 
-    @Inject(method = "render", at = @At(value="INVOKE", target = "Lnet/minecraft/client/gui/screens/Screen;render(Lcom/mojang/blaze3d/vertex/PoseStack;IIF)V"))
-    public void onRenderScreen(PoseStack poseStack, int i, int j, float f, CallbackInfo ci) {
+    @Inject(method = "render", at = @At(value="INVOKE", target = "Lnet/minecraft/client/gui/screens/Screen;render(Lnet/minecraft/client/gui/GuiGraphics;IIF)V"))
+    public void craftgr$onRenderScreen(GuiGraphics graphics, int i, int j, float f, CallbackInfo ci) {
         //Start rendering the song overlay
         if (!CraftGR.renderSongOverlay) {
             CraftGR.renderSongOverlay = true;

@@ -1,10 +1,36 @@
 plugins {
     id "architectury-plugin" version "3.4-SNAPSHOT"
-    id "dev.architectury.loom" version "0.12.0-SNAPSHOT" apply false
+    id "dev.architectury.loom" version "1.4-SNAPSHOT" apply false
+    id "io.github.pacifistmc.forgix" version "1.2.6"
 }
 
 architectury {
-    minecraft = rootProject.minecraft_version
+    minecraft = project.minecraft_version
+}
+
+def platforms = subprojects.name.clone()
+platforms.remove("common")
+project.ext.set("platforms", platforms)
+
+forgix {
+    group = project.maven_group
+    mergedJarName = "${project.archives_base_name}-${project.mod_version}-mc${project.minecraft_version}.jar"
+    outputDir = "build/libs/merged"
+
+    fabric {
+        projectName = "fabric"
+        jarLocation = "build/libs/${project.archives_base_name}-${project.mod_version}-mc${project.minecraft_version}-fabric.jar"
+    }
+
+    forge {
+        projectName = "forge"
+        jarLocation = "build/libs/${project.archives_base_name}-${project.mod_version}-mc${project.minecraft_version}-forge.jar"
+    }
+
+    custom {
+        projectName = "neoforge"
+        jarLocation = "build/libs/${project.archives_base_name}-${project.mod_version}-mc${project.minecraft_version}-neoforge.jar"
+    }
 }
 
 subprojects {
@@ -17,14 +43,15 @@ subprojects {
     repositories {
         mavenCentral()
         maven { url "https://maven.isxander.dev/releases" }
+        maven { url "https://jitpack.io" }
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+        maven { url "https://maven.neoforged.net/releases/" }
         maven { url "https://maven.terraformersmc.com/" }
         maven { url "https://maven.shedaniel.me/" }
-        maven { url "https://jitpack.io" }
     }
 
     dependencies {
-        minecraft "com.mojang:minecraft:${rootProject.minecraft_version}"
+        minecraft "com.mojang:minecraft:${project.minecraft_version}"
         mappings loom.officialMojangMappings()
     }
 }
@@ -34,9 +61,9 @@ allprojects {
     apply plugin: "architectury-plugin"
     apply plugin: "maven-publish"
 
-    archivesBaseName = rootProject.archives_base_name
-    version = "${rootProject.mod_version}-mc${rootProject.minecraft_version}-${project.name}"
-    group = rootProject.maven_group
+    archivesBaseName = project.archives_base_name
+    version = project.mod_version
+    group = project.maven_group
 
     repositories {
         // Add repositories to retrieve artifacts from in here.
@@ -53,5 +80,14 @@ allprojects {
 
     java {
         withSourcesJar()
+    }
+}
+
+build {
+    dependsOn subprojects.build
+
+    // Merge multiple JARs if both platforms are enabled
+    if (project.platforms.size() >= 2) {
+        finalizedBy "mergeJars"
     }
 }

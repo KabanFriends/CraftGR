@@ -1,4 +1,4 @@
-package io.github.kabanfriends.craftgr.forge.event;
+package io.github.kabanfriends.craftgr.forge.events;
 
 import io.github.kabanfriends.craftgr.CraftGR;
 import net.minecraftforge.event.TickEvent;
@@ -10,7 +10,7 @@ public class TickEvents {
 
     @SubscribeEvent
     public void clientTick(TickEvent.ClientTickEvent event) {
-        if (event.phase == TickEvent.Phase.START && event.type == TickEvent.Type.CLIENT && !firstTicked) {
+        if (!firstTicked && event.phase == TickEvent.Phase.START && event.type == TickEvent.Type.CLIENT) {
             firstTicked = true;
             CraftGR.lateInit();
         }

@@ -1,4 +1,4 @@
-package io.github.kabanfriends.craftgr.forge.event;
+package io.github.kabanfriends.craftgr.forge.events;
 
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.forge.keybinds.Keybinds;

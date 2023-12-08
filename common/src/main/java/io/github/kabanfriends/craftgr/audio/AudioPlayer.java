@@ -22,7 +22,7 @@ public class AudioPlayer {
     private Decoder decoder;
     private IntBuffer buffer;
     private IntBuffer source;
-    private float volume = 1.0F;
+    private float baseVolume = 1.0F;
     private boolean playing = false;
 
     public AudioPlayer(InputStream stream) {
@@ -49,14 +49,14 @@ public class AudioPlayer {
             AL10.alSourcei(this.source.get(0), AL10.AL_LOOPING, AL10.AL_FALSE);
             AL10.alSourcef(this.source.get(0), AL10.AL_PITCH, 1.0f);
 
-            AL10.alSourcef(this.source.get(0), AL10.AL_GAIN, this.volume * (GRConfig.<Integer>getValue("volume") / 100f) * CraftGR.MC.options.getSoundSourceVolume(SoundSource.MASTER));
+            AL10.alSourcef(this.source.get(0), AL10.AL_GAIN, this.baseVolume * (GRConfig.<Integer>getValue("volume") / 100f) * CraftGR.MC.options.getSoundSourceVolume(SoundSource.MASTER));
             alError();
 
             this.playing = true;
             ProcessResult result = ProcessResult.SUCCESS;
 
             while (this.playing && result == ProcessResult.SUCCESS) {
-                AL10.alSourcef(this.source.get(0), AL10.AL_GAIN, this.volume * (GRConfig.<Integer>getValue("volume") / 100f) * CraftGR.MC.options.getSoundSourceVolume(SoundSource.MASTER));
+                AL10.alSourcef(this.source.get(0), AL10.AL_GAIN, this.baseVolume * (GRConfig.<Integer>getValue("volume") / 100f) * CraftGR.MC.options.getSoundSourceVolume(SoundSource.MASTER));
                 result = decodeFrame();
             }
 
@@ -144,16 +144,16 @@ public class AudioPlayer {
         }
     }
 
-    public void setVolume(float f) {
-        this.volume = f;
+    public void setBaseVolume(float f) {
+        this.baseVolume = f;
         if (this.playing && this.source != null) {
             float volume = f * (GRConfig.<Integer>getValue("volume") / 100f) * CraftGR.MC.options.getSoundSourceVolume(SoundSource.MASTER);
             AL10.alSourcef(this.source.get(0), AL10.AL_GAIN, volume);
         }
     }
 
-    public float getVolume() {
-        return this.volume;
+    public float getBaseVolume() {
+        return this.baseVolume;
     }
 
     public boolean isPlaying() {

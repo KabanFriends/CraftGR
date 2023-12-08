@@ -1,8 +1,8 @@
 package io.github.kabanfriends.craftgr.mixin;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.mixinaccess.SoundOptionsScreenMixinAccess;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractSelectionList;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.screens.SoundOptionsScreen;
@@ -22,10 +22,8 @@ public abstract class MixinAbstractSelectionList {
 
     @Shadow protected int headerHeight;
 
-    @Shadow protected int y0;
-
     @Inject(method = "renderList", at = @At("HEAD"))
-    private void renderList(PoseStack poseStack, int i, int j, float f, CallbackInfo ci) {
+    private void craftgr$renderSelectionList(GuiGraphics graphics, int i, int j, float f, CallbackInfo ci) {
         if (CraftGR.MC.screen instanceof SoundOptionsScreen screen) {
             AbstractSelectionList instance = (AbstractSelectionList)(Object)this;
             SoundOptionsScreenMixinAccess access = (SoundOptionsScreenMixinAccess)screen;
@@ -35,12 +33,12 @@ public abstract class MixinAbstractSelectionList {
                 AbstractWidget configButton = access.getConfigButton();
 
                 //AbstractSelectionList#getRowTop
-                int y = y0 + 4 - (int)getScrollAmount() + 5 * itemHeight + headerHeight;
+                int y = instance.getY() + 4 - (int)getScrollAmount() + 5 * itemHeight + headerHeight;
                 volumeSlider.setY(y);
                 configButton.setY(y);
 
-                volumeSlider.render(poseStack, i, j, f);
-                configButton.render(poseStack, i, j, f);
+                volumeSlider.render(graphics, i, j, f);
+                configButton.render(graphics, i, j, f);
             }
         }
     }
