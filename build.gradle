@@ -22,11 +22,6 @@ forgix {
         jarLocation = "build/libs/${project.archives_base_name}-${project.mod_version}-mc${project.minecraft_version}-fabric.jar"
     }
 
-    forge {
-        projectName = "forge"
-        jarLocation = "build/libs/${project.archives_base_name}-${project.mod_version}-mc${project.minecraft_version}-forge.jar"
-    }
-
     custom {
         projectName = "neoforge"
         jarLocation = "build/libs/${project.archives_base_name}-${project.mod_version}-mc${project.minecraft_version}-neoforge.jar"
