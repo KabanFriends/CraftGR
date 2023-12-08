@@ -1,5 +1,5 @@
 modLoader = "javafml"
-loaderVersion = "[@FORGE_LOADER_MAJOR@,)"
+loaderVersion = "[1,)"
 issueTrackerURL = "https://github.com/KabanFriends/CraftGR/issues"
 license = "LGPL-3.0"
 
@@ -14,23 +14,26 @@ with a cool HUD overlay
 '''
 logoFile = "icon.png"
 
+[[mixins]]
+config = "craftgr-common.mixins.json"
+
 [[dependencies.craftgr]]
-modId = "forge"
+modId = "neoforge"
 mandatory = true
-versionRange = "[@FORGE_LOADER_MAJOR@,)"
+versionRange = "[20,)"
 ordering = "NONE"
-side = "BOTH"
+side = "CLIENT"
 
 [[dependencies.craftgr]]
 modId = "minecraft"
 mandatory = true
-versionRange = "[@MINECRAFT@,)"
+versionRange = "[1.20.4,)"
 ordering = "NONE"
-side = "BOTH"
+side = "CLIENT"
 
 [[dependencies.craftgr]]
 modId = "yet_another_config_lib_v3"
 mandatory = true
 versionRange="[3.3.0,)"
 ordering = "NONE"
-side = "BOTH"
+side = "CLIENT"
