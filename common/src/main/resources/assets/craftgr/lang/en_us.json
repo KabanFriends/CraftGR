@@ -7,7 +7,7 @@
   "text.craftgr.config.option.playback.stopped": "Stopped",
   "text.craftgr.config.option.playback.connecting": "Connecting...",
   "text.craftgr.config.option.playback.playing": "Playing",
-  "text.craftgr.config.option.playback.fail": "§cError!",
+  "text.craftgr.config.option.playback.fail": "Error!",
   "text.craftgr.config.option.volume": "Radio Volume",
   "text.craftgr.config.option.volume.tooltip": "Playback volume of Gensokyo Radio music.",
 

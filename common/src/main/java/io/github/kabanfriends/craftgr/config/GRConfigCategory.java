@@ -1,21 +1,21 @@
 package io.github.kabanfriends.craftgr.config;
 
-import io.github.kabanfriends.craftgr.config.value.GRConfigValue;
+import io.github.kabanfriends.craftgr.config.entry.GRConfigEntry;
 import net.minecraft.network.chat.Component;
 
 public class GRConfigCategory {
 
     private Component title;
     private boolean expanded;
-    private GRConfigValue[] entries;
+    private GRConfigEntry[] entries;
 
-    public GRConfigCategory(Component title, boolean expanded, GRConfigValue... entries) {
+    public GRConfigCategory(Component title, boolean expanded, GRConfigEntry... entries) {
         this.title = title;
         this.expanded = expanded;
         this.entries = entries;
     }
 
-    public GRConfigValue[] getValues() {
+    public GRConfigEntry[] getEntries() {
         return entries;
     }
 

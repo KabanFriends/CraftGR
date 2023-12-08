@@ -24,14 +24,13 @@ dependencies {
 
     implementation "javazoom:jlayer:${rootProject.jlayer_version}"
 
+    modImplementation "dev.isxander.yacl:yet-another-config-lib-fabric:${rootProject.yacl_version}"
     modApi("com.terraformersmc:modmenu:${rootProject.mod_menu_version}") { transitive(false) }
-    modApi("me.shedaniel.cloth:cloth-config-fabric:${rootProject.cloth_config_version}") { exclude(group: "net.fabricmc.fabric-api") }
 
-    include("me.shedaniel.cloth:cloth-config-fabric:${rootProject.cloth_config_version}") { exclude(group: "net.fabricmc.fabric-api") }
     include "javazoom:jlayer:${rootProject.jlayer_version}"
 
     modLocalRuntime("com.terraformersmc:modmenu:${rootProject.mod_menu_version}") { transitive(false) }
-    modLocalRuntime("me.shedaniel.cloth:cloth-config-fabric:${rootProject.cloth_config_version}") { exclude(group: "net.fabricmc.fabric-api") }
+    modLocalRuntime "dev.isxander.yacl:yet-another-config-lib-fabric:${rootProject.yacl_version}"
 }
 
 processResources {

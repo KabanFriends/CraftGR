@@ -5,6 +5,9 @@ import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.config.GRConfig;
 import io.github.kabanfriends.craftgr.platform.Platform;
 import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.ModContainer;
+
+import java.util.Optional;
 
 public class FabricPlatform extends Platform {
 
@@ -17,7 +20,8 @@ public class FabricPlatform extends Platform {
     }
 
     public String getModVersion(String id) {
-        return FabricLoader.getInstance().getModContainer(id).get().getMetadata().getVersion().getFriendlyString();
+        Optional<ModContainer> container = FabricLoader.getInstance().getModContainer(id);
+        return container.map(modContainer -> modContainer.getMetadata().getVersion().getFriendlyString()).orElse(null);
     }
 
     public boolean isInModMenu() {
