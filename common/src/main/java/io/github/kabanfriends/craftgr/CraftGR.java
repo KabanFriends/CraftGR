@@ -51,8 +51,8 @@ public class CraftGR {
 
         CraftGR.httpClient = HttpClients.createSystem();
         CraftGR.requestConfig = RequestConfig.custom()
-                .setConnectTimeout(2000)
-                .setSocketTimeout(2000)
+                .setConnectTimeout(10 * 1000)
+                .setSocketTimeout(10 * 1000)
                 .build();
     }
 
