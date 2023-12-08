@@ -27,7 +27,7 @@ dependencies {
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }
 
-    modImplementation "dev.isxander.yacl:yet-another-config-lib-forge:${project.yacl_version}"
+    modImplementation "dev.isxander.yacl:yet-another-config-lib-forge:${rootProject.yacl_version}"
 
     shadowCommon("javazoom:jlayer:${rootProject.jlayer_version}") { transitive = false }
 

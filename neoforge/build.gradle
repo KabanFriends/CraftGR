@@ -21,7 +21,7 @@ dependencies {
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionNeoForge")) { transitive = false }
 
-    modApi("me.shedaniel.cloth:cloth-config-neoforge:${rootProject.cloth_config_version}")
+    modImplementation "dev.isxander.yacl:yet-another-config-lib-forge:${rootProject.yacl_version}"
 
     shadowCommon("javazoom:jlayer:${rootProject.jlayer_version}") { transitive = false }
 
