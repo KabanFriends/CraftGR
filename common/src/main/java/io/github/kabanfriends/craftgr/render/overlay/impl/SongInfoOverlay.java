@@ -222,9 +222,7 @@ public class SongInfoOverlay extends Overlay {
 
         if (CraftGR.getPlatform().isInModMenu()) return true;
 
-        if (CraftGR.getPlatform().isModLoaded("cloth-config") || CraftGR.getPlatform().isModLoaded("cloth_config")) {
-            if (CraftGR.MC.screen instanceof YACLScreen) return true;
-        }
+        if (CraftGR.MC.screen instanceof YACLScreen) return true;
 
         OverlayVisibility visibility = GRConfig.getValue("overlayVisibility");
 
