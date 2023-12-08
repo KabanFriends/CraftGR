@@ -3,7 +3,7 @@ package io.github.kabanfriends.craftgr.render.overlay.impl;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import dev.isxander.yacl.gui.YACLScreen;
+import dev.isxander.yacl3.gui.YACLScreen;
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.config.GRConfig;
 import io.github.kabanfriends.craftgr.handler.AudioPlayerHandler;
@@ -121,7 +121,7 @@ public class SongInfoOverlay extends Overlay {
             RenderUtil.setZLevelPre(poseStack, 400);
             poseStack.scale(RenderUtil.getUIScale(scale), RenderUtil.getUIScale(scale), RenderUtil.getUIScale(scale));
 
-            RenderUtil.fill(poseStack, x, y, x + width, y + ART_SIZE + ART_TOP_PADDING + ART_BOTTOM_PADDING, GRConfig.<Integer>getValue("overlayBgColor") + 0xFF000000, 0.6f);
+            RenderUtil.fill(poseStack, x, y, x + width, y + ART_SIZE + ART_TOP_PADDING + ART_BOTTOM_PADDING, GRConfig.<Color>getValue("overlayBgColor").getRGB() + 0xFF000000, 0.6f);
 
             RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
 
@@ -174,7 +174,7 @@ public class SongInfoOverlay extends Overlay {
             poseStack.popPose();
 
             if (currentSong.isIntermission()) {
-                RenderUtil.fill(poseStack, x, y + ART_SIZE + ART_TOP_PADDING + ART_BOTTOM_PADDING, x + width, y + height, GRConfig.<Integer>getValue("overlayBgColor") + 0xFF000000, 0.6f);
+                RenderUtil.fill(poseStack, x, y + ART_SIZE + ART_TOP_PADDING + ART_BOTTOM_PADDING, x + width, y + height, GRConfig.<Color>getValue("overlayBgColor").getRGB() + 0xFF000000, 0.6f);
             } else {
                 long duration = currentSong.songEnd - currentSong.songStart;
                 long played = System.currentTimeMillis() / 1000L - SongHandler.getInstance().getSongStart();
@@ -185,8 +185,8 @@ public class SongInfoOverlay extends Overlay {
                 int timerWidth = font.width(getTimer((int) duration));
                 graphics.drawString(CraftGR.MC.font, getTimer((int) duration), x + (int) width - timerWidth - TIMER_RIGHT_PADDING, y + ART_TOP_PADDING + ART_SIZE + ART_TIMER_SPACE_HEIGHT, Color.WHITE.getRGB());
 
-                RenderUtil.fill(poseStack, x, y + ART_TOP_PADDING + ART_SIZE + ART_BOTTOM_PADDING, x + (float) played / duration * width, y + height, GRConfig.<Integer>getValue("overlayBarColor") + 0xFF000000, 0.6f);
-                RenderUtil.fill(poseStack, x + (float) played / duration * width, y + ART_TOP_PADDING + ART_SIZE + ART_BOTTOM_PADDING, x + width, y + height, GRConfig.<Integer>getValue("overlayBgColor") + 0xFF000000, 0.6f);
+                RenderUtil.fill(poseStack, x, y + ART_TOP_PADDING + ART_SIZE + ART_BOTTOM_PADDING, x + (float) played / duration * width, y + height, GRConfig.<Color>getValue("overlayBarColor").getRGB() + 0xFF000000, 0.6f);
+                RenderUtil.fill(poseStack, x + (float) played / duration * width, y + ART_TOP_PADDING + ART_SIZE + ART_BOTTOM_PADDING, x + width, y + height, GRConfig.<Color>getValue("overlayBgColor").getRGB() + 0xFF000000, 0.6f);
             }
 
             songTitleText.setX(x + ART_LEFT_PADDING + albumArtWidth + ART_INFO_SPACE_WIDTH);
@@ -269,11 +269,14 @@ public class SongInfoOverlay extends Overlay {
         float x = CraftGR.MC.getWindow().getWidth() / GRConfig.<Float>getValue("overlayScale") - width - offset;
         float y = CraftGR.MC.getWindow().getHeight() / GRConfig.<Float>getValue("overlayScale") - height - offset;
 
+        // TODO: Improve or remove
+        /*
         if (CraftGR.MC.screen instanceof YACLScreen) {
             float overlayScale = GRConfig.<Float>getValue("overlayScale");
             float guiScale = (float)CraftGR.MC.getWindow().getGuiScale();
             return new float[] {guiScale * 8 / overlayScale, guiScale * 28 / overlayScale};
         }
+        */
 
         switch (position) {
             case TOP_RIGHT:

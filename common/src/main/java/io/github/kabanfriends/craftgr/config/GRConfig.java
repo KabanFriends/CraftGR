@@ -2,9 +2,9 @@ package io.github.kabanfriends.craftgr.config;
 
 import com.google.gson.*;
 import com.google.gson.stream.JsonWriter;
-import dev.isxander.yacl.api.ConfigCategory;
-import dev.isxander.yacl.api.OptionGroup;
-import dev.isxander.yacl.api.YetAnotherConfigLib;
+import dev.isxander.yacl3.api.ConfigCategory;
+import dev.isxander.yacl3.api.OptionGroup;
+import dev.isxander.yacl3.api.YetAnotherConfigLib;
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.config.entry.GRConfigEntry;
 import io.github.kabanfriends.craftgr.config.entry.impl.*;
@@ -33,12 +33,13 @@ public class GRConfig {
     private static JsonObject configJson;
     private static Map<String, GRConfigEntry> configMap = new HashMap<>();
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     private static final GRConfigCategory[] categories = {
-            new GRConfigCategory(Component.translatable("text.craftgr.config.category.playback"), false,
+            new GRConfigCategory(Component.translatable("text.craftgr.config.category.playback"), true,
                     new RadioStateConfigEntry("playback"),
                     new PercentageConfigEntry("volume", 50)
             ),
-            new GRConfigCategory(Component.translatable("text.craftgr.config.category.overlay"), false,
+            new GRConfigCategory(Component.translatable("text.craftgr.config.category.overlay"), true,
                     new EnumConfigEntry("overlayVisibility", SongInfoOverlay.OverlayVisibility.MENU),
                     new EnumConfigEntry("overlayPosition", SongInfoOverlay.OverlayPosition.TOP_RIGHT),
                     new BooleanConfigEntry("hideAlbumArt", false),
@@ -48,7 +49,7 @@ public class GRConfig {
                     new ColorConfigEntry("overlayBgColor", new Color(99, 34, 121)),
                     new ColorConfigEntry("overlayBarColor", new Color(160, 150, 174))
             ),
-            new GRConfigCategory(Component.translatable("text.craftgr.config.category.url"), false,
+            new GRConfigCategory(Component.translatable("text.craftgr.config.category.url"), true,
                     new StringConfigEntry("urlStream", "https://stream.gensokyoradio.net/1/"),
                     new StringConfigEntry("urlInfoJson", "https://gensokyoradio.net/api/station/playing/"),
                     new StringConfigEntry("urlAlbumArt", "https://gensokyoradio.net/images/albums/500/")

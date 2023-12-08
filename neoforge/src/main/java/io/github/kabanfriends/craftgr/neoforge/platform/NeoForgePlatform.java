@@ -3,8 +3,11 @@ package io.github.kabanfriends.craftgr.neoforge.platform;
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.config.GRConfig;
 import io.github.kabanfriends.craftgr.platform.Platform;
+import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.client.gui.ModListScreen;
+
+import java.util.Optional;
 
 public class NeoForgePlatform extends Platform {
 
@@ -17,7 +20,8 @@ public class NeoForgePlatform extends Platform {
     }
 
     public String getModVersion(String id) {
-        return ModList.get().getModContainerById(id).get().getModInfo().getVersion().toString();
+        Optional<? extends ModContainer> container = ModList.get().getModContainerById(id);
+        return container.map(mod -> mod.getModInfo().getVersion().toString()).orElse(null);
     }
 
     public boolean isInModMenu() {

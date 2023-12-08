@@ -1,8 +1,9 @@
 package io.github.kabanfriends.craftgr.config.entry.impl;
 
 import com.google.gson.JsonPrimitive;
-import dev.isxander.yacl.api.Option;
-import dev.isxander.yacl.gui.controllers.string.number.FloatFieldController;
+import dev.isxander.yacl3.api.Option;
+import dev.isxander.yacl3.api.OptionDescription;
+import dev.isxander.yacl3.api.controller.FloatFieldControllerBuilder;
 import io.github.kabanfriends.craftgr.config.GRConfig;
 import io.github.kabanfriends.craftgr.config.entry.GRConfigEntry;
 import net.minecraft.network.chat.Component;
@@ -25,11 +26,11 @@ public class FloatConfigEntry extends GRConfigEntry<Float> {
         return new JsonPrimitive(getValue());
     }
 
-    public Option getOption() {
-        return Option.createBuilder(Float.class)
+    public Option<Float> getOption() {
+        return Option.<Float>createBuilder()
                 .name(Component.translatable("text.craftgr.config.option." + getKey()))
-                .tooltip(Component.translatable("text.craftgr.config.option." + getKey() + ".tooltip"))
-                .controller(FloatFieldController::new)
+                .description(OptionDescription.of(Component.translatable("text.craftgr.config.option." + getKey() + ".tooltip")))
+                .controller(FloatFieldControllerBuilder::create)
                 .binding(getDefaultValue(), this::getValue, (value) -> GRConfig.setValue(this, value))
                 .build();
     }

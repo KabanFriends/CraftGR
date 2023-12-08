@@ -1,9 +1,10 @@
 package io.github.kabanfriends.craftgr.config.entry.impl;
 
 import com.google.gson.JsonPrimitive;
-import dev.isxander.yacl.api.Option;
-import dev.isxander.yacl.gui.controllers.slider.IntegerSliderController;
-import dev.isxander.yacl.gui.controllers.string.number.IntegerFieldController;
+import dev.isxander.yacl3.api.Option;
+import dev.isxander.yacl3.api.OptionDescription;
+import dev.isxander.yacl3.api.controller.IntegerFieldControllerBuilder;
+import dev.isxander.yacl3.api.controller.IntegerSliderControllerBuilder;
 import io.github.kabanfriends.craftgr.config.GRConfig;
 import io.github.kabanfriends.craftgr.config.entry.GRConfigEntry;
 import net.minecraft.network.chat.Component;
@@ -32,17 +33,20 @@ public class IntegerConfigEntry extends GRConfigEntry<Integer> {
         return new JsonPrimitive(getValue());
     }
 
-    public Option getOption() {
-        Option.Builder<Integer> builder = Option.createBuilder(Integer.class)
+    public Option<Integer> getOption() {
+        Option.Builder<Integer> builder = Option.<Integer>createBuilder()
                 .name(Component.translatable("text.craftgr.config.option." + getKey()))
-                .tooltip(Component.translatable("text.craftgr.config.option." + getKey() + ".tooltip"))
+                .description(OptionDescription.of(Component.translatable("text.craftgr.config.option." + getKey() + ".tooltip")))
                 .binding(getDefaultValue(), this::getValue, (value) -> GRConfig.setValue(this, value));
 
         if (hasRange) {
-            return builder.controller((option) -> new IntegerSliderController(option, minValue, maxValue, 1)).build();
+            return builder.controller((option) -> IntegerSliderControllerBuilder.create(option)
+                    .step(1)
+                    .range(minValue, maxValue)
+            ).build();
         }
 
-        return builder.controller(IntegerFieldController::new).build();
+        return builder.controller(IntegerFieldControllerBuilder::create).build();
     }
 
     public IntegerConfigEntry setRange(int min, int max) {

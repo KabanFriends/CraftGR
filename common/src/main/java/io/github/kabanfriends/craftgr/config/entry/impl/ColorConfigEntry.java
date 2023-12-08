@@ -1,8 +1,9 @@
 package io.github.kabanfriends.craftgr.config.entry.impl;
 
 import com.google.gson.JsonPrimitive;
-import dev.isxander.yacl.api.Option;
-import dev.isxander.yacl.gui.controllers.ColorController;
+import dev.isxander.yacl3.api.Option;
+import dev.isxander.yacl3.api.OptionDescription;
+import dev.isxander.yacl3.api.controller.ColorControllerBuilder;
 import io.github.kabanfriends.craftgr.config.GRConfig;
 import io.github.kabanfriends.craftgr.config.entry.GRConfigEntry;
 import net.minecraft.network.chat.Component;
@@ -27,11 +28,11 @@ public class ColorConfigEntry extends GRConfigEntry<Color> {
         return new JsonPrimitive(Integer.toHexString(color));
     }
 
-    public Option getOption() {
-        return Option.createBuilder(Color.class)
+    public Option<Color> getOption() {
+        return Option.<Color>createBuilder()
                 .name(Component.translatable("text.craftgr.config.option." + getKey()))
-                .tooltip(Component.translatable("text.craftgr.config.option." + getKey() + ".tooltip"))
-                .controller((option) -> new ColorController(option, false))
+                .description(OptionDescription.of(Component.translatable("text.craftgr.config.option." + getKey() + ".tooltip")))
+                .controller(ColorControllerBuilder::create)
                 .binding(getDefaultValue(), this::getValue, (value) -> GRConfig.setValue(this, value))
                 .build();
     }

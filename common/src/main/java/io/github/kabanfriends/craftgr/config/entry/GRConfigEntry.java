@@ -1,13 +1,13 @@
 package io.github.kabanfriends.craftgr.config.entry;
 
 import com.google.gson.JsonPrimitive;
-import dev.isxander.yacl.api.Option;
+import dev.isxander.yacl3.api.Option;
 
 public abstract class GRConfigEntry<T> {
 
-    private String key;
+    private final String key;
 
-    private T defaultValue;
+    private final T defaultValue;
     private T value;
 
     public GRConfigEntry(String key, T value) {
@@ -16,11 +16,7 @@ public abstract class GRConfigEntry<T> {
         this.value = value;
     }
 
-    public abstract T deserialize(JsonPrimitive jsonValue);
-
-    public abstract JsonPrimitive serialize();
-
-    public abstract Option getOption();
+    public abstract Option<T> getOption();
 
     @SuppressWarnings("unchecked")
     public void setValue(Object value) {
@@ -37,5 +33,13 @@ public abstract class GRConfigEntry<T> {
 
     public String getKey() {
         return key;
+    }
+
+    public T deserialize(JsonPrimitive jsonValue) {
+        return null;
+    }
+
+    public JsonPrimitive serialize() {
+        return null;
     }
 }
