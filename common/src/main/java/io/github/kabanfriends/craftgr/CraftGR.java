@@ -40,6 +40,8 @@ public class CraftGR {
 
     public static boolean renderSongOverlay;
 
+    public static boolean bypassPngValidation;
+
     private static Platform platform;
     private static CloseableHttpClient httpClient;
     private static RequestConfig requestConfig;

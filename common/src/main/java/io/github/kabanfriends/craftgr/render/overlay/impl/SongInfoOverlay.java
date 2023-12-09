@@ -371,6 +371,8 @@ public class SongInfoOverlay extends Overlay {
         do {
             tries++;
 
+            CraftGR.bypassPngValidation = true;
+
             try {
                 HttpGet get = HttpUtil.get(url);
 
@@ -403,6 +405,8 @@ public class SongInfoOverlay extends Overlay {
                     albumArtTexture.close();
                     albumArtTexture = null;
                 }
+            } finally {
+                CraftGR.bypassPngValidation = false;
             }
 
             if (tries < ALBUM_ART_FETCH_TRIES) {
