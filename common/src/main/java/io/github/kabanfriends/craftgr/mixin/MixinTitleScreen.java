@@ -16,54 +16,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(TitleScreen.class)
 public class MixinTitleScreen {
 
-    private static boolean audioFading;
-    private static long audioFadeStart;
-
-    @Inject(method = "removed", at = @At("HEAD"))
-    private void craftgr$onTitleClose(CallbackInfo info) {
-        audioFadeStart = 1L;
-        AudioPlayerHandler handler = AudioPlayerHandler.getInstance();
-
-        if (handler.getState() == HandlerState.ACTIVE || handler.getState() == HandlerState.READY) {
-            if (!handler.getAudioPlayer().isPlaying()) {
-                CraftGR.EXECUTOR.submit(handler::startPlayback);
-            }
-            handler.getAudioPlayer().setBaseVolume(1.0f);
-        }
-    }
-
-    @Inject(method = "render", at = @At("HEAD"))
-    private void craftgr$onTitleRender(GuiGraphics graphics, int mouseX, int mouseY, float delta, CallbackInfo ci) {
-        AudioPlayerHandler handler = AudioPlayerHandler.getInstance();
-
-        //Initialize audio player
-        if (handler.getState() == HandlerState.NOT_INITIALIZED) {
-            AudioPlayerUtil.startPlaybackAsync(0.0f);
-        }
-
-        if (handler.getState() == HandlerState.ACTIVE && handler.hasAudioPlayer() && handler.isPlaying()) {
-            //Audio fade in
-            if (audioFadeStart == 0L) {
-                audioFading = true;
-                audioFadeStart = Util.getMillis();
-            }
-
-            if (audioFading) {
-                float value = (float) (Util.getMillis() - audioFadeStart) / 2000.0F;
-                handler.getAudioPlayer().setBaseVolume(Mth.clamp(value, 0.0f, 1.0f));
-
-                if (value >= 1.0f) {
-                    audioFading = false;
-                }
-            }
-        }
-    }
-
     @Inject(method = "render", at = @At(value="INVOKE", target = "Lnet/minecraft/client/gui/screens/Screen;render(Lnet/minecraft/client/gui/GuiGraphics;IIF)V"))
     public void craftgr$onRenderScreen(GuiGraphics graphics, int i, int j, float f, CallbackInfo ci) {
-        //Start rendering the song overlay
-        if (!CraftGR.renderSongOverlay) {
-            CraftGR.renderSongOverlay = true;
-        }
+        // Allow rendering the song overlay
+        CraftGR.renderSongOverlay = true;
     }
 }

@@ -16,16 +16,11 @@
   "license": "LGPL-3.0",
   "icon": "icon.png",
   "entrypoints": {
-    "main": [
-      "io.github.kabanfriends.craftgr.fabric.CraftGRFabric"
-    ],
     "modmenu": [
-      "io.github.kabanfriends.craftgr.fabric.config.ModMenuIntegration"
+      "io.github.kabanfriends.craftgr.fabric.ModMenuIntegration"
     ],
     "client": [
-      "io.github.kabanfriends.craftgr.fabric.events.KeybindEvents",
-      "io.github.kabanfriends.craftgr.fabric.events.OverlayEvents",
-      "io.github.kabanfriends.craftgr.fabric.events.LifecycleEvents"
+      "io.github.kabanfriends.craftgr.fabric.CraftGRFabric"
     ],
     "server": []
   },

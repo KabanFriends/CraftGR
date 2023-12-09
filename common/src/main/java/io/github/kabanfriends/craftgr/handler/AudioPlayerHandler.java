@@ -4,6 +4,8 @@ import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.audio.AudioPlayer;
 import io.github.kabanfriends.craftgr.config.GRConfig;
 import io.github.kabanfriends.craftgr.util.*;
+import net.minecraft.Util;
+import net.minecraft.util.Mth;
 import org.apache.http.client.methods.*;
 import org.apache.logging.log4j.Level;
 
@@ -17,6 +19,28 @@ public class AudioPlayerHandler {
     private AudioPlayer player;
     private ResponseHolder response;
     private boolean playing = false;
+
+    private boolean audioFading;
+    private static long audioFadeStart;
+
+    public void tick() {
+        if (getState() == HandlerState.ACTIVE && hasAudioPlayer() && isPlaying()) {
+            //Audio fade in
+            if (audioFadeStart == 0L) {
+                audioFading = true;
+                audioFadeStart = Util.getMillis();
+            }
+
+            if (audioFading) {
+                float value = (float) (Util.getMillis() - audioFadeStart) / 2000.0F;
+                getAudioPlayer().setBaseVolume(Mth.clamp(value, 0.0f, 1.0f));
+
+                if (value >= 1.0f) {
+                    audioFading = false;
+                }
+            }
+        }
+    }
 
     public void startPlayback() {
         if (state == HandlerState.FAIL) {

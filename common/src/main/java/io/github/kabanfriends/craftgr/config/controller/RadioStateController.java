@@ -76,7 +76,7 @@ public class RadioStateController implements Controller<Boolean> {
             HandlerState state = handler.getState();
 
             return switch (state) {
-                case NOT_INITIALIZED, STOPPED -> Component.translatable("text.craftgr.config.option.playback.stopped").withStyle(ChatFormatting.RED);
+                case NOT_INITIALIZED, STOPPED -> Component.translatable("text.craftgr.config.option.playback.stopped");
                 case RELOADING, INITIALIZING -> Component.translatable("text.craftgr.config.option.playback.connecting");
                 case READY, ACTIVE -> Component.translatable("text.craftgr.config.option.playback.playing");
                 case FAIL -> Component.translatable("text.craftgr.config.option.playback.fail").withStyle(ChatFormatting.RED);

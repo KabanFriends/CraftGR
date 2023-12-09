@@ -1,4 +1,4 @@
-package io.github.kabanfriends.craftgr.fabric.platform;
+package io.github.kabanfriends.craftgr.fabric;
 
 import com.terraformersmc.modmenu.gui.ModsScreen;
 import io.github.kabanfriends.craftgr.CraftGR;

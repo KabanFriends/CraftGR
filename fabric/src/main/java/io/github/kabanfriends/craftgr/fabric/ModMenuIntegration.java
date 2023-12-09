@@ -1,4 +1,4 @@
-package io.github.kabanfriends.craftgr.fabric.config;
+package io.github.kabanfriends.craftgr.fabric;
 
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;

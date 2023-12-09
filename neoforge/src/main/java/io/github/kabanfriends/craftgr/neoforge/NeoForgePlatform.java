@@ -1,4 +1,4 @@
-package io.github.kabanfriends.craftgr.neoforge.platform;
+package io.github.kabanfriends.craftgr.neoforge;
 
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.config.GRConfig;

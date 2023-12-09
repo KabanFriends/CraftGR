@@ -27,5 +27,4 @@ public class MixinMinecraft {
             e.printStackTrace();
         }
     }
-
 }
