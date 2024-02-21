@@ -155,7 +155,7 @@ public class SongHandler {
     @SuppressWarnings("unchecked")
     private static <T> T getValueWithDefault(JsonObject json, String key, T defaultValue, Class<T> clazz) {
         JsonElement element = json.get(key);
-        if (element.isJsonPrimitive()) {
+        if (element != null && element.isJsonPrimitive()) {
             JsonPrimitive value = element.getAsJsonPrimitive();
             if (value.isNumber()) {
                 Number number = value.getAsNumber();
