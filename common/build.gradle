@@ -5,7 +5,7 @@ dependencies {
 
     modImplementation "dev.isxander.yacl:yet-another-config-lib-fabric:${rootProject.yacl_version}"
 
-    implementation "javazoom:jlayer:${rootProject.jlayer_version}"
+    implementation "com.github.umjammer:jlayer:${rootProject.jlayer_version}"
 }
 
 architectury {

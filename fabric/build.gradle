@@ -22,12 +22,12 @@ dependencies {
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
 
-    implementation "javazoom:jlayer:${rootProject.jlayer_version}"
+    implementation "com.github.umjammer:jlayer:${rootProject.jlayer_version}"
 
     modImplementation "dev.isxander.yacl:yet-another-config-lib-fabric:${rootProject.yacl_version}"
     modApi("com.terraformersmc:modmenu:${rootProject.mod_menu_version}") { transitive(false) }
 
-    include "javazoom:jlayer:${rootProject.jlayer_version}"
+    include "com.github.umjammer:jlayer:${rootProject.jlayer_version}"
 
     modLocalRuntime("com.terraformersmc:modmenu:${rootProject.mod_menu_version}") { transitive(false) }
     modLocalRuntime "dev.isxander.yacl:yet-another-config-lib-fabric:${rootProject.yacl_version}"
