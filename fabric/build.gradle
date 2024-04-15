@@ -24,7 +24,6 @@ dependencies {
 
     implementation "com.github.umjammer:jlayer:${rootProject.jlayer_version}"
 
-    modImplementation "dev.isxander.yacl:yet-another-config-lib-fabric:${rootProject.yacl_version}"
     modApi("com.terraformersmc:modmenu:${rootProject.mod_menu_version}") { transitive(false) }
 
     include "com.github.umjammer:jlayer:${rootProject.jlayer_version}"
