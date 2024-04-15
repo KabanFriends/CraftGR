@@ -20,7 +20,7 @@ dependencies {
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionNeoForge")) { transitive false }
-    
+
     shadowCommon "com.github.umjammer:jlayer:${rootProject.jlayer_version}"
 
     implementation "com.github.umjammer:jlayer:${rootProject.jlayer_version}"
