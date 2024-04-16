@@ -218,7 +218,7 @@ public class SongInfoOverlay extends Overlay {
         if (CraftGR.MC.screen instanceof ReceivingLevelScreen) return true;
         if (CraftGR.MC.screen instanceof ProgressScreen) return true;
         if (CraftGR.MC.screen instanceof ConnectScreen) return true;
-        if (CraftGR.MC.screen instanceof GenericDirtMessageScreen) return true;
+        if (CraftGR.MC.screen instanceof GenericMessageScreen) return true;
 
         if (CraftGR.getPlatform().isInModMenu()) return true;
 
