@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.config.GRConfig;
 import io.github.kabanfriends.craftgr.handler.AudioPlayerHandler;
+import io.github.kabanfriends.craftgr.mixinaccess.AbstractSelectionListMixinAccess;
 import io.github.kabanfriends.craftgr.mixinaccess.SoundOptionsScreenMixinAccess;
 import net.minecraft.client.OptionInstance;
 import net.minecraft.client.gui.components.*;
@@ -52,23 +53,9 @@ public class MixinSoundOptionsScreen extends MixinOptionsSubScreen implements So
         super(title);
     }
 
-    @Inject(method = "init()V", at = @At("RETURN"))
-    private void craftgr$initSoundOptionsScreen(CallbackInfo ci) {
-        PLAYBACK_VOLUME.set(GRConfig.<Integer>getValue("volume") / 100.0D);
-
-        volumeSlider = PLAYBACK_VOLUME.createButton(CraftGR.MC.options, this.width / 2 - 155 + 160, this.height / 6 - 12 + 22 * (11 >> 1), 150 - 24);
-        configButton = new ImageButton(
-                this.width / 2 - 155 + 160 + 150 - 20,
-                this.height / 6 - 12 + 22 * (11 >> 1),
-                20,
-                20,
-                BUTTON_SPRITES,
-                (button) -> CraftGR.getPlatform().openConfigScreen()
-        );
-        configButton.setTooltip(Tooltip.create(Component.translatable("text.craftgr.gui.config.tooltip")));
-
-        this.addWidget(volumeSlider);
-        this.addWidget(configButton);
+    @Inject(method = "init()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/components/OptionsList;addSmall([Lnet/minecraft/client/OptionInstance;)V", shift = At.Shift.AFTER, ordinal = 0))
+    private void craftgr$initScreen(CallbackInfo ci) {
+        ((AbstractSelectionListMixinAccess) this.list).addEntry(OptionsList.Entry.small());
     }
 
     @Override

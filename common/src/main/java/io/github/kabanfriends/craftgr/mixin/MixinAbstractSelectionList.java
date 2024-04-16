@@ -22,6 +22,7 @@ public abstract class MixinAbstractSelectionList {
 
     @Shadow protected int headerHeight;
 
+    /*
     @Inject(method = "renderList", at = @At("HEAD"))
     private void craftgr$renderSelectionList(GuiGraphics graphics, int i, int j, float f, CallbackInfo ci) {
         if (CraftGR.MC.screen instanceof SoundOptionsScreen screen) {
@@ -42,5 +43,6 @@ public abstract class MixinAbstractSelectionList {
             }
         }
     }
+    */
 
 }
