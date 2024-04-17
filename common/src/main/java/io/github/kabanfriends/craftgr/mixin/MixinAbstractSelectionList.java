@@ -9,6 +9,7 @@ import net.minecraft.client.gui.screens.SoundOptionsScreen;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.gen.Invoker;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -16,11 +17,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(AbstractSelectionList.class)
 public abstract class MixinAbstractSelectionList {
 
-    @Shadow public abstract double getScrollAmount();
+    @Shadow
+    public abstract double getScrollAmount();
 
-    @Shadow @Final protected int itemHeight;
+    @Shadow
+    @Final
+    protected int itemHeight;
 
-    @Shadow protected int headerHeight;
+    @Shadow
+    protected int headerHeight;
 
     /*
     @Inject(method = "renderList", at = @At("HEAD"))

@@ -1,4 +1,4 @@
-package io.github.kabanfriends.craftgr.gui.widget;
+package io.github.kabanfriends.craftgr.gui;
 
 import io.github.kabanfriends.craftgr.config.GRConfig;
 import io.github.kabanfriends.craftgr.handler.AudioPlayerHandler;
@@ -10,7 +10,8 @@ import net.minecraft.util.Mth;
 public class RadioVolumeSliderButton extends AbstractSliderButton {
 
     public RadioVolumeSliderButton(int x, int y, int width) {
-        super(x, y, width, 20, CommonComponents.EMPTY, GRConfig.<Integer>getValue("volume"));
+        super(x, y, width, 20, CommonComponents.EMPTY, GRConfig.<Integer>getValue("volume") / 100d);
+        updateMessage();
     }
 
     @Override
