@@ -3,9 +3,9 @@ package io.github.kabanfriends.craftgr.mixin;
 import com.mojang.serialization.Codec;
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.config.GRConfig;
-import io.github.kabanfriends.craftgr.gui.RadioConfigContainer;
+import io.github.kabanfriends.craftgr.gui.RadioOptionContainer;
 import io.github.kabanfriends.craftgr.handler.AudioPlayerHandler;
-import io.github.kabanfriends.craftgr.mixinaccess.SoundOptionsScreenMixinAccess;
+import io.github.kabanfriends.craftgr.util.ThreadLocals;
 import net.minecraft.client.OptionInstance;
 import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.screens.SoundOptionsScreen;
@@ -16,13 +16,10 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.List;
-
 @Mixin(SoundOptionsScreen.class)
-public class MixinSoundOptionsScreen extends MixinOptionsSubScreen implements SoundOptionsScreenMixinAccess {
+public class MixinSoundOptionsScreen extends MixinOptionsSubScreen {
 
     @Shadow
     private OptionsList list;
@@ -56,36 +53,21 @@ public class MixinSoundOptionsScreen extends MixinOptionsSubScreen implements So
         super(title);
     }
 
-    @Inject(method = "init()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/components/OptionsList;addSmall([Lnet/minecraft/client/OptionInstance;)V", shift = At.Shift.AFTER, ordinal = 0))
-    private void craftgr$initScreen(CallbackInfo ci) {
-        ((MixinAccessorAbstractSelectionList) this.list).addEntry(OptionsList.Entry.big(List.of(new RadioConfigContainer(0, 0, 150)), this));
+    @Inject(method = "init", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/components/OptionsList;addSmall([Lnet/minecraft/client/OptionInstance;)V", shift = At.Shift.BEFORE, ordinal = 0))
+    private void craftgr$startSmallOptions(CallbackInfo ci) {
+        ThreadLocals.RADIO_OPTION_CONTAINER_ADDED.set(false);
     }
 
-    @Redirect(method = "init()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/components/OptionsList;addSmall([Lnet/minecraft/client/OptionInstance;)V", ordinal = 0))
-    private void craftgr$addSmallOptions(OptionsList instance, OptionInstance<?>[] optionInstances) {
-        for(int i = 0; i < optionInstances.length; i += 2) {
-            OptionInstance<?> optionInstance = i < optionInstances.length - 1 ? optionInstances[i + 1] : null;
-            this.addEntry(OptionsList.OptionEntry.small(this.minecraft.options, optionInstances[i], optionInstance, this.screen));
+    @Inject(method = "init", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/components/OptionsList;addSmall([Lnet/minecraft/client/OptionInstance;)V", shift = At.Shift.AFTER, ordinal = 0))
+    private void craftgr$endSmallOptions(CallbackInfo ci) {
+        if (!ThreadLocals.RADIO_OPTION_CONTAINER_ADDED.get()) {
+            ((MixinAccessorAbstractSelectionList) this.list).addEntry(OptionsList.Entry.small(new RadioOptionContainer(0, 0, 150), null, this));
         }
+        ThreadLocals.RADIO_OPTION_CONTAINER_ADDED.remove();
     }
 
     @Override
     public void craftgr$saveConfig(CallbackInfo ci) {
         GRConfig.save();
-    }
-
-    @Override
-    public OptionsList getOptionsList() {
-        return list;
-    }
-
-    @Override
-    public AbstractWidget getVolumeSlider() {
-        return volumeSlider;
-    }
-
-    @Override
-    public AbstractWidget getConfigButton() {
-        return configButton;
     }
 }

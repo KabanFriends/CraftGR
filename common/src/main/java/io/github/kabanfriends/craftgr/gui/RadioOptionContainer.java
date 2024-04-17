@@ -13,7 +13,7 @@ import net.minecraft.resources.ResourceLocation;
 
 import java.util.List;
 
-public class RadioConfigContainer extends AbstractContainerWidget {
+public class RadioOptionContainer extends AbstractContainerWidget {
 
     private static final int CONFIG_BUTTON_SIZE = 20;
     private static final int CONFIG_BUTTON_PADDING = 4;
@@ -28,7 +28,7 @@ public class RadioConfigContainer extends AbstractContainerWidget {
 
     private final List<AbstractWidget> children;
 
-    public RadioConfigContainer(int x, int y, int width) {
+    public RadioOptionContainer(int x, int y, int width) {
         super(x, y, width, 20, CommonComponents.EMPTY);
 
         volumeSlider = new RadioVolumeSliderButton(x, y, width - CONFIG_BUTTON_SIZE - CONFIG_BUTTON_PADDING);
