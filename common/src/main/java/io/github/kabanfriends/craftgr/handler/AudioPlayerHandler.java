@@ -23,7 +23,7 @@ public class AudioPlayerHandler {
     private boolean audioFading;
     private static long audioFadeStart;
 
-    public void tick() {
+    public void onClientTick() {
         if (getState() == HandlerState.ACTIVE && hasAudioPlayer() && isPlaying()) {
             //Audio fade in
             if (audioFadeStart == 0L) {

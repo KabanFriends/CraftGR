@@ -1,6 +1,9 @@
 package io.github.kabanfriends.craftgr.handler;
 
+import io.github.kabanfriends.craftgr.CraftGR;
+import io.github.kabanfriends.craftgr.config.GRConfig;
 import io.github.kabanfriends.craftgr.render.overlay.Overlay;
+import io.github.kabanfriends.craftgr.render.overlay.impl.SongInfoOverlay;
 import net.minecraft.client.gui.GuiGraphics;
 
 import java.util.ArrayList;
@@ -14,25 +17,27 @@ public class OverlayHandler {
         overlayList.add(overlay);
     }
 
-    public static void render(Overlay overlay, GuiGraphics graphics, int mouseX, int mouseY) {
-        overlay.render(graphics, mouseX, mouseY);
-    }
-
     public static void renderAll(GuiGraphics graphics, int mouseX, int mouseY) {
         for (Overlay overlay : overlayList) {
-            render(overlay, graphics, mouseX, mouseY);
+            overlay.render(graphics, mouseX, mouseY);
         }
     }
 
-    public static boolean clickPress(Overlay overlay, int mouseX, int mouseY) {
-        return overlay.onMouseClick(mouseX, mouseY);
-    }
-
-    public static boolean clickPressAll(int mouseX, int mouseY) {
+    public static boolean mouseClickAll(int mouseX, int mouseY) {
         boolean cancelled = false;
         for (Overlay overlay : overlayList) {
-            if (!clickPress(overlay, mouseX, mouseY)) cancelled = true;
+            if (!overlay.mouseClick(mouseX, mouseY)) cancelled = true;
         }
         return cancelled;
+    }
+
+    public static void onRenderScreen(GuiGraphics graphics, int mouseX, int mouseY) {
+        if (!CraftGR.MC.options.hideGui || CraftGR.MC.screen != null) {
+            if (CraftGR.renderSongOverlay && GRConfig.getValue("overlayVisibility") != SongInfoOverlay.OverlayVisibility.NONE) {
+                CraftGR.MC.getProfiler().push("CraftGR Song Overlay");
+                OverlayHandler.renderAll(graphics, mouseX, mouseY);
+                CraftGR.MC.getProfiler().pop();
+            }
+        }
     }
 }

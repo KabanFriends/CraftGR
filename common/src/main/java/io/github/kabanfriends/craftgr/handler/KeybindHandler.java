@@ -10,7 +10,7 @@ public class KeybindHandler {
 
     public static KeyMapping toggleMuteKey;
 
-    public static void tick() {
+    public static void onClientTick() {
         if (CraftGR.MC.screen == null) {
             while (toggleMuteKey.consumeClick()) {
                 KeybindHandler.togglePlayback();

@@ -111,11 +111,11 @@ public class SongInfoOverlay extends Overlay {
             float width = size[0];
             float height = size[1];
 
-            float[] coord = getOverlayCoordinate(GRConfig.getValue("overlayPosition"), width, height);
-            int x = (int) coord[0];
-            int y = (int) coord[1];
+            OverlayPosition position = GRConfig.getValue("overlayPosition");
+            int x = getOverlayX(position, width);
+            int y = getOverlayY(position, height);
 
-            //Rendering
+            // Rendering
             PoseStack poseStack = graphics.pose();
 
             RenderUtil.setZLevelPre(poseStack, 400);
@@ -195,7 +195,7 @@ public class SongInfoOverlay extends Overlay {
 
             RenderUtil.setZLevelPost(poseStack);
 
-            //Mouse hover detection
+            // Mouse hover detection
             float mouseScaledX = mouseX / RenderUtil.getUIScale(scale);
             float mouseScaledY = mouseY / RenderUtil.getUIScale(scale);
 
@@ -212,7 +212,7 @@ public class SongInfoOverlay extends Overlay {
     }
 
     @Override
-    public boolean onMouseClick(int mouseX, int mouseY) {
+    public boolean mouseClick(int mouseX, int mouseY) {
         if (CraftGR.MC.screen instanceof ConfirmLinkScreen) return true;
         if (CraftGR.MC.screen instanceof LevelLoadingScreen) return true;
         if (CraftGR.MC.screen instanceof ReceivingLevelScreen) return true;
@@ -243,9 +243,9 @@ public class SongInfoOverlay extends Overlay {
             float width = size[0];
             float height = size[1];
 
-            float[] coord = getOverlayCoordinate(GRConfig.getValue("overlayPosition"), width, height);
-            int x = (int) coord[0];
-            int y = (int) coord[1];
+            OverlayPosition position = GRConfig.getValue("overlayPosition");
+            int x = getOverlayX(position, width);
+            int y = getOverlayY(position, height);
 
             if (scaledX >= x && scaledX <= x + width && scaledY >= y && scaledY <= y + height) {
                 String link = "https://gensokyoradio.net/music/album/" + currentSong.albumId;
@@ -262,29 +262,27 @@ public class SongInfoOverlay extends Overlay {
         return true;
     }
 
-    private float[] getOverlayCoordinate(OverlayPosition position, float width, float height) {
-        float offset = 10 / GRConfig.<Float>getValue("overlayScale");
-        float x = CraftGR.MC.getWindow().getWidth() / GRConfig.<Float>getValue("overlayScale") - width - offset;
-        float y = CraftGR.MC.getWindow().getHeight() / GRConfig.<Float>getValue("overlayScale") - height - offset;
+    private int getOverlayX(OverlayPosition position, float width) {
+        float scale = GRConfig.getValue("overlayScale");
+        float offset = 10 / scale;
+        int x = (int)(CraftGR.MC.getWindow().getWidth() / scale - width - offset);
 
-        // TODO: Improve or remove
-        /*
-        if (CraftGR.MC.screen instanceof YACLScreen) {
-            float overlayScale = GRConfig.<Float>getValue("overlayScale");
-            float guiScale = (float)CraftGR.MC.getWindow().getGuiScale();
-            return new float[] {guiScale * 8 / overlayScale, guiScale * 28 / overlayScale};
+        if (position == OverlayPosition.TOP_RIGHT || position == OverlayPosition.BOTTOM_RIGHT) {
+            return x;
+        } else {
+            return (int)offset;
         }
-        */
+    }
 
-        switch (position) {
-            case TOP_RIGHT:
-                return new float[]{x, offset};
-            case BOTTOM_LEFT:
-                return new float[]{offset, y};
-            case BOTTOM_RIGHT:
-                return new float[]{x, y};
-            default:
-                return new float[]{offset, offset};
+    private int getOverlayY(OverlayPosition position, float height) {
+        float scale = GRConfig.getValue("overlayScale");
+        float offset = 10 / scale;
+        int y = (int)(CraftGR.MC.getWindow().getHeight() / scale - height - offset);
+
+        if (position == OverlayPosition.BOTTOM_LEFT || position == OverlayPosition.BOTTOM_RIGHT) {
+            return y;
+        } else {
+            return (int)offset;
         }
     }
 

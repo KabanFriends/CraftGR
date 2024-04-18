@@ -18,16 +18,16 @@ logoFile = "icon.png"
 config = "craftgr-common.mixins.json"
 
 [[dependencies.craftgr]]
-modId = "neoforge"
+modId = "minecraft"
 type = "required"
-versionRange = "[20,)"
+versionRange = "[1.20.4,)"
 ordering = "NONE"
 side = "CLIENT"
 
 [[dependencies.craftgr]]
-modId = "minecraft"
+modId = "neoforge"
 type = "required"
-versionRange = "[1.20.4,)"
+versionRange = "[20.4.40,)"
 ordering = "NONE"
 side = "CLIENT"
 

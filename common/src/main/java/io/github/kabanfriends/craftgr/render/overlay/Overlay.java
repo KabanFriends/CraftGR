@@ -7,6 +7,6 @@ public abstract class Overlay {
 
     abstract public void render(GuiGraphics graphics, int mouseX, int mouseY);
 
-    abstract public boolean onMouseClick(int mouseX, int mouseY);
+    abstract public boolean mouseClick(int mouseX, int mouseY);
 
 }
