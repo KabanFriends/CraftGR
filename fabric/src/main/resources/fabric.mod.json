@@ -28,10 +28,13 @@
     "craftgr-common.mixins.json"
   ],
   "depends": {
+    "minecraft": ">=1.20.5-",
     "fabricloader": "*",
-    "fabric": "*",
-    "minecraft": ">=1.20.4",
-    "fabric-key-binding-api-v1": "*"
+    "fabric-key-binding-api-v1": "*",
+    "fabric-lifecycle-events-v1": "*",
+    "fabric-rendering-v1": "*",
+    "fabric-screen-api-v1": "*",
+    "yet_another_config_lib_v3": ">=3.3.0"
   },
   "custom": {
     "modmenu:clientsideOnly": true
