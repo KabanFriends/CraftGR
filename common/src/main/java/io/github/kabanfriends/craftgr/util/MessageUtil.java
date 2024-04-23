@@ -40,6 +40,8 @@ public class MessageUtil {
     }
 
     public static void sendConnectionErrorMessage() {
+        if (CraftGR.MC.player == null) return;
+
         MutableComponent icon = Component.literal("❌ ");
         icon.withStyle(ChatFormatting.DARK_RED);
         MutableComponent message = Component.translatable("text.craftgr.message.connectionError");
@@ -60,6 +62,8 @@ public class MessageUtil {
     }
 
     public static void sendAudioStoppedMessage() {
+        if (CraftGR.MC.player == null) return;
+
         MutableComponent icon = Component.literal("■ ");
         icon.withStyle(ChatFormatting.RED);
         MutableComponent message = Component.translatable("text.craftgr.message.stopped");
