@@ -46,7 +46,8 @@
   "text.craftgr.config.option.urlAlbumArt.tooltip": "Base URL to get the album images from.",
 
   "text.craftgr.gui.options.volume": "Gensokyo Radio",
-  "text.craftgr.gui.config.tooltip": "Configure...",
+  "text.craftgr.gui.config.tooltip": "CraftGR Settings...",
+  "text.craftgr.gui.config.tooltip.disabled": "Install YetAnotherConfigLib to open CraftGR settings menu.",
 
   "text.craftgr.message.connecting": "Connecting...",
   "text.craftgr.message.reconnecting": "Reconnecting...",
@@ -56,7 +57,7 @@
 
   "text.craftgr.song.intermission": "Intermission",
 
-  "button.craftgr.config": "CraftGR Settings",
+  "button.craftgr.config": "CraftGR Settings...",
   "button.craftgr.config.disabled": "Install YetAnotherConfigLib to open CraftGR settings menu.",
 
   "key.category.craftgr": "CraftGR",

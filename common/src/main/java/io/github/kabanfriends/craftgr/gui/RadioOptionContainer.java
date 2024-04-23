@@ -17,6 +17,9 @@ public class RadioOptionContainer extends AbstractContainerWidget {
     private static final int CONFIG_BUTTON_SIZE = 20;
     private static final int CONFIG_BUTTON_PADDING = 5;
 
+    private static final Component TOOLTIP = Component.translatable("text.craftgr.gui.config.tooltip");
+    private static final Component TOOLTIP_DISABLED = Component.translatable("text.craftgr.gui.config.tooltip.disabled");
+
     private static final WidgetSprites CONFIG_BUTTON_SPRITES = new WidgetSprites(
             new ResourceLocation(CraftGR.MOD_ID, "config"),
             new ResourceLocation(CraftGR.MOD_ID, "config_disabled"),
@@ -42,7 +45,7 @@ public class RadioOptionContainer extends AbstractContainerWidget {
                 (button) -> CraftGR.getPlatform().openConfigScreen()
         );
         configButton.active = hasConfig;
-        configButton.setTooltip(Tooltip.create(Component.translatable(hasConfig ? "button.craftgr.config" : "button.craftgr.config.disabled")));
+        configButton.setTooltip(Tooltip.create(hasConfig ? TOOLTIP : TOOLTIP_DISABLED));
 
         children = List.of(volumeSlider, configButton);
     }

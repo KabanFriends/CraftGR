@@ -46,7 +46,8 @@
   "text.craftgr.config.option.urlAlbumArt.tooltip": "曲情報オーバーレイに表示するアルバム\nカバー画像を取得するURLです。",
 
   "text.craftgr.gui.options.volume": "Gensokyo Radio",
-  "text.craftgr.gui.config.tooltip": "設定…",
+  "text.craftgr.gui.config.tooltip": "CraftGRの設定…",
+  "text.craftgr.gui.config.tooltip.disabled": "CraftGRの設定を開くには、YetAnotherConfigLibが必要です。",
 
   "text.craftgr.message.connecting": "接続中…",
   "text.craftgr.message.reconnecting": "再接続中…",
@@ -55,9 +56,6 @@
   "text.craftgr.message.stopped": "Gensokyo Radio を停止しました",
 
   "text.craftgr.song.intermission": "インターミッション",
-
-  "button.craftgr.config": "CraftGRの設定",
-  "button.craftgr.config.disabled": "CraftGRの設定を開くには、YetAnotherConfigLibが必要です。",
 
   "key.category.craftgr": "CraftGR",
   "key.craftgr.toggle": "再生/停止"
