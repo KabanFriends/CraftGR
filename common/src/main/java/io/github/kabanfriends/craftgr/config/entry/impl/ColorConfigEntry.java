@@ -6,6 +6,7 @@ import dev.isxander.yacl3.api.OptionDescription;
 import dev.isxander.yacl3.api.controller.ColorControllerBuilder;
 import io.github.kabanfriends.craftgr.config.GRConfig;
 import io.github.kabanfriends.craftgr.config.entry.GRConfigEntry;
+import io.github.kabanfriends.craftgr.config.entry.OptionProvider;
 import net.minecraft.network.chat.Component;
 
 import java.awt.*;
@@ -16,6 +17,7 @@ public class ColorConfigEntry extends GRConfigEntry<Color> {
         super(key, value);
     }
 
+    @Override
     public Color deserialize(JsonPrimitive jsonValue) {
         if (jsonValue.isString()) {
             return new Color(Integer.parseInt(jsonValue.getAsString(), 16));
@@ -23,17 +25,24 @@ public class ColorConfigEntry extends GRConfigEntry<Color> {
         return getDefaultValue();
     }
 
+    @Override
     public JsonPrimitive serialize() {
         int color = getValue().getRGB() & 0xFFFFFF;
         return new JsonPrimitive(Integer.toHexString(color));
     }
 
-    public Option<Color> getOption() {
-        return Option.<Color>createBuilder()
-                .name(Component.translatable("text.craftgr.config.option." + getKey()))
-                .description(OptionDescription.of(Component.translatable("text.craftgr.config.option." + getKey() + ".tooltip")))
-                .controller(ColorControllerBuilder::create)
-                .binding(getDefaultValue(), this::getValue, (value) -> GRConfig.setValue(this, value))
-                .build();
+    @Override
+    public OptionProvider<Color> getOptionProvider() {
+        return new OptionProvider<Color>() {
+            @Override
+            public Option<Color> getOption() {
+                return Option.<Color>createBuilder()
+                        .name(Component.translatable("text.craftgr.config.option." + getKey()))
+                        .description(OptionDescription.of(Component.translatable("text.craftgr.config.option." + getKey() + ".tooltip")))
+                        .controller(ColorControllerBuilder::create)
+                        .binding(getDefaultValue(), ColorConfigEntry.this::getValue, (value) -> GRConfig.setValue(ColorConfigEntry.this, value))
+                        .build();
+            }
+        };
     }
 }

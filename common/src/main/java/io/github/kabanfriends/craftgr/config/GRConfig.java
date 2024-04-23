@@ -72,7 +72,7 @@ public class GRConfig {
             group.collapsed(!grc.getExpanded());
 
             for (GRConfigEntry<?> entry : grc.getEntries()) {
-                group.option(entry.getOption());
+                group.option(entry.getOptionProvider().getOption());
             }
 
             category.group(group.build());

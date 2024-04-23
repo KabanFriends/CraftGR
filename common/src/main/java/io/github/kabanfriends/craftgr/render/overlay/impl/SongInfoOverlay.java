@@ -11,10 +11,7 @@ import io.github.kabanfriends.craftgr.handler.SongHandler;
 import io.github.kabanfriends.craftgr.render.overlay.Overlay;
 import io.github.kabanfriends.craftgr.render.widget.impl.ScrollingText;
 import io.github.kabanfriends.craftgr.song.Song;
-import io.github.kabanfriends.craftgr.util.HandlerState;
-import io.github.kabanfriends.craftgr.util.HttpUtil;
-import io.github.kabanfriends.craftgr.util.RenderUtil;
-import io.github.kabanfriends.craftgr.util.ResponseHolder;
+import io.github.kabanfriends.craftgr.util.*;
 import net.minecraft.Util;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -222,7 +219,7 @@ public class SongInfoOverlay extends Overlay {
 
         if (CraftGR.getPlatform().isInModMenu()) return true;
 
-        if (CraftGR.MC.screen instanceof YACLScreen) return true;
+        if (ModUtil.isConfigModAvailable() && CraftGR.MC.screen instanceof YACLScreen) return true;
 
         OverlayVisibility visibility = GRConfig.getValue("overlayVisibility");
 

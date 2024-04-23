@@ -6,6 +6,7 @@ import dev.isxander.yacl3.api.OptionDescription;
 import dev.isxander.yacl3.api.controller.IntegerSliderControllerBuilder;
 import io.github.kabanfriends.craftgr.config.GRConfig;
 import io.github.kabanfriends.craftgr.config.entry.GRConfigEntry;
+import io.github.kabanfriends.craftgr.config.entry.OptionProvider;
 import io.github.kabanfriends.craftgr.render.overlay.impl.SongInfoOverlay;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
@@ -24,10 +25,12 @@ public class OverlayWidthConfigEntry extends GRConfigEntry<Integer> {
         super(key, value);
     }
 
+    @Override
     public Integer deserialize(JsonPrimitive jsonValue) {
         return Mth.clamp(jsonValue.getAsInt(), MIN_VALUE, MAX_VALUE);
     }
 
+    @Override
     public JsonPrimitive serialize() {
         return new JsonPrimitive(getValue());
     }
@@ -40,16 +43,22 @@ public class OverlayWidthConfigEntry extends GRConfigEntry<Integer> {
         }
     }
 
-    public Option<Integer> getOption() {
-        return Option.<Integer>createBuilder()
-                .name(Component.translatable("text.craftgr.config.option." + getKey()))
-                .description(OptionDescription.of(Component.translatable("text.craftgr.config.option." + getKey() + ".tooltip")))
-                .controller((option) -> IntegerSliderControllerBuilder.create(option)
-                        .step(1)
-                        .range(MIN_VALUE, MAX_VALUE)
-                        .formatValue((value) -> Component.literal((WIDTH_OFFSET + value * 2) + "px"))
-                )
-                .binding(getDefaultValue(), this::getValue, (value) -> GRConfig.setValue(this, value))
-                .build();
+    @Override
+    public OptionProvider<Integer> getOptionProvider() {
+        return new OptionProvider<Integer>() {
+            @Override
+            public Option<Integer> getOption() {
+                return Option.<Integer>createBuilder()
+                        .name(Component.translatable("text.craftgr.config.option." + getKey()))
+                        .description(OptionDescription.of(Component.translatable("text.craftgr.config.option." + getKey() + ".tooltip")))
+                        .controller((option) -> IntegerSliderControllerBuilder.create(option)
+                                .step(1)
+                                .range(MIN_VALUE, MAX_VALUE)
+                                .formatValue((value) -> Component.literal((WIDTH_OFFSET + value * 2) + "px"))
+                        )
+                        .binding(getDefaultValue(), OverlayWidthConfigEntry.this::getValue, (value) -> GRConfig.setValue(OverlayWidthConfigEntry.this, value))
+                        .build();
+            }
+        };
     }
 }

@@ -1,6 +1,7 @@
 package io.github.kabanfriends.craftgr.gui;
 
 import io.github.kabanfriends.craftgr.CraftGR;
+import io.github.kabanfriends.craftgr.util.ModUtil;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractContainerWidget;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -30,23 +31,30 @@ public class RadioOptionContainer extends AbstractContainerWidget {
 
     public RadioOptionContainer(int x, int y, int width) {
         super(x, y, width, 20, CommonComponents.EMPTY);
+        boolean hasConfig = ModUtil.isConfigModAvailable();
 
-        volumeSlider = new RadioVolumeSliderButton(x, y, width - CONFIG_BUTTON_SIZE - CONFIG_BUTTON_PADDING);
-        configButton = new ImageButton(
-                x + width - CONFIG_BUTTON_SIZE,
-                y,
-                CONFIG_BUTTON_SIZE,
-                CONFIG_BUTTON_SIZE,
-                CONFIG_BUTTON_SPRITES,
-                (button) -> CraftGR.getPlatform().openConfigScreen()
-        );
-
-        children = List.of(volumeSlider, configButton);
+        volumeSlider = new RadioVolumeSliderButton(x, y, hasConfig ? width - CONFIG_BUTTON_SIZE - CONFIG_BUTTON_PADDING : width);
+        if (hasConfig) {
+            configButton = new ImageButton(
+                    x + width - CONFIG_BUTTON_SIZE,
+                    y,
+                    CONFIG_BUTTON_SIZE,
+                    CONFIG_BUTTON_SIZE,
+                    CONFIG_BUTTON_SPRITES,
+                    (button) -> CraftGR.getPlatform().openConfigScreen()
+            );
+            children = List.of(volumeSlider, configButton);
+        } else {
+            configButton = null;
+            children = List.of(volumeSlider);
+        }
     }
 
     private void repositionChildren() {
         volumeSlider.setPosition(getX(), getY());
-        configButton.setPosition(getX() + width - CONFIG_BUTTON_SIZE, getY());
+        if (configButton != null) {
+            configButton.setPosition(getX() + width - CONFIG_BUTTON_SIZE, getY());
+        }
     }
 
     @Override

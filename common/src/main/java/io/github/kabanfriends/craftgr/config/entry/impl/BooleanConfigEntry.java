@@ -7,6 +7,7 @@ import dev.isxander.yacl3.api.OptionDescription;
 import dev.isxander.yacl3.api.controller.TickBoxControllerBuilder;
 import io.github.kabanfriends.craftgr.config.GRConfig;
 import io.github.kabanfriends.craftgr.config.entry.GRConfigEntry;
+import io.github.kabanfriends.craftgr.config.entry.OptionProvider;
 import net.minecraft.network.chat.Component;
 
 public class BooleanConfigEntry extends GRConfigEntry<Boolean> {
@@ -15,20 +16,28 @@ public class BooleanConfigEntry extends GRConfigEntry<Boolean> {
         super(key, value);
     }
 
+    @Override
     public Boolean deserialize(JsonPrimitive jsonValue) {
         return jsonValue.getAsBoolean();
     }
 
+    @Override
     public JsonPrimitive serialize() {
         return new JsonPrimitive(getValue());
     }
 
-    public Option<Boolean> getOption() {
-        return Option.<Boolean>createBuilder()
-                .name(Component.translatable("text.craftgr.config.option." + getKey()))
-                .description(OptionDescription.of(Component.translatable("text.craftgr.config.option." + getKey() + ".tooltip")))
-                .controller(TickBoxControllerBuilder::create)
-                .binding(getDefaultValue(), this::getValue, (value) -> GRConfig.setValue(this, value))
-                .build();
+    @Override
+    public OptionProvider<Boolean> getOptionProvider() {
+        return new OptionProvider<Boolean>() {
+            @Override
+            public Option<Boolean> getOption() {
+                return Option.<Boolean>createBuilder()
+                        .name(Component.translatable("text.craftgr.config.option." + getKey()))
+                        .description(OptionDescription.of(Component.translatable("text.craftgr.config.option." + getKey() + ".tooltip")))
+                        .controller(TickBoxControllerBuilder::create)
+                        .binding(getDefaultValue(), BooleanConfigEntry.this::getValue, (value) -> GRConfig.setValue(BooleanConfigEntry.this, value))
+                        .build();
+            }
+        };
     }
 }

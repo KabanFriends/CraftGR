@@ -7,6 +7,7 @@ import dev.isxander.yacl3.api.controller.IntegerFieldControllerBuilder;
 import dev.isxander.yacl3.api.controller.IntegerSliderControllerBuilder;
 import io.github.kabanfriends.craftgr.config.GRConfig;
 import io.github.kabanfriends.craftgr.config.entry.GRConfigEntry;
+import io.github.kabanfriends.craftgr.config.entry.OptionProvider;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 
@@ -21,6 +22,7 @@ public class IntegerConfigEntry extends GRConfigEntry<Integer> {
         super(key, value);
     }
 
+    @Override
     public Integer deserialize(JsonPrimitive jsonValue) {
         int value = jsonValue.getAsInt();
         if (hasRange) {
@@ -29,24 +31,31 @@ public class IntegerConfigEntry extends GRConfigEntry<Integer> {
         return value;
     }
 
+    @Override
     public JsonPrimitive serialize() {
         return new JsonPrimitive(getValue());
     }
 
-    public Option<Integer> getOption() {
-        Option.Builder<Integer> builder = Option.<Integer>createBuilder()
-                .name(Component.translatable("text.craftgr.config.option." + getKey()))
-                .description(OptionDescription.of(Component.translatable("text.craftgr.config.option." + getKey() + ".tooltip")))
-                .binding(getDefaultValue(), this::getValue, (value) -> GRConfig.setValue(this, value));
+    @Override
+    public OptionProvider<Integer> getOptionProvider() {
+        return new OptionProvider<Integer>() {
+            @Override
+            public Option<Integer> getOption() {
+                Option.Builder<Integer> builder = Option.<Integer>createBuilder()
+                        .name(Component.translatable("text.craftgr.config.option." + getKey()))
+                        .description(OptionDescription.of(Component.translatable("text.craftgr.config.option." + getKey() + ".tooltip")))
+                        .binding(getDefaultValue(), IntegerConfigEntry.this::getValue, (value) -> GRConfig.setValue(IntegerConfigEntry.this, value));
 
-        if (hasRange) {
-            return builder.controller((option) -> IntegerSliderControllerBuilder.create(option)
-                    .step(1)
-                    .range(minValue, maxValue)
-            ).build();
-        }
+                if (hasRange) {
+                    return builder.controller((option) -> IntegerSliderControllerBuilder.create(option)
+                            .step(1)
+                            .range(minValue, maxValue)
+                    ).build();
+                }
 
-        return builder.controller(IntegerFieldControllerBuilder::create).build();
+                return builder.controller(IntegerFieldControllerBuilder::create).build();
+            }
+        };
     }
 
     public IntegerConfigEntry setRange(int min, int max) {

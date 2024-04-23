@@ -8,5 +8,5 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 public interface MixinAccessorAbstractSelectionList {
 
     @Invoker("addEntry")
-    int addEntry(AbstractSelectionList.Entry entry);
+    int craftgr$addEntry(AbstractSelectionList.Entry entry);
 }
