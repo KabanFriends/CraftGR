@@ -15,7 +15,7 @@ import java.util.List;
 public class RadioOptionContainer extends AbstractContainerWidget {
 
     private static final int CONFIG_BUTTON_SIZE = 20;
-    private static final int CONFIG_BUTTON_PADDING = 4;
+    private static final int CONFIG_BUTTON_PADDING = 5;
 
     private static final WidgetSprites CONFIG_BUTTON_SPRITES = new WidgetSprites(
             new ResourceLocation(CraftGR.MOD_ID, "config"),
