@@ -5,6 +5,7 @@ import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.config.GRConfig;
 import io.github.kabanfriends.craftgr.handler.KeybindHandler;
 import io.github.kabanfriends.craftgr.platform.Platform;
+import io.github.kabanfriends.craftgr.util.ModUtil;
 import net.minecraft.client.KeyMapping;
 import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.Mod;
@@ -30,7 +31,9 @@ public class CraftGRNeoForge {
         NeoForge.EVENT_BUS.register(new ClientEvents());
 
         // Config menu
-        ModLoadingContext.get().registerExtensionPoint(ConfigScreenHandler.ConfigScreenFactory.class, () -> new ConfigScreenHandler.ConfigScreenFactory((mc, screen) -> GRConfig.getConfigScreen(screen)));
+        if (ModUtil.isConfigModAvailable()) {
+            ModLoadingContext.get().registerExtensionPoint(ConfigScreenHandler.ConfigScreenFactory.class, () -> new ConfigScreenHandler.ConfigScreenFactory((mc, screen) -> GRConfig.getConfigScreen(screen)));
+        }
     }
 
 }
