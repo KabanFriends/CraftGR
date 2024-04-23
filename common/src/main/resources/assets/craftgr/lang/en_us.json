@@ -1,5 +1,5 @@
 {
-  "text.craftgr.config.title": "CraftGR Config",
+  "text.craftgr.config.title": "CraftGR Settings",
 
   "text.craftgr.config.category.playback": "Playback Settings",
   "text.craftgr.config.option.playback": "Radio Playback",
@@ -55,6 +55,9 @@
   "text.craftgr.message.stopped": "Stopped radio playback",
 
   "text.craftgr.song.intermission": "Intermission",
+
+  "button.craftgr.config": "CraftGR Settings",
+  "button.craftgr.config.disabled": "Install YetAnotherConfigLib to open CraftGR settings menu.",
 
   "key.category.craftgr": "CraftGR",
   "key.craftgr.toggle": "Pause/Resume"

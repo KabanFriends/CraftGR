@@ -6,6 +6,10 @@
         },
         {
             "type": "single",
+            "resource": "craftgr:config_disabled"
+        },
+        {
+            "type": "single",
             "resource": "craftgr:config_highlighted"
         }
     ]

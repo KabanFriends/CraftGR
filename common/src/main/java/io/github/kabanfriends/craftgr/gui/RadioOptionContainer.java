@@ -3,13 +3,11 @@ package io.github.kabanfriends.craftgr.gui;
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.util.ModUtil;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.AbstractContainerWidget;
-import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.client.gui.components.ImageButton;
-import net.minecraft.client.gui.components.WidgetSprites;
+import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.List;
@@ -21,6 +19,7 @@ public class RadioOptionContainer extends AbstractContainerWidget {
 
     private static final WidgetSprites CONFIG_BUTTON_SPRITES = new WidgetSprites(
             new ResourceLocation(CraftGR.MOD_ID, "config"),
+            new ResourceLocation(CraftGR.MOD_ID, "config_disabled"),
             new ResourceLocation(CraftGR.MOD_ID, "config_highlighted")
     );
 
@@ -33,28 +32,24 @@ public class RadioOptionContainer extends AbstractContainerWidget {
         super(x, y, width, 20, CommonComponents.EMPTY);
         boolean hasConfig = ModUtil.isConfigModAvailable();
 
-        volumeSlider = new RadioVolumeSliderButton(x, y, hasConfig ? width - CONFIG_BUTTON_SIZE - CONFIG_BUTTON_PADDING : width);
-        if (hasConfig) {
-            configButton = new ImageButton(
-                    x + width - CONFIG_BUTTON_SIZE,
-                    y,
-                    CONFIG_BUTTON_SIZE,
-                    CONFIG_BUTTON_SIZE,
-                    CONFIG_BUTTON_SPRITES,
-                    (button) -> CraftGR.getPlatform().openConfigScreen()
-            );
-            children = List.of(volumeSlider, configButton);
-        } else {
-            configButton = null;
-            children = List.of(volumeSlider);
-        }
+        volumeSlider = new RadioVolumeSliderButton(x, y, width - CONFIG_BUTTON_SIZE - CONFIG_BUTTON_PADDING);
+        configButton = new ImageButton(
+                x + width - CONFIG_BUTTON_SIZE,
+                y,
+                CONFIG_BUTTON_SIZE,
+                CONFIG_BUTTON_SIZE,
+                CONFIG_BUTTON_SPRITES,
+                (button) -> CraftGR.getPlatform().openConfigScreen()
+        );
+        configButton.active = hasConfig;
+        configButton.setTooltip(Tooltip.create(Component.translatable(hasConfig ? "button.craftgr.config" : "button.craftgr.config.disabled")));
+
+        children = List.of(volumeSlider, configButton);
     }
 
     private void repositionChildren() {
         volumeSlider.setPosition(getX(), getY());
-        if (configButton != null) {
-            configButton.setPosition(getX() + width - CONFIG_BUTTON_SIZE, getY());
-        }
+        configButton.setPosition(getX() + width - CONFIG_BUTTON_SIZE, getY());
     }
 
     @Override

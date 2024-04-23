@@ -56,6 +56,9 @@
 
   "text.craftgr.song.intermission": "インターミッション",
 
+  "button.craftgr.config": "CraftGRの設定",
+  "button.craftgr.config.disabled": "CraftGRの設定を開くには、YetAnotherConfigLibが必要です。",
+
   "key.category.craftgr": "CraftGR",
   "key.craftgr.toggle": "再生/停止"
 }
