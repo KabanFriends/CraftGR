@@ -366,8 +366,6 @@ public class SongInfoOverlay extends Overlay {
         do {
             tries++;
 
-            CraftGR.bypassPngValidation = true;
-
             try {
                 HttpGet get = HttpUtil.get(url);
 
@@ -375,6 +373,7 @@ public class SongInfoOverlay extends Overlay {
                         ResponseHolder response = new ResponseHolder(CraftGR.getHttpClient().execute(get));
                         InputStream stream = resizeImage(response.getResponse().getEntity().getContent())
                 ) {
+                    ThreadLocals.PNG_INFO_BYPASS_VALIDATION.set(true);
                     NativeImage image = NativeImage.read(stream);
 
                     if (albumArtTexture == null) {
@@ -401,7 +400,7 @@ public class SongInfoOverlay extends Overlay {
                     albumArtTexture = null;
                 }
             } finally {
-                CraftGR.bypassPngValidation = false;
+                ThreadLocals.PNG_INFO_BYPASS_VALIDATION.remove();
             }
 
             if (tries < ALBUM_ART_FETCH_TRIES) {

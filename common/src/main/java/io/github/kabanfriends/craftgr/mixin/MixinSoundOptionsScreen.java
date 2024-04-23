@@ -60,7 +60,8 @@ public class MixinSoundOptionsScreen extends MixinOptionsSubScreen {
 
     @Inject(method = "init", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/components/OptionsList;addSmall([Lnet/minecraft/client/OptionInstance;)V", shift = At.Shift.AFTER, ordinal = 0))
     private void craftgr$endSmallOptions(CallbackInfo ci) {
-        if (!ThreadLocals.RADIO_OPTION_CONTAINER_ADDED.get()) {
+        Boolean added = ThreadLocals.RADIO_OPTION_CONTAINER_ADDED.get();
+        if (added != null && !added) {
             ((MixinAccessorAbstractSelectionList) this.list).craftgr$addEntry(OptionsList.Entry.small(new RadioOptionContainer(0, 0, 150), null, this));
         }
         ThreadLocals.RADIO_OPTION_CONTAINER_ADDED.remove();
