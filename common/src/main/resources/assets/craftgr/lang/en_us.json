@@ -57,9 +57,6 @@
 
   "text.craftgr.song.intermission": "Intermission",
 
-  "button.craftgr.config": "CraftGR Settings...",
-  "button.craftgr.config.disabled": "Install YetAnotherConfigLib to open CraftGR settings menu.",
-
   "key.category.craftgr": "CraftGR",
   "key.craftgr.toggle": "Pause/Resume"
 }
