@@ -11,10 +11,7 @@ import io.github.kabanfriends.craftgr.handler.SongHandler;
 import io.github.kabanfriends.craftgr.render.overlay.Overlay;
 import io.github.kabanfriends.craftgr.render.widget.impl.ScrollingText;
 import io.github.kabanfriends.craftgr.song.Song;
-import io.github.kabanfriends.craftgr.util.HandlerState;
-import io.github.kabanfriends.craftgr.util.HttpUtil;
-import io.github.kabanfriends.craftgr.util.RenderUtil;
-import io.github.kabanfriends.craftgr.util.ResponseHolder;
+import io.github.kabanfriends.craftgr.util.*;
 import net.minecraft.Util;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -218,11 +215,11 @@ public class SongInfoOverlay extends Overlay {
         if (CraftGR.MC.screen instanceof ReceivingLevelScreen) return true;
         if (CraftGR.MC.screen instanceof ProgressScreen) return true;
         if (CraftGR.MC.screen instanceof ConnectScreen) return true;
-        if (CraftGR.MC.screen instanceof GenericDirtMessageScreen) return true;
+        if (CraftGR.MC.screen instanceof GenericMessageScreen) return true;
 
         if (CraftGR.getPlatform().isInModMenu()) return true;
 
-        if (CraftGR.MC.screen instanceof YACLScreen) return true;
+        if (ModUtil.isConfigModAvailable() && CraftGR.MC.screen instanceof YACLScreen) return true;
 
         OverlayVisibility visibility = GRConfig.getValue("overlayVisibility");
 
@@ -369,8 +366,6 @@ public class SongInfoOverlay extends Overlay {
         do {
             tries++;
 
-            CraftGR.bypassPngValidation = true;
-
             try {
                 HttpGet get = HttpUtil.get(url);
 
@@ -378,6 +373,7 @@ public class SongInfoOverlay extends Overlay {
                         ResponseHolder response = new ResponseHolder(CraftGR.getHttpClient().execute(get));
                         InputStream stream = resizeImage(response.getResponse().getEntity().getContent())
                 ) {
+                    ThreadLocals.PNG_INFO_BYPASS_VALIDATION.set(true);
                     NativeImage image = NativeImage.read(stream);
 
                     if (albumArtTexture == null) {
@@ -404,7 +400,7 @@ public class SongInfoOverlay extends Overlay {
                     albumArtTexture = null;
                 }
             } finally {
-                CraftGR.bypassPngValidation = false;
+                ThreadLocals.PNG_INFO_BYPASS_VALIDATION.remove();
             }
 
             if (tries < ALBUM_ART_FETCH_TRIES) {

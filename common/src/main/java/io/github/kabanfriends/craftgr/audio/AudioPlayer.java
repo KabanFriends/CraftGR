@@ -14,19 +14,18 @@ import java.nio.Buffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 
-//Code based on: https://github.com/PC-Logix/OpenFM/blob/1.12.2/src/main/java/pcl/OpenFM/player/MP3Player.java
+// Code based on: https://github.com/PC-Logix/OpenFM/blob/1.12.2/src/main/java/pcl/OpenFM/player/MP3Player.java
 public class AudioPlayer {
 
-    private InputStream stream;
-    private Bitstream bitstream;
-    private Decoder decoder;
+    private final Bitstream bitstream;
+    private final Decoder decoder;
+
     private IntBuffer buffer;
     private IntBuffer source;
     private float baseVolume = 1.0F;
     private boolean playing = false;
 
     public AudioPlayer(InputStream stream) {
-        this.stream = stream;
         this.bitstream = new Bitstream(stream);
         this.decoder = new Decoder();
     }

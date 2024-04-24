@@ -1,7 +1,6 @@
 package io.github.kabanfriends.craftgr.config.entry;
 
 import com.google.gson.JsonPrimitive;
-import dev.isxander.yacl3.api.Option;
 
 public abstract class GRConfigEntry<T> {
 
@@ -16,7 +15,7 @@ public abstract class GRConfigEntry<T> {
         this.value = value;
     }
 
-    public abstract Option<T> getOption();
+    public abstract OptionProvider<T> getOptionProvider();
 
     @SuppressWarnings("unchecked")
     public void setValue(Object value) {

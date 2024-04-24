@@ -1,5 +1,5 @@
 {
-  "text.craftgr.config.title": "CraftGR Config",
+  "text.craftgr.config.title": "CraftGR Settings",
 
   "text.craftgr.config.category.playback": "Playback Settings",
   "text.craftgr.config.option.playback": "Radio Playback",
@@ -46,7 +46,8 @@
   "text.craftgr.config.option.urlAlbumArt.tooltip": "Base URL to get the album images from.",
 
   "text.craftgr.gui.options.volume": "Gensokyo Radio",
-  "text.craftgr.gui.config.tooltip": "Configure...",
+  "text.craftgr.gui.config.tooltip": "CraftGR Settings...",
+  "text.craftgr.gui.config.tooltip.disabled": "Install YetAnotherConfigLib to open CraftGR settings menu.",
 
   "text.craftgr.message.connecting": "Connecting...",
   "text.craftgr.message.reconnecting": "Reconnecting...",

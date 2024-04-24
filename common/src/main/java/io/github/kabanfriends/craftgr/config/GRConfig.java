@@ -71,8 +71,8 @@ public class GRConfig {
             group.name(grc.getTitle());
             group.collapsed(!grc.getExpanded());
 
-            for (GRConfigEntry entry : grc.getEntries()) {
-                group.option(entry.getOption());
+            for (GRConfigEntry<?> entry : grc.getEntries()) {
+                group.option(entry.getOptionProvider().getOption());
             }
 
             category.group(group.build());
@@ -86,8 +86,7 @@ public class GRConfig {
 
     public static void init() {
         if (Files.exists(CONFIG_FILE_PATH)) {
-            try {
-                Stream<String> stream = Files.lines(CONFIG_FILE_PATH);
+            try (Stream<String> stream = Files.lines(CONFIG_FILE_PATH)) {
                 StringBuilder sb = new StringBuilder();
                 stream.forEach(sb::append);
                 String jstr = sb.toString();
@@ -102,7 +101,7 @@ public class GRConfig {
         }
 
         for (GRConfigCategory grc : categories) {
-            for (GRConfigEntry value : grc.getEntries()) {
+            for (GRConfigEntry<?> value : grc.getEntries()) {
                 configMap.put(value.getKey(), value);
                 try {
                     if (configJson.has(value.getKey())) {
@@ -139,7 +138,7 @@ public class GRConfig {
         }
     }
 
-    public static GRConfigEntry getConfigEntry(String key) {
+    public static GRConfigEntry<?> getConfigEntry(String key) {
         return configMap.get(key);
     }
 
@@ -152,7 +151,7 @@ public class GRConfig {
         setValue(GRConfig.getConfigEntry(key), value);
     }
 
-    public static void setValue(GRConfigEntry entry, Object value) {
+    public static void setValue(GRConfigEntry<?> entry, Object value) {
         if (entry.getValue().equals(value)) {
             return;
         }
