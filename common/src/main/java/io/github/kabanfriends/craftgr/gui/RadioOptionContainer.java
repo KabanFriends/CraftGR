@@ -57,7 +57,6 @@ public class RadioOptionContainer extends AbstractContainerWidget {
 
     @Override
     protected void updateWidgetNarration(NarrationElementOutput output) {
-
     }
 
     @Override
