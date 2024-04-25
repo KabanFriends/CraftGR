@@ -36,7 +36,7 @@
     "fabric-screen-api-v1": "*"
   },
   "recommends": {
-    "yet_another_config_lib_v3": ">=3.3.0"
+    "yet_another_config_lib_v3": ">=3.4.1"
   },
   "custom": {
     "modmenu:clientsideOnly": true
