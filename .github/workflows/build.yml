@@ -16,16 +16,16 @@ jobs:
           distribution: 'temurin'
           java-version: 21
           check-latest: true
-      - name: Build using Gradle
+      - name: Build with Gradle
         run: |
           chmod +x ./gradlew
           ./gradlew build
-      - name: Upload Fabric artifacts
+      - name: Upload Fabric artifact
         uses: actions/upload-artifact@v3
         with:
           name: fabric
           path: fabric/build/libs/
-      - name: Upload NeoForge artifacts
+      - name: Upload NeoForge artifact
         uses: actions/upload-artifact@v3
         with:
           name: neoforge

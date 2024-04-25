@@ -1,0 +1,25 @@
+name: Create Release
+
+on: workflow_dispatch
+
+jobs:
+  release:
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Read mod properties
+        id: mod_properties
+        uses: christian-draeger/read-properties@1.1.1
+        with:
+          path: gradle.properties
+          properties: mod_version minecraft_version
+      - name: Create a release
+        uses: softprops/action-gh-release@v2.0.4
+        with:
+          tag_name: "${{ steps.mod_properties.outputs.mod_version }}-mc${{ steps.mod_properties.outputs.minecraft_version }}"
+          name: "${{ steps.mod_properties.outputs.mod_version }}-mc${{ steps.mod_properties.outputs.minecraft_version }}"
+          body: No changelog available.
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}

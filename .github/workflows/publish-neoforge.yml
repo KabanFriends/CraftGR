@@ -1,0 +1,52 @@
+name: Publish NeoForge Build
+
+on: workflow_dispatch
+
+jobs:
+  release:
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Validate Gradle wrapper
+        uses: gradle/wrapper-validation-action@v1
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: 21
+          check-latest: true
+      - name: Build with Gradle
+        run: |
+          chmod +x ./gradlew
+          ./gradlew neoforge:build
+      - name: Get latest release
+        id: latest_release
+        uses: cardinalby/git-get-release-action@1.2.4
+        env:
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        with:
+          latest: 1
+      - name: Get release versions
+        id: release_versions
+        uses: actions-ecosystem/action-regex-match@v2.0.2
+        with:
+          text: ${{ steps.latest_release.outputs.name }}
+          regex: "^(.+?)-mc(.+?)$"
+      - name: Publish NeoForge artifact
+        uses: Kir-Antipov/mc-publish@v3.3.0
+        with:
+          files: |
+            neoforge/build/libs/!(*-@(dev|sources|javadoc)).jar
+            neoforge/build/libs/*-@(dev|sources|javadoc).jar
+          modrinth-id: tL5PrgXI
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+          name: "[NeoForge] CraftGR ${{ steps.release_versions.outputs.group1 }} for Minecraft ${{ steps.release_versions.outputs.group2 }}"
+          version: "${{ steps.release_versions.outputs.group1 }}-mc${{ steps.release_versions.outputs.group2 }}"
+          changelog: ${{ steps.latest_release.outputs.body }}
+          loaders: |
+            neoforge
+          game-versions: ${{ steps.release_versions.outputs.group2 }}
+          dependencies: yacl
