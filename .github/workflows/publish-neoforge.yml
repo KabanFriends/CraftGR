@@ -44,7 +44,7 @@ jobs:
           modrinth-id: tL5PrgXI
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
           name: "[NeoForge] CraftGR ${{ steps.release_versions.outputs.group1 }} for Minecraft ${{ steps.release_versions.outputs.group2 }}"
-          version: "${{ steps.release_versions.outputs.group1 }}-mc${{ steps.release_versions.outputs.group2 }}"
+          version: "${{ steps.release_versions.outputs.group1 }}-mc${{ steps.release_versions.outputs.group2 }}-neoforge"
           changelog: ${{ steps.latest_release.outputs.body }}
           loaders: |
             neoforge

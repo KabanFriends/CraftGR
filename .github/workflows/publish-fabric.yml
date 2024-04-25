@@ -44,7 +44,7 @@ jobs:
           modrinth-id: lKYr4L6w
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
           name: "[Fabric] CraftGR ${{ steps.release_versions.outputs.group1 }} for Minecraft ${{ steps.release_versions.outputs.group2 }}"
-          version: "${{ steps.release_versions.outputs.group1 }}-mc${{ steps.release_versions.outputs.group2 }}"
+          version: "${{ steps.release_versions.outputs.group1 }}-mc${{ steps.release_versions.outputs.group2 }}-fabric"
           changelog: ${{ steps.latest_release.outputs.body }}
           loaders: |
             fabric
