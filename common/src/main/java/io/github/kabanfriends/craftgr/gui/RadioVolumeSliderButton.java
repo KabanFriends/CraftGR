@@ -9,6 +9,8 @@ import net.minecraft.util.Mth;
 
 public class RadioVolumeSliderButton extends AbstractSliderButton {
 
+    private static final Component SLIDER_NAME = Component.translatable("text.craftgr.button.volume");
+
     public RadioVolumeSliderButton(int x, int y, int width) {
         super(x, y, width, 20, CommonComponents.EMPTY, GRConfig.<Integer>getValue("volume") / 100d);
         updateMessage();
@@ -16,9 +18,8 @@ public class RadioVolumeSliderButton extends AbstractSliderButton {
 
     @Override
     protected void updateMessage() {
-        Component name = Component.translatable("text.craftgr.gui.options.volume");
         int volume = GRConfig.getValue("volume");
-        this.setMessage(volume == 0 ? Component.translatable("options.generic_value", name, CommonComponents.OPTION_OFF) : Component.translatable("options.percent_value", name, volume));
+        this.setMessage(volume == 0 ? Component.translatable("options.generic_value", SLIDER_NAME, CommonComponents.OPTION_OFF) : Component.translatable("options.percent_value", SLIDER_NAME, volume));
     }
 
     @Override
