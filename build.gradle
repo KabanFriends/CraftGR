@@ -7,10 +7,6 @@ architectury {
     minecraft = project.minecraft_version
 }
 
-def platforms = subprojects.name.clone()
-platforms.remove("common")
-project.ext.set("platforms", platforms)
-
 subprojects {
     apply plugin: "dev.architectury.loom"
 
@@ -63,9 +59,4 @@ allprojects {
 
 build {
     dependsOn subprojects.build
-
-    // Merge multiple JARs if both platforms are enabled
-    if (project.platforms.size() >= 2) {
-        finalizedBy "mergeJars"
-    }
 }
