@@ -35,13 +35,16 @@ jobs:
         with:
           text: ${{ steps.latest_release.outputs.name }}
           regex: "^(.+?)-mc(.+?)$"
+      - name: Upload NeoForge artifact
+        uses: shogo82148/actions-upload-release-asset@v1.7.5
+        with:
+          upload_url: ${{ steps.latest_release.outputs.upload_url }}
+          asset_path: neoforge/build/libs/craftgr-*-mc*-neoforge.jar
       - name: Publish NeoForge artifact
         uses: Kir-Antipov/mc-publish@v3.3.0
         with:
-          files: |
-            neoforge/build/libs/!(*-@(dev|sources|javadoc)).jar
-            neoforge/build/libs/*-@(dev|sources|javadoc).jar
-          modrinth-id: tL5PrgXI
+          files: neoforge/build/libs/craftgr-*-mc*-neoforge.jar
+          modrinth-id: lKYr4L6w
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
           name: "[NeoForge] CraftGR ${{ steps.release_versions.outputs.group1 }} for Minecraft ${{ steps.release_versions.outputs.group2 }}"
           version: "${{ steps.release_versions.outputs.group1 }}-mc${{ steps.release_versions.outputs.group2 }}-neoforge"
