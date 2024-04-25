@@ -30,8 +30,3 @@ jobs:
         with:
           name: neoforge
           path: neoforge/build/libs/
-      - name: Upload merged artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: merged
-          path: build/libs/merged/

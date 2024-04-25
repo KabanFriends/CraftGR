@@ -1,7 +1,6 @@
 plugins {
     id "architectury-plugin" version "3.4-SNAPSHOT"
     id "dev.architectury.loom" version "1.6-SNAPSHOT" apply false
-    id "io.github.pacifistmc.forgix" version "1.2.6"
 }
 
 architectury {
@@ -11,22 +10,6 @@ architectury {
 def platforms = subprojects.name.clone()
 platforms.remove("common")
 project.ext.set("platforms", platforms)
-
-forgix {
-    group = project.maven_group
-    mergedJarName = "${project.archives_base_name}-${project.mod_version}-mc${project.minecraft_version}.jar"
-    outputDir = "build/libs/merged"
-
-    fabric {
-        projectName = "fabric"
-        jarLocation = "build/libs/${project.archives_base_name}-${project.mod_version}-mc${project.minecraft_version}-fabric.jar"
-    }
-
-    custom {
-        projectName = "neoforge"
-        jarLocation = "build/libs/${project.archives_base_name}-${project.mod_version}-mc${project.minecraft_version}-neoforge.jar"
-    }
-}
 
 subprojects {
     apply plugin: "dev.architectury.loom"
