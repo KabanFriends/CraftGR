@@ -3,7 +3,7 @@ name: Publish NeoForge Build
 on: workflow_dispatch
 
 jobs:
-  release:
+  public-neoforge:
     runs-on: ubuntu-22.04
     permissions:
       contents: write

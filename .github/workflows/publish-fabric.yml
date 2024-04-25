@@ -3,7 +3,7 @@ name: Publish Fabric Build
 on: workflow_dispatch
 
 jobs:
-  release:
+  publish-fabric:
     runs-on: ubuntu-22.04
     permissions:
       contents: write
