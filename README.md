@@ -1,7 +1,8 @@
 <div align="center">
-<img src="https://github.com/KabanFriends/CraftGR/assets/45000995/a86fe141-77ed-4055-99b5-63693d8a7c19" alt="CraftGR" width="200" height="200">
+<img src="https://raw.githubusercontent.com/KabanFriends/creation/master/images/craftgr/logo_256.png" alt="CraftGR" width="200" height="200">
 <h1>CraftGR</h1>
-The best Touhou music player for Minecraft
+Touhou Project music player for Minecraft
+<br><br>
 
 [![Build](https://github.com/KabanFriends/CraftGR/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/KabanFriends/CraftGR/actions/workflows/build.yml)
 [![Latest Version](https://img.shields.io/modrinth/v/lKYr4L6w)](https://modrinth.com/mod/craftgr/version/latest)
@@ -17,8 +18,8 @@ which streams fan-made Touhou Project songs in the game. The mod also comes with
 
 This mod is compatible with [Fabric](https://fabricmc.net/) and [NeoForge](https://neoforged.net/).
 
-![Preview 1](https://github.com/KabanFriends/CraftGR/assets/45000995/922045d8-68d8-4ef8-9d20-bc235bc7bf68)
-![Preview 2](https://github.com/KabanFriends/CraftGR/assets/45000995/c83d2e95-f2bc-4fc7-8467-8ec36b183550)
+![HUD Preview 1](https://github.com/KabanFriends/creation/blob/master/images/craftgr/song_1.png)
+![HUD Preview 2](https://github.com/KabanFriends/creation/blob/master/images/craftgr/song_2.png)
 
 # Compiling
 To compile this mod, run the following command:
