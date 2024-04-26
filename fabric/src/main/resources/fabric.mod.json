@@ -3,12 +3,13 @@
   "id": "craftgr",
   "version": "${version}",
   "name": "CraftGR",
-  "description": "Plays Gensokyo Radio in Minecraft with a cool HUD overlay",
+  "description": "Touhou Project music player for Minecraft",
   "authors": [
     "KabanFriends"
   ],
   "contributors": [],
   "contact": {
+    "homepage": "https://modrinth.com/mod/craftgr",
     "sources": "https://github.com/KabanFriends/CraftGR",
     "issues": "https://github.com/KabanFriends/CraftGR/issues"
   },

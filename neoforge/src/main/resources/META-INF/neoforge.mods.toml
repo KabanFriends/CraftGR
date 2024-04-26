@@ -8,10 +8,8 @@ modId = "craftgr"
 version = "${version}"
 displayName = "CraftGR"
 authors = "KabanFriends"
-description = '''
-Plays Gensokyo Radio in Minecraft
-with a cool HUD overlay
-'''
+description = "Touhou Project music player for Minecraft"
+modUrl = "https://modrinth.com/mod/craftgr"
 logoFile = "icon.png"
 
 [[mixins]]
