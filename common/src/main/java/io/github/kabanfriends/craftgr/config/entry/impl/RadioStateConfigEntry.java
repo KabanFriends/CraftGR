@@ -20,7 +20,7 @@ public class RadioStateConfigEntry extends GRConfigEntry<Boolean> {
             public Option<Boolean> getOption() {
                 return Option.<Boolean>createBuilder()
                         .name(Component.translatable("text.craftgr.config.option." + getKey()))
-                        .description(OptionDescription.of(Component.translatable("text.craftgr.config.option." + getKey() + ".tooltip")))
+                        .description(OptionDescription.of(Component.translatable("text.craftgr.config.option." + getKey() + ".description")))
                         .controller(RadioStateController.Builder::new)
                         .binding(getDefaultValue(), RadioStateConfigEntry.this::getValue, (value) -> {})
                         .build();

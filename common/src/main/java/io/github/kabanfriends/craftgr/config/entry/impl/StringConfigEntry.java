@@ -32,7 +32,7 @@ public class StringConfigEntry extends GRConfigEntry<String> {
             public Option<String> getOption() {
                 return Option.<String>createBuilder()
                         .name(Component.translatable("text.craftgr.config.option." + getKey()))
-                        .description(OptionDescription.of(Component.translatable("text.craftgr.config.option." + getKey() + ".tooltip")))
+                        .description(OptionDescription.of(Component.translatable("text.craftgr.config.option." + getKey() + ".description")))
                         .controller(StringControllerBuilder::create)
                         .binding(getDefaultValue(), StringConfigEntry.this::getValue, (value) -> GRConfig.setValue(StringConfigEntry.this, value))
                         .build();

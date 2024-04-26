@@ -38,7 +38,7 @@ public class ColorConfigEntry extends GRConfigEntry<Color> {
             public Option<Color> getOption() {
                 return Option.<Color>createBuilder()
                         .name(Component.translatable("text.craftgr.config.option." + getKey()))
-                        .description(OptionDescription.of(Component.translatable("text.craftgr.config.option." + getKey() + ".tooltip")))
+                        .description(OptionDescription.of(Component.translatable("text.craftgr.config.option." + getKey() + ".description")))
                         .controller(ColorControllerBuilder::create)
                         .binding(getDefaultValue(), ColorConfigEntry.this::getValue, (value) -> GRConfig.setValue(ColorConfigEntry.this, value))
                         .build();

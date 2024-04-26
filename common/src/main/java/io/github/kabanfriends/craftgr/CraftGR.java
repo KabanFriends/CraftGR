@@ -9,7 +9,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
-import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.logging.log4j.Level;
@@ -42,7 +41,6 @@ public class CraftGR {
 
     private static Platform platform;
     private static CloseableHttpClient httpClient;
-    private static RequestConfig requestConfig;
 
     public static void init(Platform platform) {
         CraftGR.platform = platform;
@@ -50,10 +48,6 @@ public class CraftGR {
         GRConfig.init();
 
         CraftGR.httpClient = HttpClients.createSystem();
-        CraftGR.requestConfig = RequestConfig.custom()
-                .setConnectTimeout(10 * 1000)
-                .setSocketTimeout(10 * 1000)
-                .build();
     }
 
     public static void lateInit() {
@@ -67,10 +61,6 @@ public class CraftGR {
 
     public static CloseableHttpClient getHttpClient() {
         return httpClient;
-    }
-
-    public static RequestConfig getRequestConfig() {
-        return requestConfig;
     }
 
     public static void log(Level level, String message) {

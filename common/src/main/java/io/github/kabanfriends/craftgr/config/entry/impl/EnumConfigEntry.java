@@ -44,7 +44,7 @@ public class EnumConfigEntry<T extends Enum<T>> extends GRConfigEntry<T> {
             public Option<T> getOption() {
                 return Option.<T>createBuilder()
                         .name(Component.translatable("text.craftgr.config.option." + getKey()))
-                        .description(OptionDescription.of(Component.translatable("text.craftgr.config.option." + getKey() + ".tooltip")))
+                        .description(OptionDescription.of(Component.translatable("text.craftgr.config.option." + getKey() + ".description")))
                         .controller((option) -> EnumControllerBuilder.create(option)
                                 .enumClass(enumClass)
                                 .formatValue((value) -> Component.translatable("text.craftgr.config.option." + getKey() + "." + value.name()))

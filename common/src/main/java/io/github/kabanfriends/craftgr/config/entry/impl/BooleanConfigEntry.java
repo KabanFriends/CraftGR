@@ -33,7 +33,7 @@ public class BooleanConfigEntry extends GRConfigEntry<Boolean> {
             public Option<Boolean> getOption() {
                 return Option.<Boolean>createBuilder()
                         .name(Component.translatable("text.craftgr.config.option." + getKey()))
-                        .description(OptionDescription.of(Component.translatable("text.craftgr.config.option." + getKey() + ".tooltip")))
+                        .description(OptionDescription.of(Component.translatable("text.craftgr.config.option." + getKey() + ".description")))
                         .controller(TickBoxControllerBuilder::create)
                         .binding(getDefaultValue(), BooleanConfigEntry.this::getValue, (value) -> GRConfig.setValue(BooleanConfigEntry.this, value))
                         .build();
