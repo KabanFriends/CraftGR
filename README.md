@@ -14,7 +14,7 @@ Touhou Project music player for Minecraft
 
 # About this mod
 CraftGR is a music player mod for Minecraft designed specifically for [Gensokyo Radio](https://gensokyoradio.net/),
-which streams fan-made Touhou Project songs in the game. The mod also comes with a HUD display that shows information of the songs.
+which streams fan-made Touhou Project songs in the game. It also has a custom HUD display that shows information of the songs.
 
 This mod is compatible with [Fabric](https://fabricmc.net/) and [NeoForge](https://neoforged.net/).
 
