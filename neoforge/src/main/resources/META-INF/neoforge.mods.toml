@@ -32,6 +32,6 @@ side = "CLIENT"
 [[dependencies.craftgr]]
 modId = "yet_another_config_lib_v3"
 type = "optional"
-versionRange="[3.4.1,)"
+versionRange="[3.4.0,)"
 ordering = "NONE"
 side = "CLIENT"
