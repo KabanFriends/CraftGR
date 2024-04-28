@@ -8,7 +8,8 @@ Touhou Project music player for Minecraft
 [![Latest Version](https://img.shields.io/modrinth/v/lKYr4L6w)](https://modrinth.com/mod/craftgr/version/latest)
 [![Modrinth Downloads](https://img.shields.io/modrinth/dt/lKYr4L6w)](https://modrinth.com/mod/craftgr/)
 
-[![Available on Modrinth](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/compact/available/modrinth_vector.svg)](https://modrinth.com/mod/craftgr/)
+[![Available on Modrinth](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/modrinth_vector.svg)](https://modrinth.com/mod/craftgr/)
+[![Available on CurseForge](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/curseforge_vector.svg)](https://curseforge.com/minecraft/mc-mods/craftgr)
 
 </div>
 
