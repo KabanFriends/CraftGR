@@ -5,26 +5,24 @@ import io.github.kabanfriends.craftgr.handler.AudioPlayerHandler;
 import io.github.kabanfriends.craftgr.handler.KeybindHandler;
 import io.github.kabanfriends.craftgr.handler.OverlayHandler;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RenderGuiEvent;
 import net.neoforged.neoforge.client.event.ScreenEvent;
-import net.neoforged.neoforge.event.TickEvent;
 
 public class ClientEvents {
 
     public static boolean firstTicked;
 
     @SubscribeEvent
-    public void tick(TickEvent.ClientTickEvent event) {
-        if (event.phase == TickEvent.Phase.START && event.type == TickEvent.Type.CLIENT) {
-            // Late init
-            if (!firstTicked) {
-                firstTicked = true;
-                CraftGR.lateInit();
-            }
-
-            AudioPlayerHandler.getInstance().onClientTick();
-            KeybindHandler.onClientTick();
+    public void tick(ClientTickEvent.Pre event) {
+        // Late init
+        if (!firstTicked) {
+            firstTicked = true;
+            CraftGR.lateInit();
         }
+
+        AudioPlayerHandler.getInstance().onClientTick();
+        KeybindHandler.onClientTick();
     }
 
     @SubscribeEvent
