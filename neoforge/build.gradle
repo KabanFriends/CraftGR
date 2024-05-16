@@ -2,6 +2,12 @@ plugins {
     id "com.github.johnrengelman.shadow" version "8.1.1"
 }
 
+loom {
+    neoForge {
+        accessTransformer { file("src/main/resources/META-INF/accesstransformer.cfg") }
+    }
+}
+
 architectury {
     platformSetupLoomIde()
     neoForge()
