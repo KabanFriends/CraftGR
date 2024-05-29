@@ -41,27 +41,21 @@ public class SongHandler {
     }
 
     private ProcessResult prepareNewSong() {
-        Song song;
+        ProcessResult result;
         try {
-            song = getSongFromJson(GRConfig.getValue("urlInfoJson"));
+            this.song = getSongFromJson(GRConfig.getValue("urlInfoJson"));
+            result = ProcessResult.SUCCESS;
         } catch (Exception e) {
+            this.song = null;
             CraftGR.log(Level.ERROR, "Error while fetching song information!");
             e.printStackTrace();
-
-            return ProcessResult.ERROR;
+            result = ProcessResult.ERROR;
         }
-        this.song = song;
 
-        SongInfoOverlay overlay = SongInfoOverlay.getInstance();
+        SongInfoOverlay.getInstance().updateSongTitle();
+        SongInfoOverlay.getInstance().updateAlbumArtTexture();
 
-        if (song.isIntermission()) {
-            overlay.setIntermissionSongTitle();
-        } else {
-            overlay.setSongTitle(song.title);
-        }
-        overlay.createAlbumArtTexture(song);
-
-        return ProcessResult.SUCCESS;
+        return result;
     }
 
     private void start() {
@@ -81,7 +75,7 @@ public class SongHandler {
         }
 
         CraftGR.log(Level.ERROR, "Error on preparing the song information! Fetching again in 30 seconds...");
-        this.song = null;
+
         try {
             Thread.sleep(30 * 1000L);
         } catch (InterruptedException e) { }
@@ -116,7 +110,7 @@ public class SongHandler {
                     getValueWithDefault(songInfo, "YEAR", null, String.class),
                     TitleFixer.fixJapaneseString(getValueWithDefault(songInfo, "CIRCLE", null, String.class)),
                     getValueWithDefault(songTimes, "SONGSTART", 0L, long.class),
-                    getValueWithDefault(songTimes, "SONGEND", System.currentTimeMillis() / 1000L + 4L, long.class),
+                    getValueWithDefault(songTimes, "SONGEND", System.currentTimeMillis() / 1000L + 3L, long.class),
                     getValueWithDefault(songData, "ALBUMID", 0, int.class),
                     getValueWithDefault(misc, "ALBUMART", null, String.class),
                     getValueWithDefault(misc, "OFFSETTIME", 0L, long.class)

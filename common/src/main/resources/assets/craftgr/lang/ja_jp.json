@@ -60,6 +60,7 @@
   "text.craftgr.message.started": "Gensokyo Radio を再生します",
   "text.craftgr.message.stopped": "Gensokyo Radio を停止しました",
 
+  "text.craftgr.song.unknown": "不明な楽曲",
   "text.craftgr.song.intermission": "インターミッション",
 
   "key.category.craftgr": "CraftGR",

@@ -59,6 +59,7 @@
   "text.craftgr.message.started": "Started radio playback",
   "text.craftgr.message.stopped": "Stopped radio playback",
 
+  "text.craftgr.song.unknown": "Unknown Song",
   "text.craftgr.song.intermission": "Intermission",
 
   "key.category.craftgr": "CraftGR",

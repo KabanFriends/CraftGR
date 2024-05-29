@@ -20,6 +20,7 @@ import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.logging.log4j.Level;
 
@@ -70,7 +71,6 @@ public class SongInfoOverlay extends Overlay {
 
     private DynamicTexture albumArtTexture;
     private ScrollingText songTitleText;
-    private boolean hasAlbumArt;
     private boolean expanded;
     private boolean muted;
 
@@ -95,40 +95,40 @@ public class SongInfoOverlay extends Overlay {
             if (visibility == SongInfoOverlay.OverlayVisibility.CHAT && !(CraftGR.MC.screen instanceof ChatScreen)) return;
         }
 
+        Font font = CraftGR.MC.font;
+
+        float scale = GRConfig.getValue("overlayScale");
+
+        int albumArtWidth = GRConfig.getValue("hideAlbumArt") ? -ART_LEFT_PADDING : ART_SIZE;
+
+        float[] size = getOverlaySize();
+        float width = size[0];
+        float height = size[1];
+
+        OverlayPosition position = GRConfig.getValue("overlayPosition");
+        int x = getOverlayX(position, width);
+        int y = getOverlayY(position, height);
+
+        // Rendering
+        PoseStack poseStack = graphics.pose();
+
+        RenderUtil.setZLevelPre(poseStack, 400);
+        poseStack.scale(RenderUtil.getUIScale(scale), RenderUtil.getUIScale(scale), RenderUtil.getUIScale(scale));
+
+        RenderUtil.fill(poseStack, x, y, x + width, y + ART_SIZE + ART_TOP_PADDING + ART_BOTTOM_PADDING, GRConfig.<Color>getValue("overlayBgColor").getRGB() + 0xFF000000, 0.6f);
+
+        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
+
+        if (!GRConfig.<Boolean>getValue("hideAlbumArt")) {
+            graphics.blit(albumArtTexture == null ? ALBUM_ART_PLACEHOLDER_LOCATION : ALBUM_ART_LOCATION, x + ART_LEFT_PADDING, y + ART_TOP_PADDING, 0f, 0f, ART_SIZE, ART_SIZE, ART_SIZE, ART_SIZE);
+        }
+
+        poseStack.pushPose();
+        poseStack.scale(2, 2, 2);
+
         Song currentSong = SongHandler.getInstance().getCurrentSong();
 
         if (currentSong != null) {
-            Font font = CraftGR.MC.font;
-
-            float scale = GRConfig.getValue("overlayScale");
-
-            int albumArtWidth = GRConfig.getValue("hideAlbumArt") ? -ART_LEFT_PADDING : ART_SIZE;
-
-            float[] size = getOverlaySize();
-            float width = size[0];
-            float height = size[1];
-
-            OverlayPosition position = GRConfig.getValue("overlayPosition");
-            int x = getOverlayX(position, width);
-            int y = getOverlayY(position, height);
-
-            // Rendering
-            PoseStack poseStack = graphics.pose();
-
-            RenderUtil.setZLevelPre(poseStack, 400);
-            poseStack.scale(RenderUtil.getUIScale(scale), RenderUtil.getUIScale(scale), RenderUtil.getUIScale(scale));
-
-            RenderUtil.fill(poseStack, x, y, x + width, y + ART_SIZE + ART_TOP_PADDING + ART_BOTTOM_PADDING, GRConfig.<Color>getValue("overlayBgColor").getRGB() + 0xFF000000, 0.6f);
-
-            RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
-
-            if (!GRConfig.<Boolean>getValue("hideAlbumArt")) {
-                graphics.blit(hasAlbumArt ? ALBUM_ART_LOCATION : ALBUM_ART_PLACEHOLDER_LOCATION, x + ART_LEFT_PADDING, y + ART_TOP_PADDING, 0f, 0f, ART_SIZE, ART_SIZE, ART_SIZE, ART_SIZE);
-            }
-
-            poseStack.pushPose();
-            poseStack.scale(2, 2, 2);
-
             if (!currentSong.isIntermission()) {
                 int dotWidth = font.width("...");
 
@@ -162,49 +162,49 @@ public class SongInfoOverlay extends Overlay {
                     muted = true;
                     updateScrollWidth();
                 }
-                graphics.drawString(CraftGR.MC.font, CraftGR.AUDIO_MUTED_ICON, (x + (int)width - MUTED_ICON_RIGHT_PADDING - MUTED_ICON_SIZE) / 2, (y + MUTED_ICON_TOP_PADDING) / 2, Color.WHITE.getRGB());
+                graphics.drawString(CraftGR.MC.font, CraftGR.AUDIO_MUTED_ICON, (x + (int) width - MUTED_ICON_RIGHT_PADDING - MUTED_ICON_SIZE) / 2, (y + MUTED_ICON_TOP_PADDING) / 2, Color.WHITE.getRGB());
             } else if (muted) {
                 muted = false;
                 updateScrollWidth();
             }
+        }
 
-            poseStack.popPose();
+        poseStack.popPose();
 
-            if (currentSong.isIntermission()) {
-                RenderUtil.fill(poseStack, x, y + ART_SIZE + ART_TOP_PADDING + ART_BOTTOM_PADDING, x + width, y + height, GRConfig.<Color>getValue("overlayBgColor").getRGB() + 0xFF000000, 0.6f);
-            } else {
-                long duration = currentSong.songEnd - currentSong.songStart;
-                long played = System.currentTimeMillis() / 1000L - SongHandler.getInstance().getSongStart();
-                if (played > duration) played = duration;
+        if (currentSong == null || currentSong.isIntermission()) {
+            RenderUtil.fill(poseStack, x, y + ART_SIZE + ART_TOP_PADDING + ART_BOTTOM_PADDING, x + width, y + height, GRConfig.<Color>getValue("overlayBgColor").getRGB() + 0xFF000000, 0.6f);
+        } else {
+            long duration = currentSong.songEnd - currentSong.songStart;
+            long played = System.currentTimeMillis() / 1000L - SongHandler.getInstance().getSongStart();
+            if (played > duration) played = duration;
 
-                graphics.drawString(CraftGR.MC.font, getTimer((int) played), x + ART_LEFT_PADDING, y + ART_TOP_PADDING + ART_SIZE + ART_TIMER_SPACE_HEIGHT, Color.WHITE.getRGB());
+            graphics.drawString(CraftGR.MC.font, getTimer((int) played), x + ART_LEFT_PADDING, y + ART_TOP_PADDING + ART_SIZE + ART_TIMER_SPACE_HEIGHT, Color.WHITE.getRGB());
 
-                int timerWidth = font.width(getTimer((int) duration));
-                graphics.drawString(CraftGR.MC.font, getTimer((int) duration), x + (int) width - timerWidth - TIMER_RIGHT_PADDING, y + ART_TOP_PADDING + ART_SIZE + ART_TIMER_SPACE_HEIGHT, Color.WHITE.getRGB());
+            int timerWidth = font.width(getTimer((int) duration));
+            graphics.drawString(CraftGR.MC.font, getTimer((int) duration), x + (int) width - timerWidth - TIMER_RIGHT_PADDING, y + ART_TOP_PADDING + ART_SIZE + ART_TIMER_SPACE_HEIGHT, Color.WHITE.getRGB());
 
-                RenderUtil.fill(poseStack, x, y + ART_TOP_PADDING + ART_SIZE + ART_BOTTOM_PADDING, x + (float) played / duration * width, y + height, GRConfig.<Color>getValue("overlayBarColor").getRGB() + 0xFF000000, 0.6f);
-                RenderUtil.fill(poseStack, x + (float) played / duration * width, y + ART_TOP_PADDING + ART_SIZE + ART_BOTTOM_PADDING, x + width, y + height, GRConfig.<Color>getValue("overlayBgColor").getRGB() + 0xFF000000, 0.6f);
-            }
+            RenderUtil.fill(poseStack, x, y + ART_TOP_PADDING + ART_SIZE + ART_BOTTOM_PADDING, x + (float) played / duration * width, y + height, GRConfig.<Color>getValue("overlayBarColor").getRGB() + 0xFF000000, 0.6f);
+            RenderUtil.fill(poseStack, x + (float) played / duration * width, y + ART_TOP_PADDING + ART_SIZE + ART_BOTTOM_PADDING, x + width, y + height, GRConfig.<Color>getValue("overlayBgColor").getRGB() + 0xFF000000, 0.6f);
+        }
 
-            songTitleText.setX(x + ART_LEFT_PADDING + albumArtWidth + ART_INFO_SPACE_WIDTH);
-            songTitleText.setY(y + INFO_TOP_PADDING);
-            songTitleText.render(graphics, mouseX, mouseY);
+        songTitleText.setX(x + ART_LEFT_PADDING + albumArtWidth + ART_INFO_SPACE_WIDTH);
+        songTitleText.setY(y + INFO_TOP_PADDING);
+        songTitleText.render(graphics, mouseX, mouseY);
 
-            RenderUtil.setZLevelPost(poseStack);
+        RenderUtil.setZLevelPost(poseStack);
 
-            // Mouse hover detection
-            float mouseScaledX = mouseX / RenderUtil.getUIScale(scale);
-            float mouseScaledY = mouseY / RenderUtil.getUIScale(scale);
+        // Mouse hover detection
+        float mouseScaledX = mouseX / RenderUtil.getUIScale(scale);
+        float mouseScaledY = mouseY / RenderUtil.getUIScale(scale);
 
-            if (mouseScaledX >= x && mouseScaledX <= x + width && mouseScaledY >= y && mouseScaledY <= y + height) {
-                if (!expanded) {
-                    expanded = true;
-                    updateScrollWidth();
-                }
-            } else if (expanded) {
-                expanded = false;
+        if (mouseScaledX >= x && mouseScaledX <= x + width && mouseScaledY >= y && mouseScaledY <= y + height) {
+            if (!expanded) {
+                expanded = true;
                 updateScrollWidth();
             }
+        } else if (expanded) {
+            expanded = false;
+            updateScrollWidth();
         }
     }
 
@@ -307,35 +307,33 @@ public class SongInfoOverlay extends Overlay {
     }
 
     private int getMaxTextWidth() {
-        Song currentSong = SongHandler.getInstance().getCurrentSong();
+        Song song = SongHandler.getInstance().getCurrentSong();
         Font font = CraftGR.MC.font;
-        int maxWidth = 0;
 
-        if (currentSong.isIntermission()) {
-            maxWidth = font.width(Component.translatable("text.craftgr.song.intermission"));
-        } else {
-            String[] strings = {currentSong.title, "(" + currentSong.year + ")", currentSong.artist, currentSong.album, currentSong.circle};
-            for (String string : strings) {
-                if (string != null) {
-                    int textWidth = font.width(string);
-                    if (textWidth > maxWidth) {
-                        maxWidth = textWidth;
-                    }
-                }
-            }
+        if (song == null || song.isIntermission()) {
+            return font.width(songTitleText.getText());
         }
 
-        return maxWidth;
+        return NumberUtils.max(
+                font.width(songTitleText.getText()),
+                font.width("(" + song.year + ")"),
+                font.width(song.artist),
+                font.width(song.album),
+                font.width(song.circle)
+        );
     }
 
-    public void setIntermissionSongTitle() {
-        songTitleText.setText(Component.translatable("text.craftgr.song.intermission"));
+    public void updateSongTitle() {
         songTitleText.resetScroll();
-    }
 
-    public void setSongTitle(String title) {
-        songTitleText.setText(Component.literal(title));
-        songTitleText.resetScroll();
+        Song song = SongHandler.getInstance().getCurrentSong();
+        if (song == null) {
+            songTitleText.setText(Component.translatable("text.craftgr.song.unknown"));
+        } else if (song.isIntermission()) {
+            songTitleText.setText(Component.translatable("text.craftgr.song.intermission"));
+        } else {
+            songTitleText.setText(Component.literal(song.title));
+        }
     }
 
     public void updateScrollWidth() {
@@ -354,15 +352,17 @@ public class SongInfoOverlay extends Overlay {
         songTitleText.resetScroll();
     }
 
-    public void createAlbumArtTexture(Song song) {
-        hasAlbumArt = false;
-        if (song.albumArt == null || song.albumArt.isEmpty()) {
+    public void updateAlbumArtTexture() {
+        disposeAlbumArtTexture();
+
+        Song song = SongHandler.getInstance().getCurrentSong();
+        if (song == null || song.albumArt == null || song.albumArt.isEmpty()) {
             return;
         }
 
         String url = GRConfig.getValue("urlAlbumArt") + song.albumArt;
-
         int tries = 0;
+
         do {
             tries++;
 
@@ -383,22 +383,16 @@ public class SongInfoOverlay extends Overlay {
                         albumArtTexture.upload();
                     }
 
-                    // OptiFine compatibility: RenderSystem works only in the main thread
+                    // OptiFine compatibility: RenderSystem only works in the main thread
                     CraftGR.MC.execute(() -> {
                         textureManager.register(ALBUM_ART_LOCATION, albumArtTexture);
-                        hasAlbumArt = true;
                     });
                 }
                 break;
             } catch (Exception e) {
                 CraftGR.log(Level.ERROR, "Error while creating album art texture! (" + url + ")");
                 e.printStackTrace();
-
-                if (albumArtTexture != null) {
-                    textureManager.release(ALBUM_ART_LOCATION);
-                    albumArtTexture.close();
-                    albumArtTexture = null;
-                }
+                disposeAlbumArtTexture();
             } finally {
                 ThreadLocals.PNG_INFO_BYPASS_VALIDATION.remove();
             }
@@ -411,6 +405,14 @@ public class SongInfoOverlay extends Overlay {
                 Thread.sleep(ALBUM_ART_FETCH_DELAY_SECONDS * 1000L);
             } catch (InterruptedException e) { }
         } while (tries < ALBUM_ART_FETCH_TRIES);
+    }
+
+    private void disposeAlbumArtTexture() {
+        if (albumArtTexture != null) {
+            textureManager.release(ALBUM_ART_LOCATION);
+            albumArtTexture.close();
+            albumArtTexture = null;
+        }
     }
 
     public InputStream resizeImage(InputStream input) throws IOException {
