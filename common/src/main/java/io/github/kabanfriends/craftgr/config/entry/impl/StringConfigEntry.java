@@ -4,7 +4,6 @@ import com.google.gson.JsonPrimitive;
 import dev.isxander.yacl3.api.Option;
 import dev.isxander.yacl3.api.OptionDescription;
 import dev.isxander.yacl3.api.controller.StringControllerBuilder;
-import io.github.kabanfriends.craftgr.config.GRConfig;
 import io.github.kabanfriends.craftgr.config.entry.GRConfigEntry;
 import io.github.kabanfriends.craftgr.config.entry.OptionProvider;
 import net.minecraft.network.chat.Component;
@@ -34,7 +33,7 @@ public class StringConfigEntry extends GRConfigEntry<String> {
                         .name(Component.translatable("text.craftgr.config.option." + getKey()))
                         .description(OptionDescription.of(Component.translatable("text.craftgr.config.option." + getKey() + ".description")))
                         .controller(StringControllerBuilder::create)
-                        .binding(getDefaultValue(), StringConfigEntry.this::getValue, (value) -> GRConfig.setValue(StringConfigEntry.this, value))
+                        .binding(getDefaultValue(), StringConfigEntry.this::getValue, StringConfigEntry.this::apply)
                         .build();
             }
         };

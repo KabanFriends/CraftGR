@@ -4,7 +4,6 @@ import com.google.gson.JsonPrimitive;
 import dev.isxander.yacl3.api.Option;
 import dev.isxander.yacl3.api.OptionDescription;
 import dev.isxander.yacl3.api.controller.ColorControllerBuilder;
-import io.github.kabanfriends.craftgr.config.GRConfig;
 import io.github.kabanfriends.craftgr.config.entry.GRConfigEntry;
 import io.github.kabanfriends.craftgr.config.entry.OptionProvider;
 import net.minecraft.network.chat.Component;
@@ -40,7 +39,7 @@ public class ColorConfigEntry extends GRConfigEntry<Color> {
                         .name(Component.translatable("text.craftgr.config.option." + getKey()))
                         .description(OptionDescription.of(Component.translatable("text.craftgr.config.option." + getKey() + ".description")))
                         .controller(ColorControllerBuilder::create)
-                        .binding(getDefaultValue(), ColorConfigEntry.this::getValue, (value) -> GRConfig.setValue(ColorConfigEntry.this, value))
+                        .binding(getDefaultValue(), ColorConfigEntry.this::getValue, ColorConfigEntry.this::apply)
                         .build();
             }
         };

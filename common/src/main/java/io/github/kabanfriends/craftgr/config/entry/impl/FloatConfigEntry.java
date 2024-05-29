@@ -4,8 +4,6 @@ import com.google.gson.JsonPrimitive;
 import dev.isxander.yacl3.api.Option;
 import dev.isxander.yacl3.api.OptionDescription;
 import dev.isxander.yacl3.api.controller.FloatFieldControllerBuilder;
-import dev.isxander.yacl3.gui.controllers.string.number.FloatFieldController;
-import io.github.kabanfriends.craftgr.config.GRConfig;
 import io.github.kabanfriends.craftgr.config.entry.GRConfigEntry;
 import io.github.kabanfriends.craftgr.config.entry.OptionProvider;
 import net.minecraft.network.chat.Component;
@@ -49,7 +47,7 @@ public class FloatConfigEntry extends GRConfigEntry<Float> {
                             }
                             return controllerBuilder;
                         })
-                        .binding(getDefaultValue(), FloatConfigEntry.this::getValue, (value) -> GRConfig.setValue(FloatConfigEntry.this, value))
+                        .binding(getDefaultValue(), FloatConfigEntry.this::getValue, FloatConfigEntry.this::apply)
                         .build();
             }
         };

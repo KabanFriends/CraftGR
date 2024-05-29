@@ -48,7 +48,7 @@ public class IntegerConfigEntry extends GRConfigEntry<Integer> {
                 Option.Builder<Integer> builder = Option.<Integer>createBuilder()
                         .name(Component.translatable("text.craftgr.config.option." + getKey()))
                         .description(OptionDescription.of(Component.translatable("text.craftgr.config.option." + getKey() + ".description")))
-                        .binding(getDefaultValue(), IntegerConfigEntry.this::getValue, (value) -> GRConfig.setValue(IntegerConfigEntry.this, value));
+                        .binding(getDefaultValue(), IntegerConfigEntry.this::getValue, IntegerConfigEntry.this::apply);
 
                 Function<Option<Integer>, ControllerBuilder<Integer>> function = (option) -> {
                     ValueFormattableController<Integer, ?> controllerBuilder = hasRange ?

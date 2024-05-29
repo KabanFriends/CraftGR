@@ -37,15 +37,26 @@ public class GRConfig {
     private static final GRConfigCategory[] categories = {
             new GRConfigCategory(Component.translatable("text.craftgr.config.category.playback"), true,
                     new RadioStateConfigEntry("playback"),
-                    new IntegerConfigEntry("volume", 50).setFormatter((value) -> Component.literal(value + "%")).setRange(0, 100)
+                    new IntegerConfigEntry("volume", 50)
+                            .setFormatter((value) -> Component.literal(value + "%"))
+                            .setRange(0, 100)
             ),
             new GRConfigCategory(Component.translatable("text.craftgr.config.category.overlay"), true,
                     new EnumConfigEntry("overlayVisibility", SongInfoOverlay.OverlayVisibility.MENU),
                     new EnumConfigEntry("overlayPosition", SongInfoOverlay.OverlayPosition.TOP_RIGHT),
                     new BooleanConfigEntry("hideAlbumArt", false),
                     new BooleanConfigEntry("openAlbum", true),
-                    new IntegerConfigEntry("overlayWidth", 115).setFormatter(value -> Component.literal(value + "px")).setRange(35, 435),
-                    new FloatConfigEntry("overlayScale", 1.0f).setFormatter(value -> Component.literal(value + "×")),
+                    new IntegerConfigEntry("overlayWidth", 115)
+                            .setFormatter((value) -> Component.literal(value + "px"))
+                            .setRange(35, 435)
+                            .onApply((value) -> {
+                                SongInfoOverlay overlay = SongInfoOverlay.getInstance();
+                                if (overlay != null) {
+                                    overlay.updateScrollWidth();
+                                }
+                            }),
+                    new FloatConfigEntry("overlayScale", 1.0f)
+                            .setFormatter(value -> Component.literal(value + "×")),
                     new ColorConfigEntry("overlayBgColor", new Color(99, 34, 121)),
                     new ColorConfigEntry("overlayBarColor", new Color(160, 150, 174))
             ),
@@ -53,8 +64,10 @@ public class GRConfig {
                     new StringConfigEntry("urlStream", "https://stream.gensokyoradio.net/1/"),
                     new StringConfigEntry("urlInfoJson", "https://gensokyoradio.net/api/station/playing/"),
                     new StringConfigEntry("urlAlbumArt", "https://gensokyoradio.net/images/albums/500/"),
-                    new IntegerConfigEntry("connectTimeout", 20_000).setFormatter(value -> Component.literal(value + "ms")),
-                    new IntegerConfigEntry("socketTimeout", 10_000).setFormatter(value -> Component.literal(value + "ms"))
+                    new IntegerConfigEntry("connectTimeout", 20_000)
+                            .setFormatter((value) -> Component.literal(value + "ms")),
+                    new IntegerConfigEntry("socketTimeout", 10_000)
+                            .setFormatter((value) -> Component.literal(value + "ms"))
             )
     };
 

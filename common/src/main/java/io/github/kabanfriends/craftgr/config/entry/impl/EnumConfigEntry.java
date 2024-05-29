@@ -4,7 +4,6 @@ import com.google.gson.JsonPrimitive;
 import dev.isxander.yacl3.api.Option;
 import dev.isxander.yacl3.api.OptionDescription;
 import dev.isxander.yacl3.api.controller.EnumControllerBuilder;
-import io.github.kabanfriends.craftgr.config.GRConfig;
 import io.github.kabanfriends.craftgr.config.entry.GRConfigEntry;
 import io.github.kabanfriends.craftgr.config.entry.OptionProvider;
 import net.minecraft.network.chat.Component;
@@ -49,7 +48,7 @@ public class EnumConfigEntry<T extends Enum<T>> extends GRConfigEntry<T> {
                                 .enumClass(enumClass)
                                 .formatValue((value) -> Component.translatable("text.craftgr.config.option." + getKey() + "." + value.name()))
                         )
-                        .binding(getDefaultValue(), EnumConfigEntry.this::getValue, (value) -> GRConfig.setValue(EnumConfigEntry.this, value))
+                        .binding(getDefaultValue(), EnumConfigEntry.this::getValue, EnumConfigEntry.this::apply)
                         .build();
             }
         };
