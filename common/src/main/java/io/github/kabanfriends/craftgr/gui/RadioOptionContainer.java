@@ -25,9 +25,9 @@ public class RadioOptionContainer extends AbstractContainerWidget {
     private static final Component DISABLED_TOOLTIP = Component.translatable("text.craftgr.button.config.disabled");
 
     private static final WidgetSprites CONFIG_BUTTON_SPRITES = new WidgetSprites(
-            new ResourceLocation(CraftGR.MOD_ID, "config"),
-            new ResourceLocation(CraftGR.MOD_ID, "config_disabled"),
-            new ResourceLocation(CraftGR.MOD_ID, "config_highlighted")
+            ResourceLocation.fromNamespaceAndPath(CraftGR.MOD_ID, "config"),
+            ResourceLocation.fromNamespaceAndPath(CraftGR.MOD_ID, "config_disabled"),
+            ResourceLocation.fromNamespaceAndPath(CraftGR.MOD_ID, "config_highlighted")
     );
 
     private final RadioVolumeSliderButton volumeSlider;

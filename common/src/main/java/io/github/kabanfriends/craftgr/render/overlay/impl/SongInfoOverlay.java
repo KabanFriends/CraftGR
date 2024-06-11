@@ -62,8 +62,8 @@ public class SongInfoOverlay extends Overlay {
     private static final int ALBUM_ART_FETCH_TRIES = 3;
     private static final int ALBUM_ART_FETCH_DELAY_SECONDS = 4;
 
-    private static final ResourceLocation ALBUM_ART_PLACEHOLDER_LOCATION = new ResourceLocation(CraftGR.MOD_ID, "textures/album_placeholder.png");
-    private static final ResourceLocation ALBUM_ART_LOCATION = new ResourceLocation(CraftGR.MOD_ID, "album");
+    private static final ResourceLocation ALBUM_ART_PLACEHOLDER_LOCATION = ResourceLocation.fromNamespaceAndPath(CraftGR.MOD_ID, "textures/album_placeholder.png");
+    private static final ResourceLocation ALBUM_ART_LOCATION = ResourceLocation.fromNamespaceAndPath(CraftGR.MOD_ID, "album");
 
     private static SongInfoOverlay instance;
 
