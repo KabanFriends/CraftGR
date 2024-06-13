@@ -39,6 +39,9 @@
   "recommends": {
     "yet_another_config_lib_v3": ">=3.4.0"
   },
+  "suggests": {
+    "modmenu": ">=11.0.0-beta.1"
+  },
   "custom": {
     "modmenu:clientsideOnly": true
   }
