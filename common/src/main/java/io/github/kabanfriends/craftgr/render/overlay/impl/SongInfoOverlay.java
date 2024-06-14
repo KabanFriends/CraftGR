@@ -70,9 +70,9 @@ public class SongInfoOverlay extends Overlay {
     private static SongInfoOverlay instance;
 
     private final TextureManager textureManager;
+    private final ScrollingText songTitleText;
 
-    private DynamicTexture albumArtTexture;
-    private ScrollingText songTitleText;
+    private boolean renderAlbumArt;
     private boolean expanded;
     private boolean muted;
 
@@ -122,7 +122,7 @@ public class SongInfoOverlay extends Overlay {
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
 
         if (!GRConfig.<Boolean>getValue("hideAlbumArt")) {
-            graphics.blit(albumArtTexture == null ? ALBUM_ART_PLACEHOLDER_LOCATION : ALBUM_ART_LOCATION, x + ART_LEFT_PADDING, y + ART_TOP_PADDING, 0f, 0f, ART_SIZE, ART_SIZE, ART_SIZE, ART_SIZE);
+            graphics.blit(shouldRenderAlbumArt() ? ALBUM_ART_LOCATION : ALBUM_ART_PLACEHOLDER_LOCATION, x + ART_LEFT_PADDING, y + ART_TOP_PADDING, 0f, 0f, ART_SIZE, ART_SIZE, ART_SIZE, ART_SIZE);
         }
 
         poseStack.pushPose();
@@ -180,10 +180,10 @@ public class SongInfoOverlay extends Overlay {
             long played = System.currentTimeMillis() / 1000L - SongHandler.getInstance().getSongStart();
             if (played > duration) played = duration;
 
-            graphics.drawString(CraftGR.MC.font, getTimer((int) played), x + ART_LEFT_PADDING, y + ART_TOP_PADDING + ART_SIZE + ART_TIMER_SPACE_HEIGHT, COLOR_WHITE);
+            graphics.drawString(CraftGR.MC.font, formatTime((int) played), x + ART_LEFT_PADDING, y + ART_TOP_PADDING + ART_SIZE + ART_TIMER_SPACE_HEIGHT, COLOR_WHITE);
 
-            int timerWidth = font.width(getTimer((int) duration));
-            graphics.drawString(CraftGR.MC.font, getTimer((int) duration), x + (int) width - timerWidth - TIMER_RIGHT_PADDING, y + ART_TOP_PADDING + ART_SIZE + ART_TIMER_SPACE_HEIGHT, COLOR_WHITE);
+            int timerWidth = font.width(formatTime((int) duration));
+            graphics.drawString(CraftGR.MC.font, formatTime((int) duration), x + (int) width - timerWidth - TIMER_RIGHT_PADDING, y + ART_TOP_PADDING + ART_SIZE + ART_TIMER_SPACE_HEIGHT, COLOR_WHITE);
 
             RenderUtil.fill(poseStack, x, y + ART_TOP_PADDING + ART_SIZE + ART_BOTTOM_PADDING, x + (float) played / duration * width, y + height, GRConfig.<Color>getValue("overlayBarColor").getRGB() + 0xFF000000, 0.6f);
             RenderUtil.fill(poseStack, x + (float) played / duration * width, y + ART_TOP_PADDING + ART_SIZE + ART_BOTTOM_PADDING, x + width, y + height, GRConfig.<Color>getValue("overlayBgColor").getRGB() + 0xFF000000, 0.6f);
@@ -261,6 +261,111 @@ public class SongInfoOverlay extends Overlay {
         return true;
     }
 
+    public void updateSongTitle() {
+        songTitleText.resetScroll();
+
+        Song song = SongHandler.getInstance().getCurrentSong();
+        if (song == null) {
+            songTitleText.setText(Component.translatable("text.craftgr.song.unknown"));
+        } else if (song.isIntermission()) {
+            songTitleText.setText(Component.translatable("text.craftgr.song.intermission"));
+        } else {
+            songTitleText.setText(Component.literal(song.title));
+        }
+    }
+
+    public void updateScrollWidth() {
+        int width = GRConfig.getValue("overlayWidth");
+        if (expanded) {
+            width = getMaxTextWidth();
+
+            if (GRConfig.<Integer>getValue("overlayWidth") > width) {
+                width = GRConfig.getValue("overlayWidth");
+            }
+        }
+        if (muted) {
+            width -= (MUTED_ICON_SIZE + TITLE_MUTED_ICON_SPACE) / 2;
+        }
+        songTitleText.setWidth(width);
+        songTitleText.resetScroll();
+    }
+
+    public void updateAlbumArtTexture() {
+        renderAlbumArt = false;
+
+        Song song = SongHandler.getInstance().getCurrentSong();
+        if (song == null || song.albumArt == null || song.albumArt.isEmpty()) {
+            return;
+        }
+
+        String url = GRConfig.getValue("urlAlbumArt") + song.albumArt;
+        int tries = 0;
+
+        do {
+            tries++;
+
+            try {
+                HttpGet get = HttpUtil.get(url);
+
+                try (
+                        ResponseHolder response = new ResponseHolder(CraftGR.getHttpClient().execute(get));
+                        InputStream stream = resizeImage(response.getResponse().getEntity().getContent())
+                ) {
+                    ThreadLocals.PNG_INFO_BYPASS_VALIDATION.set(true);
+                    NativeImage image = NativeImage.read(stream);
+
+                    CraftGR.MC.execute(() -> {
+                        textureManager.register(ALBUM_ART_LOCATION, new DynamicTexture(image));
+                        renderAlbumArt = true;
+                    });
+                }
+                break;
+            } catch (Exception e) {
+                CraftGR.log(Level.ERROR, "Error while creating album art texture! (" + url + ")");
+                e.printStackTrace();
+                textureManager.release(ALBUM_ART_LOCATION);
+            } finally {
+                ThreadLocals.PNG_INFO_BYPASS_VALIDATION.remove();
+            }
+
+            if (tries < ALBUM_ART_FETCH_TRIES) {
+                CraftGR.log(Level.INFO, "Retrying to create album art texture in " + ALBUM_ART_FETCH_DELAY_SECONDS + " seconds... (" + (ALBUM_ART_FETCH_TRIES - tries) + " tries left)");
+            }
+
+            try {
+                Thread.sleep(ALBUM_ART_FETCH_DELAY_SECONDS * 1000L);
+            } catch (InterruptedException e) { }
+        } while (tries < ALBUM_ART_FETCH_TRIES);
+    }
+
+    public InputStream resizeImage(InputStream input) throws IOException {
+        try (input) {
+            Image image = ImageIO.read(input);
+
+            BufferedImage resizedImage = new BufferedImage(ALBUM_ART_TEXTURE_SIZE, ALBUM_ART_TEXTURE_SIZE, BufferedImage.TYPE_INT_RGB);
+            Graphics graphics = resizedImage.createGraphics();
+            graphics.drawImage(image, 0,0, ALBUM_ART_TEXTURE_SIZE, ALBUM_ART_TEXTURE_SIZE, null);
+
+            ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+            ImageIO.write(resizedImage, "jpg", outStream);
+            return new ByteArrayInputStream(outStream.toByteArray());
+        }
+    }
+
+    public enum OverlayPosition {
+        TOP_LEFT,
+        TOP_RIGHT,
+        BOTTOM_LEFT,
+        BOTTOM_RIGHT
+    }
+
+    public enum OverlayVisibility {
+        NONE,
+        ALWAYS,
+        MENU,
+        CHAT
+    }
+
     private int getOverlayX(OverlayPosition position, float width) {
         float scale = GRConfig.getValue("overlayScale");
         float offset = 10 / scale;
@@ -325,127 +430,12 @@ public class SongInfoOverlay extends Overlay {
         );
     }
 
-    public void updateSongTitle() {
-        songTitleText.resetScroll();
-
-        Song song = SongHandler.getInstance().getCurrentSong();
-        if (song == null) {
-            songTitleText.setText(Component.translatable("text.craftgr.song.unknown"));
-        } else if (song.isIntermission()) {
-            songTitleText.setText(Component.translatable("text.craftgr.song.intermission"));
-        } else {
-            songTitleText.setText(Component.literal(song.title));
-        }
+    @SuppressWarnings("ConstantConditions")
+    private boolean shouldRenderAlbumArt() {
+        return renderAlbumArt && textureManager.getTexture(ALBUM_ART_LOCATION, null) != null;
     }
 
-    public void updateScrollWidth() {
-        int width = GRConfig.getValue("overlayWidth");
-        if (expanded) {
-            width = getMaxTextWidth();
-
-            if (GRConfig.<Integer>getValue("overlayWidth") > width) {
-                width = GRConfig.getValue("overlayWidth");
-            }
-        }
-        if (muted) {
-            width -= (MUTED_ICON_SIZE + TITLE_MUTED_ICON_SPACE) / 2;
-        }
-        songTitleText.setWidth(width);
-        songTitleText.resetScroll();
-    }
-
-    public void updateAlbumArtTexture() {
-        disposeAlbumArtTexture();
-
-        Song song = SongHandler.getInstance().getCurrentSong();
-        if (song == null || song.albumArt == null || song.albumArt.isEmpty()) {
-            return;
-        }
-
-        String url = GRConfig.getValue("urlAlbumArt") + song.albumArt;
-        int tries = 0;
-
-        do {
-            tries++;
-
-            try {
-                HttpGet get = HttpUtil.get(url);
-
-                try (
-                        ResponseHolder response = new ResponseHolder(CraftGR.getHttpClient().execute(get));
-                        InputStream stream = resizeImage(response.getResponse().getEntity().getContent())
-                ) {
-                    ThreadLocals.PNG_INFO_BYPASS_VALIDATION.set(true);
-                    NativeImage image = NativeImage.read(stream);
-
-                    if (albumArtTexture == null) {
-                        albumArtTexture = new DynamicTexture(image);
-                    } else {
-                        albumArtTexture.setPixels(image);
-                        albumArtTexture.upload();
-                    }
-
-                    // OptiFine compatibility: RenderSystem only works in the main thread
-                    CraftGR.MC.execute(() -> {
-                        textureManager.register(ALBUM_ART_LOCATION, albumArtTexture);
-                    });
-                }
-                break;
-            } catch (Exception e) {
-                CraftGR.log(Level.ERROR, "Error while creating album art texture! (" + url + ")");
-                e.printStackTrace();
-                disposeAlbumArtTexture();
-            } finally {
-                ThreadLocals.PNG_INFO_BYPASS_VALIDATION.remove();
-            }
-
-            if (tries < ALBUM_ART_FETCH_TRIES) {
-                CraftGR.log(Level.INFO, "Retrying to create album art texture in " + ALBUM_ART_FETCH_DELAY_SECONDS + " seconds... (" + (ALBUM_ART_FETCH_TRIES - tries) + " tries left)");
-            }
-
-            try {
-                Thread.sleep(ALBUM_ART_FETCH_DELAY_SECONDS * 1000L);
-            } catch (InterruptedException e) { }
-        } while (tries < ALBUM_ART_FETCH_TRIES);
-    }
-
-    private void disposeAlbumArtTexture() {
-        if (albumArtTexture != null) {
-            textureManager.release(ALBUM_ART_LOCATION);
-            albumArtTexture.close();
-            albumArtTexture = null;
-        }
-    }
-
-    public InputStream resizeImage(InputStream input) throws IOException {
-        try (input) {
-            Image image = ImageIO.read(input);
-
-            BufferedImage resizedImage = new BufferedImage(ALBUM_ART_TEXTURE_SIZE, ALBUM_ART_TEXTURE_SIZE, BufferedImage.TYPE_INT_RGB);
-            Graphics graphics = resizedImage.createGraphics();
-            graphics.drawImage(image, 0,0, ALBUM_ART_TEXTURE_SIZE, ALBUM_ART_TEXTURE_SIZE, null);
-
-            ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-            ImageIO.write(resizedImage, "jpg", outStream);
-            return new ByteArrayInputStream(outStream.toByteArray());
-        }
-    }
-
-    public enum OverlayPosition {
-        TOP_LEFT,
-        TOP_RIGHT,
-        BOTTOM_LEFT,
-        BOTTOM_RIGHT
-    }
-
-    public enum OverlayVisibility {
-        NONE,
-        ALWAYS,
-        MENU,
-        CHAT
-    }
-
-    private static String getTimer(int time) {
+    private static String formatTime(int time) {
         int minutes = time / 60;
         int seconds = time % 60;
 
