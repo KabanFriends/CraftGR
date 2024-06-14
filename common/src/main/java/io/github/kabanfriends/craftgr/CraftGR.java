@@ -32,7 +32,7 @@ public class CraftGR {
     public static final Component RECONNECT_ICON;
 
     static {
-        ResourceLocation iconFont = new ResourceLocation(CraftGR.MOD_ID, "icons");
+        ResourceLocation iconFont = ResourceLocation.fromNamespaceAndPath(CraftGR.MOD_ID, "icons");
         AUDIO_MUTED_ICON = Component.literal("M").withStyle(Style.EMPTY.withFont(iconFont));
         RECONNECT_ICON = Component.literal("R").withStyle(Style.EMPTY.withFont(iconFont));
     }

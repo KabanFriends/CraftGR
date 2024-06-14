@@ -61,9 +61,11 @@ public class SongInfoOverlay extends Overlay {
 
     private static final int ALBUM_ART_FETCH_TRIES = 3;
     private static final int ALBUM_ART_FETCH_DELAY_SECONDS = 4;
+    
+    private static final int COLOR_WHITE = 0xFFFFFF;
 
-    private static final ResourceLocation ALBUM_ART_PLACEHOLDER_LOCATION = new ResourceLocation(CraftGR.MOD_ID, "textures/album_placeholder.png");
-    private static final ResourceLocation ALBUM_ART_LOCATION = new ResourceLocation(CraftGR.MOD_ID, "album");
+    private static final ResourceLocation ALBUM_ART_PLACEHOLDER_LOCATION = ResourceLocation.fromNamespaceAndPath(CraftGR.MOD_ID, "textures/album_placeholder.png");
+    private static final ResourceLocation ALBUM_ART_LOCATION = ResourceLocation.fromNamespaceAndPath(CraftGR.MOD_ID, "album");
 
     private static SongInfoOverlay instance;
 
@@ -162,7 +164,7 @@ public class SongInfoOverlay extends Overlay {
                     muted = true;
                     updateScrollWidth();
                 }
-                graphics.drawString(CraftGR.MC.font, CraftGR.AUDIO_MUTED_ICON, (x + (int) width - MUTED_ICON_RIGHT_PADDING - MUTED_ICON_SIZE) / 2, (y + MUTED_ICON_TOP_PADDING) / 2, Color.WHITE.getRGB());
+                graphics.drawString(CraftGR.MC.font, CraftGR.AUDIO_MUTED_ICON, (x + (int) width - MUTED_ICON_RIGHT_PADDING - MUTED_ICON_SIZE) / 2, (y + MUTED_ICON_TOP_PADDING) / 2, COLOR_WHITE);
             } else if (muted) {
                 muted = false;
                 updateScrollWidth();
@@ -178,10 +180,10 @@ public class SongInfoOverlay extends Overlay {
             long played = System.currentTimeMillis() / 1000L - SongHandler.getInstance().getSongStart();
             if (played > duration) played = duration;
 
-            graphics.drawString(CraftGR.MC.font, getTimer((int) played), x + ART_LEFT_PADDING, y + ART_TOP_PADDING + ART_SIZE + ART_TIMER_SPACE_HEIGHT, Color.WHITE.getRGB());
+            graphics.drawString(CraftGR.MC.font, getTimer((int) played), x + ART_LEFT_PADDING, y + ART_TOP_PADDING + ART_SIZE + ART_TIMER_SPACE_HEIGHT, COLOR_WHITE);
 
             int timerWidth = font.width(getTimer((int) duration));
-            graphics.drawString(CraftGR.MC.font, getTimer((int) duration), x + (int) width - timerWidth - TIMER_RIGHT_PADDING, y + ART_TOP_PADDING + ART_SIZE + ART_TIMER_SPACE_HEIGHT, Color.WHITE.getRGB());
+            graphics.drawString(CraftGR.MC.font, getTimer((int) duration), x + (int) width - timerWidth - TIMER_RIGHT_PADDING, y + ART_TOP_PADDING + ART_SIZE + ART_TIMER_SPACE_HEIGHT, COLOR_WHITE);
 
             RenderUtil.fill(poseStack, x, y + ART_TOP_PADDING + ART_SIZE + ART_BOTTOM_PADDING, x + (float) played / duration * width, y + height, GRConfig.<Color>getValue("overlayBarColor").getRGB() + 0xFF000000, 0.6f);
             RenderUtil.fill(poseStack, x + (float) played / duration * width, y + ART_TOP_PADDING + ART_SIZE + ART_BOTTOM_PADDING, x + width, y + height, GRConfig.<Color>getValue("overlayBgColor").getRGB() + 0xFF000000, 0.6f);

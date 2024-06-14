@@ -56,16 +56,15 @@ public class RenderUtil {
 
         a = a * opacity;
 
-        BufferBuilder bb = Tesselator.getInstance().getBuilder();
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.setShader(GameRenderer::getPositionColorShader);
-        bb.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-        bb.vertex(matrix4f, minX, maxY, 0.0F).color(r, g, b, a).endVertex();
-        bb.vertex(matrix4f, maxX, maxY, 0.0F).color(r, g, b, a).endVertex();
-        bb.vertex(matrix4f, maxX, minY, 0.0F).color(r, g, b, a).endVertex();
-        bb.vertex(matrix4f, minX, minY, 0.0F).color(r, g, b, a).endVertex();
-        BufferUploader.drawWithShader(bb.end());
+        BufferBuilder bb = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+        bb.addVertex(matrix4f, minX, maxY, 0.0F).setColor(r, g, b, a);
+        bb.addVertex(matrix4f, maxX, maxY, 0.0F).setColor(r, g, b, a);
+        bb.addVertex(matrix4f, maxX, minY, 0.0F).setColor(r, g, b, a);
+        bb.addVertex(matrix4f, minX, minY, 0.0F).setColor(r, g, b, a);
+        BufferUploader.drawWithShader(bb.buildOrThrow());
         RenderSystem.disableBlend();
     }
 
