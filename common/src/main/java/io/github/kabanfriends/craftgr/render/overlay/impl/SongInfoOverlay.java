@@ -74,7 +74,6 @@ public class SongInfoOverlay extends Overlay {
     private final TextureManager textureManager;
     private final ScrollingText songTitleText;
 
-    private boolean isAlbumArtReady;
     private boolean expanded;
     private boolean muted;
 
@@ -291,21 +290,18 @@ public class SongInfoOverlay extends Overlay {
     }
 
     public void updateAlbumArtTexture() {
-        isAlbumArtReady = false;
-
         Song song = SongProviderManager.getProvider().getCurrentSong();
         if (song == null || song.metadata().albumArt() == null || song.metadata().albumArt().isEmpty()) {
             return;
         }
 
-        String url = GRConfig.getValue("urlAlbumArt") + song.metadata().albumArt();
         int tries = 0;
 
         do {
             tries++;
 
             try {
-                HttpGet get = HttpUtil.get(url);
+                HttpGet get = HttpUtil.get(song.metadata().albumArt());
 
                 try (
                         ResponseHolder response = new ResponseHolder(CraftGR.getHttpClient().execute(get));
@@ -316,12 +312,11 @@ public class SongInfoOverlay extends Overlay {
 
                     CraftGR.MC.execute(() -> {
                         textureManager.register(ALBUM_ART_LOCATION, new DynamicTexture(image));
-                        isAlbumArtReady = true;
                     });
                 }
                 break;
             } catch (Exception e) {
-                CraftGR.log(Level.ERROR, "Error while creating album art texture! (" + url + ")");
+                CraftGR.log(Level.ERROR, "Error while creating album art texture! (" + song.metadata().albumArt() + ")");
                 e.printStackTrace();
                 textureManager.release(ALBUM_ART_LOCATION);
             } finally {
@@ -425,7 +420,6 @@ public class SongInfoOverlay extends Overlay {
         Song song = SongProviderManager.getProvider().getCurrentSong();
         return song != null &&
                 !song.metadata().intermission() &&
-                isAlbumArtReady &&
                 textureManager.getTexture(ALBUM_ART_LOCATION, null) != null;
     }
 

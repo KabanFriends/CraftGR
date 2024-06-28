@@ -1,9 +1,7 @@
 package io.github.kabanfriends.craftgr.song;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.google.gson.JsonPrimitive;
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.config.GRConfig;
 import io.github.kabanfriends.craftgr.render.overlay.impl.SongInfoOverlay;
@@ -33,6 +31,12 @@ public class JsonAPISongProvider implements SongProvider {
     @Override
     public void start() {
         CraftGR.getThreadExecutor().submit(() -> verifyCurrentSong(true));
+    }
+
+    @Override
+    public void stop() {
+        cancelIfNotNull(songEndTask);
+        cancelIfNotNull(songVerifyTask);
     }
 
     @Override
@@ -102,45 +106,26 @@ public class JsonAPISongProvider implements SongProvider {
             JsonObject songData = json.getAsJsonObject("SONGDATA");
             JsonObject misc = json.getAsJsonObject("MISC");
 
-            long apiDuration = getValueWithDefault(songTimes, "DURATION", 3L, long.class);
-            long apiPlayed = getValueWithDefault(songTimes, "PLAYED", 0L, long.class);
+            long apiDuration = JsonUtil.getValueWithDefault(songTimes, "DURATION", 3L, long.class);
+            long apiPlayed = JsonUtil.getValueWithDefault(songTimes, "PLAYED", 0L, long.class);
+
+            String albumArt = JsonUtil.getValueWithDefault(misc, "ALBUMART", null, String.class);
 
             return new Song(
                     new Song.Metadata(
-                            TitleFixer.fixJapaneseString(getValueWithDefault(songInfo, "TITLE", "", String.class)),
-                            TitleFixer.fixJapaneseString(getValueWithDefault(songInfo, "ARTIST", null, String.class)),
-                            TitleFixer.fixJapaneseString(getValueWithDefault(songInfo, "ALBUM", null, String.class)),
-                            getValueWithDefault(songInfo, "YEAR", null, String.class),
-                            TitleFixer.fixJapaneseString(getValueWithDefault(songInfo, "CIRCLE", null, String.class)),
+                            TitleFixer.fixJapaneseString(JsonUtil.getValueWithDefault(songInfo, "TITLE", "", String.class)),
+                            TitleFixer.fixJapaneseString(JsonUtil.getValueWithDefault(songInfo, "ARTIST", null, String.class)),
+                            TitleFixer.fixJapaneseString(JsonUtil.getValueWithDefault(songInfo, "ALBUM", null, String.class)),
+                            JsonUtil.getValueWithDefault(songInfo, "YEAR", null, String.class),
+                            TitleFixer.fixJapaneseString(JsonUtil.getValueWithDefault(songInfo, "CIRCLE", null, String.class)),
                             apiDuration,
-                            getValueWithDefault(songData, "ALBUMID", 0, int.class),
-                            getValueWithDefault(misc, "ALBUMART", null, String.class),
+                            JsonUtil.getValueWithDefault(songData, "ALBUMID", 0, int.class),
+                            albumArt == null ? null : GRConfig.getValue("urlAlbumArt") + albumArt,
                             apiPlayed > apiDuration
                     ),
                     apiPlayed
             );
         }
-    }
-
-    @SuppressWarnings("unchecked")
-    private static <T> T getValueWithDefault(JsonObject json, String key, T defaultValue, Class<T> clazz) {
-        JsonElement element = json.get(key);
-        if (element != null && element.isJsonPrimitive()) {
-            JsonPrimitive value = element.getAsJsonPrimitive();
-            if (value.isNumber()) {
-                Number number = value.getAsNumber();
-                if (clazz == byte.class) return (T) Byte.valueOf(number.byteValue());
-                if (clazz == double.class) return (T) Double.valueOf(number.doubleValue());
-                if (clazz == float.class) return (T) Float.valueOf(number.floatValue());
-                if (clazz == long.class) return (T) Long.valueOf(number.longValue());
-                if (clazz == int.class) return (T) Integer.valueOf(number.intValue());
-                if (clazz == short.class) return (T) Short.valueOf(number.shortValue());
-            } else if (value.isString()) {
-                return (T) value.getAsString();
-            }
-            return defaultValue;
-        }
-        return defaultValue;
     }
 
     private static void cancelIfNotNull(ScheduledFuture<?> task) {

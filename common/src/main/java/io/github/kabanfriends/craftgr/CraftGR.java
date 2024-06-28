@@ -6,6 +6,7 @@ import io.github.kabanfriends.craftgr.song.JsonAPISongProvider;
 import io.github.kabanfriends.craftgr.platform.Platform;
 import io.github.kabanfriends.craftgr.render.overlay.impl.SongInfoOverlay;
 import io.github.kabanfriends.craftgr.song.SongProviderManager;
+import io.github.kabanfriends.craftgr.song.WebSocketSongProvider;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
@@ -18,7 +19,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 
 public class CraftGR {
 
@@ -55,7 +55,7 @@ public class CraftGR {
 
     public static void lateInit() {
         OverlayHandler.addOverlay(new SongInfoOverlay(MC.getTextureManager()));
-        SongProviderManager.setProvider(new JsonAPISongProvider());
+        SongProviderManager.setProvider(new WebSocketSongProvider());
     }
 
     public static Platform getPlatform() {

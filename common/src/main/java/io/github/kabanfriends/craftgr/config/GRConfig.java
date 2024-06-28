@@ -10,6 +10,8 @@ import io.github.kabanfriends.craftgr.config.entry.GRConfigEntry;
 import io.github.kabanfriends.craftgr.config.entry.impl.*;
 import io.github.kabanfriends.craftgr.config.entry.impl.EnumConfigEntry;
 import io.github.kabanfriends.craftgr.render.overlay.impl.SongInfoOverlay;
+import io.github.kabanfriends.craftgr.song.SongProviderManager;
+import io.github.kabanfriends.craftgr.song.SongProviderType;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import org.apache.logging.log4j.Level;
@@ -61,9 +63,17 @@ public class GRConfig {
                     new ColorConfigEntry("overlayBarColor", new Color(160, 150, 174))
             ),
             new GRConfigCategory(Component.translatable("text.craftgr.config.category.url"), true,
+                    new EnumConfigEntry("songProvider", SongProviderType.JSON_API)
+                            .onApply((value) -> {
+                                SongProviderType type = (SongProviderType) value;
+                                SongProviderManager.setProvider(type.createProvider());
+                                SongInfoOverlay.getInstance().updateSongTitle();
+                                SongInfoOverlay.getInstance().updateAlbumArtTexture();
+                            }),
                     new StringConfigEntry("urlStream", "https://stream.gensokyoradio.net/1/"),
                     new StringConfigEntry("urlInfoJson", "https://gensokyoradio.net/api/station/playing/"),
                     new StringConfigEntry("urlAlbumArt", "https://gensokyoradio.net/images/albums/500/"),
+                    new StringConfigEntry("urlWebSocket", "wss://gensokyoradio.net/wss"),
                     new IntegerConfigEntry("connectTimeout", 20_000)
                             .setFormatter((value) -> Component.literal(value + "ms")),
                     new IntegerConfigEntry("socketTimeout", 10_000)
