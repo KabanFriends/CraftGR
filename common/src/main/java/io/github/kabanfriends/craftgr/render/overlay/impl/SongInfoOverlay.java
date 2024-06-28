@@ -7,7 +7,6 @@ import dev.isxander.yacl3.gui.YACLScreen;
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.config.GRConfig;
 import io.github.kabanfriends.craftgr.handler.AudioPlayerHandler;
-import io.github.kabanfriends.craftgr.song.JsonAPISongProvider;
 import io.github.kabanfriends.craftgr.render.overlay.Overlay;
 import io.github.kabanfriends.craftgr.render.widget.impl.ScrollingText;
 import io.github.kabanfriends.craftgr.song.Song;
@@ -24,6 +23,8 @@ import net.minecraft.resources.ResourceLocation;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.logging.log4j.Level;
+import org.joml.Vector2f;
+import org.joml.Vector2i;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -82,7 +83,7 @@ public class SongInfoOverlay extends Overlay {
 
         this.textureManager = textureManager;
         this.expanded = false;
-        this.songTitleText = new ScrollingText(0, 0, Component.empty());
+        this.songTitleText = new ScrollingText(0, 0, Component.translatable("text.craftgr.song.unknown"));
 
         updateScrollWidth();
     }
@@ -104,13 +105,14 @@ public class SongInfoOverlay extends Overlay {
 
         int albumArtWidth = GRConfig.getValue("hideAlbumArt") ? -ART_LEFT_PADDING : ART_SIZE;
 
-        float[] size = getOverlaySize();
-        float width = size[0];
-        float height = size[1];
+        Vector2f size = getOverlaySize();
+        float width = size.x();
+        float height = size.y();
 
         OverlayPosition position = GRConfig.getValue("overlayPosition");
-        int x = getOverlayX(position, width);
-        int y = getOverlayY(position, height);
+        Vector2i coords = getOverlayCoordinate(position, width, height);
+        int x = coords.x();
+        int y = coords.y();
 
         // Rendering
         PoseStack poseStack = graphics.pose();
@@ -129,18 +131,18 @@ public class SongInfoOverlay extends Overlay {
         poseStack.pushPose();
         poseStack.scale(2, 2, 2);
 
-        Song currentSong = SongProviderManager.getProvider().getCurrentSong();
+        Song song = SongProviderManager.getProvider().getCurrentSong();
 
-        if (currentSong != null) {
-            if (!currentSong.intermission()) {
+        if (song != null) {
+            if (!song.metadata().intermission()) {
                 int dotWidth = font.width("...");
 
                 String year = null;
-                if (currentSong.year() != null) {
-                    year = "(" + currentSong.year() + ")";
+                if (song.metadata().year() != null) {
+                    year = "(" + song.metadata().year() + ")";
                 }
 
-                String[] strings = {year, currentSong.artist(), currentSong.album(), currentSong.circle()};
+                String[] strings = {year, song.metadata().artist(), song.metadata().album(), song.metadata().circle()};
                 for (int i = 0; i < 4; i++) {
                     String str = strings[i];
                     if (str != null) {
@@ -174,20 +176,16 @@ public class SongInfoOverlay extends Overlay {
 
         poseStack.popPose();
 
-        if (currentSong == null || currentSong.intermission()) {
+        if (song == null || song.metadata().intermission()) {
             RenderUtil.fill(poseStack, x, y + ART_SIZE + ART_TOP_PADDING + ART_BOTTOM_PADDING, x + width, y + height, GRConfig.<Color>getValue("overlayBgColor").getRGB() + 0xFF000000, 0.6f);
         } else {
-            long duration = currentSong.songEnd() - currentSong.songStart();
-            long played = System.currentTimeMillis() / 1000L - SongProviderManager.getProvider().getCurrentSong().songStart();
-            if (played > duration) played = duration;
+            graphics.drawString(CraftGR.MC.font, formatTime(song.getLocalPlayedTime()), x + ART_LEFT_PADDING, y + ART_TOP_PADDING + ART_SIZE + ART_TIMER_SPACE_HEIGHT, COLOR_WHITE);
 
-            graphics.drawString(CraftGR.MC.font, formatTime((int) played), x + ART_LEFT_PADDING, y + ART_TOP_PADDING + ART_SIZE + ART_TIMER_SPACE_HEIGHT, COLOR_WHITE);
+            int timerWidth = font.width(formatTime(song.metadata().duration()));
+            graphics.drawString(CraftGR.MC.font, formatTime(song.metadata().duration()), x + (int) width - timerWidth - TIMER_RIGHT_PADDING, y + ART_TOP_PADDING + ART_SIZE + ART_TIMER_SPACE_HEIGHT, COLOR_WHITE);
 
-            int timerWidth = font.width(formatTime((int) duration));
-            graphics.drawString(CraftGR.MC.font, formatTime((int) duration), x + (int) width - timerWidth - TIMER_RIGHT_PADDING, y + ART_TOP_PADDING + ART_SIZE + ART_TIMER_SPACE_HEIGHT, COLOR_WHITE);
-
-            RenderUtil.fill(poseStack, x, y + ART_TOP_PADDING + ART_SIZE + ART_BOTTOM_PADDING, x + (float) played / duration * width, y + height, GRConfig.<Color>getValue("overlayBarColor").getRGB() + 0xFF000000, 0.6f);
-            RenderUtil.fill(poseStack, x + (float) played / duration * width, y + ART_TOP_PADDING + ART_SIZE + ART_BOTTOM_PADDING, x + width, y + height, GRConfig.<Color>getValue("overlayBgColor").getRGB() + 0xFF000000, 0.6f);
+            RenderUtil.fill(poseStack, x, y + ART_TOP_PADDING + ART_SIZE + ART_BOTTOM_PADDING, x + (float) song.getLocalPlayedTime() / song.metadata().duration() * width, y + height, GRConfig.<Color>getValue("overlayBarColor").getRGB() + 0xFF000000, 0.6f);
+            RenderUtil.fill(poseStack, x + (float) song.getLocalPlayedTime() / song.metadata().duration() * width, y + ART_TOP_PADDING + ART_SIZE + ART_BOTTOM_PADDING, x + width, y + height, GRConfig.<Color>getValue("overlayBgColor").getRGB() + 0xFF000000, 0.6f);
         }
 
         songTitleText.setX(x + ART_LEFT_PADDING + albumArtWidth + ART_INFO_SPACE_WIDTH);
@@ -229,26 +227,27 @@ public class SongInfoOverlay extends Overlay {
         if (visibility == OverlayVisibility.NONE) return true;
         if (visibility == OverlayVisibility.CHAT && !(CraftGR.MC.screen instanceof ChatScreen)) return true;
 
-        Song currentSong = SongProviderManager.getProvider().getCurrentSong();
+        Song song = SongProviderManager.getProvider().getCurrentSong();
 
-        if (currentSong != null && GRConfig.<Boolean>getValue("openAlbum")) {
-            if (currentSong.intermission()) return true;
+        if (song != null && GRConfig.<Boolean>getValue("openAlbum")) {
+            if (song.metadata().intermission()) return true;
 
             float scale = GRConfig.getValue("overlayScale");
 
             float scaledX = mouseX / RenderUtil.getUIScale(scale);
             float scaledY = mouseY / RenderUtil.getUIScale(scale);
 
-            float[] size = getOverlaySize();
-            float width = size[0];
-            float height = size[1];
+            Vector2f size = getOverlaySize();
+            float width = size.x();
+            float height = size.y();
 
             OverlayPosition position = GRConfig.getValue("overlayPosition");
-            int x = getOverlayX(position, width);
-            int y = getOverlayY(position, height);
+            Vector2i coords = getOverlayCoordinate(position, width, height);
+            int x = coords.x();
+            int y = coords.y();
 
             if (scaledX >= x && scaledX <= x + width && scaledY >= y && scaledY <= y + height) {
-                String link = "https://gensokyoradio.net/music/album/" + currentSong.albumId();
+                String link = "https://gensokyoradio.net/music/album/" + song.metadata().albumId();
                 Screen oldScreen = CraftGR.MC.screen;
 
                 CraftGR.MC.setScreen(new ConfirmLinkScreen((result) -> {
@@ -268,10 +267,10 @@ public class SongInfoOverlay extends Overlay {
         Song song = SongProviderManager.getProvider().getCurrentSong();
         if (song == null) {
             songTitleText.setText(Component.translatable("text.craftgr.song.unknown"));
-        } else if (song.intermission()) {
+        } else if (song.metadata().intermission()) {
             songTitleText.setText(Component.translatable("text.craftgr.song.intermission"));
         } else {
-            songTitleText.setText(Component.literal(song.title()));
+            songTitleText.setText(Component.literal(song.metadata().title()));
         }
     }
 
@@ -295,11 +294,11 @@ public class SongInfoOverlay extends Overlay {
         isAlbumArtReady = false;
 
         Song song = SongProviderManager.getProvider().getCurrentSong();
-        if (song == null || song.albumArt() == null || song.albumArt().isEmpty()) {
+        if (song == null || song.metadata().albumArt() == null || song.metadata().albumArt().isEmpty()) {
             return;
         }
 
-        String url = GRConfig.getValue("urlAlbumArt") + song.albumArt();
+        String url = GRConfig.getValue("urlAlbumArt") + song.metadata().albumArt();
         int tries = 0;
 
         do {
@@ -367,31 +366,21 @@ public class SongInfoOverlay extends Overlay {
         CHAT
     }
 
-    private int getOverlayX(OverlayPosition position, float width) {
+    private Vector2i getOverlayCoordinate(OverlayPosition position, float width, float height) {
         float scale = GRConfig.getValue("overlayScale");
         float offset = 10 / scale;
         int x = (int)(CraftGR.MC.getWindow().getWidth() / scale - width - offset);
-
-        if (position == OverlayPosition.TOP_RIGHT || position == OverlayPosition.BOTTOM_RIGHT) {
-            return x;
-        } else {
-            return (int)offset;
-        }
-    }
-
-    private int getOverlayY(OverlayPosition position, float height) {
-        float scale = GRConfig.getValue("overlayScale");
-        float offset = 10 / scale;
         int y = (int)(CraftGR.MC.getWindow().getHeight() / scale - height - offset);
 
-        if (position == OverlayPosition.BOTTOM_LEFT || position == OverlayPosition.BOTTOM_RIGHT) {
-            return y;
-        } else {
-            return (int)offset;
-        }
+        return switch (position) {
+            case TOP_RIGHT -> new Vector2i(x, (int) offset);
+            case TOP_LEFT -> new Vector2i((int) offset, (int) offset);
+            case BOTTOM_RIGHT -> new Vector2i(x, y);
+            case BOTTOM_LEFT -> new Vector2i((int) offset, y);
+        };
     }
 
-    private float[] getOverlaySize() {
+    private Vector2f getOverlaySize() {
         int albumArtWidth;
         if (GRConfig.getValue("hideAlbumArt")) albumArtWidth = -ART_LEFT_PADDING;
         else albumArtWidth = ART_SIZE;
@@ -411,23 +400,23 @@ public class SongInfoOverlay extends Overlay {
             width = ART_LEFT_PADDING + albumArtWidth + ART_INFO_SPACE_WIDTH + GRConfig.<Integer>getValue("overlayWidth") * 2 + INFO_RIGHT_PADDING;
         }
 
-        return new float[]{width, height};
+        return new Vector2f(width, height);
     }
 
     private int getMaxTextWidth() {
         Song song = SongProviderManager.getProvider().getCurrentSong();
         Font font = CraftGR.MC.font;
 
-        if (song == null || song.intermission()) {
+        if (song == null || song.metadata().intermission()) {
             return font.width(songTitleText.getText());
         }
 
         return NumberUtils.max(
                 font.width(songTitleText.getText()),
-                font.width("(" + song.year() + ")"),
-                font.width(song.artist()),
-                font.width(song.album()),
-                font.width(song.circle())
+                font.width("(" + song.metadata().year() + ")"),
+                font.width(song.metadata().artist()),
+                font.width(song.metadata().album()),
+                font.width(song.metadata().circle())
         );
     }
 
@@ -435,14 +424,14 @@ public class SongInfoOverlay extends Overlay {
     private boolean shouldRenderAlbumArt() {
         Song song = SongProviderManager.getProvider().getCurrentSong();
         return song != null &&
-                !song.intermission() &&
+                !song.metadata().intermission() &&
                 isAlbumArtReady &&
                 textureManager.getTexture(ALBUM_ART_LOCATION, null) != null;
     }
 
-    private static String formatTime(int time) {
-        int minutes = time / 60;
-        int seconds = time % 60;
+    private static String formatTime(long time) {
+        int minutes = (int) time / 60;
+        int seconds = (int) time % 60;
 
         return minutes + ":" + (seconds < 10 ? "0" + seconds : seconds);
     }

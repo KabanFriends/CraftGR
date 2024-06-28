@@ -33,9 +33,6 @@ public class JsonAPISongProvider implements SongProvider {
     @Override
     public void start() {
         CraftGR.getThreadExecutor().submit(() -> verifyCurrentSong(true));
-
-        SongInfoOverlay.getInstance().updateSongTitle();
-        SongInfoOverlay.getInstance().updateAlbumArtTexture();
     }
 
     @Override
@@ -49,11 +46,10 @@ public class JsonAPISongProvider implements SongProvider {
     }
 
     private void verifyCurrentSong(boolean shouldRetry) {
-        System.out.println("SONG VERIFY");
         try {
             Song song = getSongFromAPI();
 
-            if (!song.equals(currentSong)) {
+            if (currentSong == null || !song.metadata().equals(currentSong.metadata())) {
                 startNewSong(song);
             }
         } catch (IOException e) {
@@ -70,24 +66,20 @@ public class JsonAPISongProvider implements SongProvider {
     }
 
     private void startNewSong(Song song) {
-        System.out.println("NEW SONG!");
         this.currentSong = song;
 
-        // Separate handling from current task thread
-        CraftGR.getThreadExecutor().submit(() -> {
-            // Cancel old tasks
-            cancelIfNotNull(songEndTask);
-            cancelIfNotNull(songVerifyTask);
+        // Cancel old tasks
+        cancelIfNotNull(songEndTask);
+        cancelIfNotNull(songVerifyTask);
 
-            // Update the song again when the current song ends
-            long remaining = song.songEnd() - System.currentTimeMillis() / 1000L;
-            songEndTask = scheduler.schedule(() -> verifyCurrentSong(true), remaining, TimeUnit.SECONDS);
-            // Verify the current song every once in a while
-            songVerifyTask = scheduler.scheduleWithFixedDelay(() -> verifyCurrentSong(false), VERIFY_INTERVAL, VERIFY_INTERVAL, TimeUnit.SECONDS);
+        // Update the song again when the current song ends
+        long remaining = song.metadata().duration() - song.getAPIPlayedTime();
+        songEndTask = scheduler.schedule(() -> verifyCurrentSong(true), remaining, TimeUnit.SECONDS);
+        // Verify the current song every once in a while
+        songVerifyTask = scheduler.scheduleWithFixedDelay(() -> verifyCurrentSong(false), VERIFY_INTERVAL, VERIFY_INTERVAL, TimeUnit.SECONDS);
 
-            SongInfoOverlay.getInstance().updateSongTitle();
-            SongInfoOverlay.getInstance().updateAlbumArtTexture();
-        });
+        SongInfoOverlay.getInstance().updateSongTitle();
+        SongInfoOverlay.getInstance().updateAlbumArtTexture();
     }
 
     private Song getSongFromAPI() throws IOException {
@@ -110,42 +102,22 @@ public class JsonAPISongProvider implements SongProvider {
             JsonObject songData = json.getAsJsonObject("SONGDATA");
             JsonObject misc = json.getAsJsonObject("MISC");
 
-            // Get times from API (depends on remote timestamp)
-            long apiSongEnd = getValueWithDefault(songTimes, "SONGEND", System.currentTimeMillis() / 1000L + 3L, long.class);
-            long apiSongStart = getValueWithDefault(songTimes, "SONGSTART", 0L, long.class);
-            long apiOffsetTime = getValueWithDefault(misc, "OFFSETTIME", 0L, long.class);
-
-            // Make song times independent of remote timestamp
-            long played = apiOffsetTime - apiSongStart;
-            long duration = apiSongEnd - apiSongStart;
-
-            long songStart = System.currentTimeMillis() / 1000L - played;
-            long songEnd = songStart + duration;
-
-            Song song = new Song(
-                    TitleFixer.fixJapaneseString(getValueWithDefault(songInfo, "TITLE", "", String.class)),
-                    TitleFixer.fixJapaneseString(getValueWithDefault(songInfo, "ARTIST", null, String.class)),
-                    TitleFixer.fixJapaneseString(getValueWithDefault(songInfo, "ALBUM", null, String.class)),
-                    getValueWithDefault(songInfo, "YEAR", null, String.class),
-                    TitleFixer.fixJapaneseString(getValueWithDefault(songInfo, "CIRCLE", null, String.class)),
-                    songStart,
-                    songEnd,
-                    getValueWithDefault(songData, "ALBUMID", 0, int.class),
-                    getValueWithDefault(misc, "ALBUMART", null, String.class),
-                    apiOffsetTime > apiSongEnd
-            );
+            long apiDuration = getValueWithDefault(songTimes, "DURATION", 3L, long.class);
+            long apiPlayed = getValueWithDefault(songTimes, "PLAYED", 0L, long.class);
 
             return new Song(
-                    TitleFixer.fixJapaneseString(getValueWithDefault(songInfo, "TITLE", "", String.class)),
-                    TitleFixer.fixJapaneseString(getValueWithDefault(songInfo, "ARTIST", null, String.class)),
-                    TitleFixer.fixJapaneseString(getValueWithDefault(songInfo, "ALBUM", null, String.class)),
-                    getValueWithDefault(songInfo, "YEAR", null, String.class),
-                    TitleFixer.fixJapaneseString(getValueWithDefault(songInfo, "CIRCLE", null, String.class)),
-                    songStart,
-                    songEnd,
-                    getValueWithDefault(songData, "ALBUMID", 0, int.class),
-                    getValueWithDefault(misc, "ALBUMART", null, String.class),
-                    apiOffsetTime > apiSongEnd
+                    new Song.Metadata(
+                            TitleFixer.fixJapaneseString(getValueWithDefault(songInfo, "TITLE", "", String.class)),
+                            TitleFixer.fixJapaneseString(getValueWithDefault(songInfo, "ARTIST", null, String.class)),
+                            TitleFixer.fixJapaneseString(getValueWithDefault(songInfo, "ALBUM", null, String.class)),
+                            getValueWithDefault(songInfo, "YEAR", null, String.class),
+                            TitleFixer.fixJapaneseString(getValueWithDefault(songInfo, "CIRCLE", null, String.class)),
+                            apiDuration,
+                            getValueWithDefault(songData, "ALBUMID", 0, int.class),
+                            getValueWithDefault(misc, "ALBUMART", null, String.class),
+                            apiPlayed > apiDuration
+                    ),
+                    apiPlayed
             );
         }
     }
@@ -175,6 +147,6 @@ public class JsonAPISongProvider implements SongProvider {
         if (task == null) {
             return;
         }
-        task.cancel(true);
+        task.cancel(false);
     }
 }
