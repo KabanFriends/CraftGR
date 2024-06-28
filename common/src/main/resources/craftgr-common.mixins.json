@@ -4,6 +4,7 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "MixinAccessorAbstractSelectionList",
+    "MixinGuiGraphics",
     "MixinMinecraft",
     "MixinOptionEntry",
     "MixinOptionsSubScreen",
@@ -12,7 +13,6 @@
     "MixinSoundOptionsScreen",
     "MixinTitleScreen"
   ],
-  "client": [],
   "server": [],
   "injectors": {
     "defaultRequire": 1

@@ -89,13 +89,8 @@ public class ScrollingText extends UIWidget {
 
         RenderSystem.enableScissor(scissorX, (CraftGR.MC.getWindow().getHeight() - scissorY - scissorH), scissorW, scissorH);
 
-        //Debugging code
-        /*
-        poseStack.pushPose();
-        poseStack.last().pose().setIdentity();
-        RenderUtil.fill(poseStack, 0, 0, CraftGR.MC.getWindow().getWidth(), CraftGR.MC.getWindow().getHeight(), 0x8F00FF00, 0.6f);
-        poseStack.popPose();
-        */
+        // Uncomment to debug
+        //io.github.kabanfriends.craftgr.util.RenderUtil.fill(poseStack, 0, 0, CraftGR.MC.getWindow().getWidth(), CraftGR.MC.getWindow().getHeight(), 0x8F00FF00, 0.6f);
 
         poseStack.pushPose();
         poseStack.scale(2, 2, 2);
