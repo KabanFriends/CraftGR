@@ -7,10 +7,11 @@ import dev.isxander.yacl3.gui.YACLScreen;
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.config.GRConfig;
 import io.github.kabanfriends.craftgr.handler.AudioPlayerHandler;
-import io.github.kabanfriends.craftgr.handler.SongHandler;
+import io.github.kabanfriends.craftgr.song.JsonAPISongProvider;
 import io.github.kabanfriends.craftgr.render.overlay.Overlay;
 import io.github.kabanfriends.craftgr.render.widget.impl.ScrollingText;
 import io.github.kabanfriends.craftgr.song.Song;
+import io.github.kabanfriends.craftgr.song.SongProviderManager;
 import io.github.kabanfriends.craftgr.util.*;
 import net.minecraft.Util;
 import net.minecraft.client.gui.Font;
@@ -72,7 +73,7 @@ public class SongInfoOverlay extends Overlay {
     private final TextureManager textureManager;
     private final ScrollingText songTitleText;
 
-    private boolean renderAlbumArt;
+    private boolean isAlbumArtReady;
     private boolean expanded;
     private boolean muted;
 
@@ -128,18 +129,18 @@ public class SongInfoOverlay extends Overlay {
         poseStack.pushPose();
         poseStack.scale(2, 2, 2);
 
-        Song currentSong = SongHandler.getInstance().getCurrentSong();
+        Song currentSong = SongProviderManager.getProvider().getCurrentSong();
 
         if (currentSong != null) {
-            if (!currentSong.isIntermission()) {
+            if (!currentSong.intermission()) {
                 int dotWidth = font.width("...");
 
                 String year = null;
-                if (currentSong.year != null) {
-                    year = "(" + currentSong.year + ")";
+                if (currentSong.year() != null) {
+                    year = "(" + currentSong.year() + ")";
                 }
 
-                String[] strings = {year, currentSong.artist, currentSong.album, currentSong.circle};
+                String[] strings = {year, currentSong.artist(), currentSong.album(), currentSong.circle()};
                 for (int i = 0; i < 4; i++) {
                     String str = strings[i];
                     if (str != null) {
@@ -173,11 +174,11 @@ public class SongInfoOverlay extends Overlay {
 
         poseStack.popPose();
 
-        if (currentSong == null || currentSong.isIntermission()) {
+        if (currentSong == null || currentSong.intermission()) {
             RenderUtil.fill(poseStack, x, y + ART_SIZE + ART_TOP_PADDING + ART_BOTTOM_PADDING, x + width, y + height, GRConfig.<Color>getValue("overlayBgColor").getRGB() + 0xFF000000, 0.6f);
         } else {
-            long duration = currentSong.songEnd - currentSong.songStart;
-            long played = System.currentTimeMillis() / 1000L - SongHandler.getInstance().getSongStart();
+            long duration = currentSong.songEnd() - currentSong.songStart();
+            long played = System.currentTimeMillis() / 1000L - SongProviderManager.getProvider().getCurrentSong().songStart();
             if (played > duration) played = duration;
 
             graphics.drawString(CraftGR.MC.font, formatTime((int) played), x + ART_LEFT_PADDING, y + ART_TOP_PADDING + ART_SIZE + ART_TIMER_SPACE_HEIGHT, COLOR_WHITE);
@@ -228,10 +229,10 @@ public class SongInfoOverlay extends Overlay {
         if (visibility == OverlayVisibility.NONE) return true;
         if (visibility == OverlayVisibility.CHAT && !(CraftGR.MC.screen instanceof ChatScreen)) return true;
 
-        Song currentSong = SongHandler.getInstance().getCurrentSong();
+        Song currentSong = SongProviderManager.getProvider().getCurrentSong();
 
         if (currentSong != null && GRConfig.<Boolean>getValue("openAlbum")) {
-            if (currentSong.isIntermission()) return true;
+            if (currentSong.intermission()) return true;
 
             float scale = GRConfig.getValue("overlayScale");
 
@@ -247,7 +248,7 @@ public class SongInfoOverlay extends Overlay {
             int y = getOverlayY(position, height);
 
             if (scaledX >= x && scaledX <= x + width && scaledY >= y && scaledY <= y + height) {
-                String link = "https://gensokyoradio.net/music/album/" + currentSong.albumId;
+                String link = "https://gensokyoradio.net/music/album/" + currentSong.albumId();
                 Screen oldScreen = CraftGR.MC.screen;
 
                 CraftGR.MC.setScreen(new ConfirmLinkScreen((result) -> {
@@ -264,13 +265,13 @@ public class SongInfoOverlay extends Overlay {
     public void updateSongTitle() {
         songTitleText.resetScroll();
 
-        Song song = SongHandler.getInstance().getCurrentSong();
+        Song song = SongProviderManager.getProvider().getCurrentSong();
         if (song == null) {
             songTitleText.setText(Component.translatable("text.craftgr.song.unknown"));
-        } else if (song.isIntermission()) {
+        } else if (song.intermission()) {
             songTitleText.setText(Component.translatable("text.craftgr.song.intermission"));
         } else {
-            songTitleText.setText(Component.literal(song.title));
+            songTitleText.setText(Component.literal(song.title()));
         }
     }
 
@@ -291,14 +292,14 @@ public class SongInfoOverlay extends Overlay {
     }
 
     public void updateAlbumArtTexture() {
-        renderAlbumArt = false;
+        isAlbumArtReady = false;
 
-        Song song = SongHandler.getInstance().getCurrentSong();
-        if (song == null || song.albumArt == null || song.albumArt.isEmpty()) {
+        Song song = SongProviderManager.getProvider().getCurrentSong();
+        if (song == null || song.albumArt() == null || song.albumArt().isEmpty()) {
             return;
         }
 
-        String url = GRConfig.getValue("urlAlbumArt") + song.albumArt;
+        String url = GRConfig.getValue("urlAlbumArt") + song.albumArt();
         int tries = 0;
 
         do {
@@ -316,7 +317,7 @@ public class SongInfoOverlay extends Overlay {
 
                     CraftGR.MC.execute(() -> {
                         textureManager.register(ALBUM_ART_LOCATION, new DynamicTexture(image));
-                        renderAlbumArt = true;
+                        isAlbumArtReady = true;
                     });
                 }
                 break;
@@ -414,25 +415,29 @@ public class SongInfoOverlay extends Overlay {
     }
 
     private int getMaxTextWidth() {
-        Song song = SongHandler.getInstance().getCurrentSong();
+        Song song = SongProviderManager.getProvider().getCurrentSong();
         Font font = CraftGR.MC.font;
 
-        if (song == null || song.isIntermission()) {
+        if (song == null || song.intermission()) {
             return font.width(songTitleText.getText());
         }
 
         return NumberUtils.max(
                 font.width(songTitleText.getText()),
-                font.width("(" + song.year + ")"),
-                font.width(song.artist),
-                font.width(song.album),
-                font.width(song.circle)
+                font.width("(" + song.year() + ")"),
+                font.width(song.artist()),
+                font.width(song.album()),
+                font.width(song.circle())
         );
     }
 
     @SuppressWarnings("ConstantConditions")
     private boolean shouldRenderAlbumArt() {
-        return renderAlbumArt && textureManager.getTexture(ALBUM_ART_LOCATION, null) != null;
+        Song song = SongProviderManager.getProvider().getCurrentSong();
+        return song != null &&
+                !song.intermission() &&
+                isAlbumArtReady &&
+                textureManager.getTexture(ALBUM_ART_LOCATION, null) != null;
     }
 
     private static String formatTime(int time) {

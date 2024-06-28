@@ -12,7 +12,7 @@ public class AudioPlayerUtil {
     public static void startPlaybackAsync(float baseVolume) {
         AudioPlayerHandler handler = AudioPlayerHandler.getInstance();
 
-        CraftGR.EXECUTOR.submit(() -> {
+        CraftGR.getThreadExecutor().submit(() -> {
             handler.initialize();
             if (handler.getState() == HandlerState.FAIL) {
                 MessageUtil.sendConnectionErrorMessage();

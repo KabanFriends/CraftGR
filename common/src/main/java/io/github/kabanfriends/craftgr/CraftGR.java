@@ -2,9 +2,10 @@ package io.github.kabanfriends.craftgr;
 
 import io.github.kabanfriends.craftgr.config.GRConfig;
 import io.github.kabanfriends.craftgr.handler.OverlayHandler;
-import io.github.kabanfriends.craftgr.handler.SongHandler;
+import io.github.kabanfriends.craftgr.song.JsonAPISongProvider;
 import io.github.kabanfriends.craftgr.platform.Platform;
 import io.github.kabanfriends.craftgr.render.overlay.impl.SongInfoOverlay;
+import io.github.kabanfriends.craftgr.song.SongProviderManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
@@ -17,6 +18,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 public class CraftGR {
 
@@ -26,10 +28,11 @@ public class CraftGR {
     public static final String MOD_NAME = "CraftGR";
 
     public static final Minecraft MC = Minecraft.getInstance();
-    public static final ExecutorService EXECUTOR = Executors.newCachedThreadPool();
 
     public static final Component AUDIO_MUTED_ICON;
     public static final Component RECONNECT_ICON;
+
+    private static final ExecutorService EXECUTOR = Executors.newCachedThreadPool();
 
     static {
         ResourceLocation iconFont = ResourceLocation.fromNamespaceAndPath(CraftGR.MOD_ID, "icons");
@@ -52,7 +55,7 @@ public class CraftGR {
 
     public static void lateInit() {
         OverlayHandler.addOverlay(new SongInfoOverlay(MC.getTextureManager()));
-        SongHandler.getInstance().initialize();
+        SongProviderManager.setProvider(new JsonAPISongProvider());
     }
 
     public static Platform getPlatform() {
@@ -63,8 +66,11 @@ public class CraftGR {
         return httpClient;
     }
 
+    public static ExecutorService getThreadExecutor() {
+        return EXECUTOR;
+    }
+
     public static void log(Level level, String message) {
         LOGGER.log(level, "[" + MOD_NAME + "] " + message);
     }
-
 }
