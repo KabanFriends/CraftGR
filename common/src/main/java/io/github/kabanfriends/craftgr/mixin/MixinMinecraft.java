@@ -15,7 +15,7 @@ import java.io.IOException;
 public class MixinMinecraft {
 
     @Inject(method = "stop()V", at = @At("HEAD"))
-    public void craftgr$onClientStop(CallbackInfo ci) {
+    private void craftgr$onClientStop(CallbackInfo ci) {
         AudioPlayerHandler handler = AudioPlayerHandler.getInstance();
 
         if (handler.isPlaying()) handler.stopPlayback();

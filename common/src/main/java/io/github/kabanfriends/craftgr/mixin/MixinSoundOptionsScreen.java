@@ -45,7 +45,7 @@ public class MixinSoundOptionsScreen extends MixinOptionsSubScreen {
                 }
             });
 
-    public MixinSoundOptionsScreen(Component title) {
+    private MixinSoundOptionsScreen(Component title) {
         super(title);
     }
 
@@ -64,7 +64,7 @@ public class MixinSoundOptionsScreen extends MixinOptionsSubScreen {
     }
 
     @Override
-    public void craftgr$saveConfig(CallbackInfo ci) {
+    protected void craftgr$saveConfig(CallbackInfo ci) {
         GRConfig.save();
     }
 }

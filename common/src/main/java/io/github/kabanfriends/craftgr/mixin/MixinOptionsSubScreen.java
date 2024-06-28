@@ -16,12 +16,12 @@ public class MixinOptionsSubScreen extends Screen {
     @Shadow
     protected OptionsList list;
 
-    public MixinOptionsSubScreen(Component title) {
+    protected MixinOptionsSubScreen(Component title) {
         super(title);
     }
 
     @Inject(method = "removed()V", at = @At("RETURN"))
-    public void craftgr$saveConfig(CallbackInfo ci) {
+    protected void craftgr$saveConfig(CallbackInfo ci) {
     }
 
 }

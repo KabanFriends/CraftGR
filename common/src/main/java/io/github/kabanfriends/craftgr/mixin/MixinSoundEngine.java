@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MixinSoundEngine {
 
     @Inject(method = "reload", at = @At("HEAD"))
-    public void craftgr$stopAudio(CallbackInfo ci) {
+    private void craftgr$stopAudio(CallbackInfo ci) {
         AudioPlayerHandler handler = AudioPlayerHandler.getInstance();
 
         if (handler.getState() == HandlerState.ACTIVE) {
@@ -24,7 +24,7 @@ public class MixinSoundEngine {
     }
 
     @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/sounds/SoundBufferLibrary;preload(Ljava/util/Collection;)Ljava/util/concurrent/CompletableFuture;", shift = At.Shift.AFTER), method = "loadLibrary()V")
-    public void craftgr$startAudio(CallbackInfo ci) {
+    private void craftgr$startAudio(CallbackInfo ci) {
         AudioPlayerHandler handler = AudioPlayerHandler.getInstance();
 
         // Establish the connection right after the audio is loaded
