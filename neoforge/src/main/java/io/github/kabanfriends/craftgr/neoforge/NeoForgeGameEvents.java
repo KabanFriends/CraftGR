@@ -1,37 +1,22 @@
 package io.github.kabanfriends.craftgr.neoforge;
 
 import io.github.kabanfriends.craftgr.CraftGR;
-import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
-import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.event.RenderGuiEvent;
 import net.neoforged.neoforge.client.event.ScreenEvent;
 import net.neoforged.neoforge.event.GameShuttingDownEvent;
 
-public class NeoForgeEvents {
+public class NeoForgeGameEvents {
 
     @SubscribeEvent
-    public void onClientSetup(FMLClientSetupEvent event) {
-        CraftGR.getInstance().clientEvents().onClientStart();
-    }
-
-    @SubscribeEvent
-    public void onRegisterKeymapping(RegisterKeyMappingsEvent event) {
-        for (KeyMapping keyMapping : CraftGR.getInstance().getKeybinds().getKeyMappings()) {
-            event.register(keyMapping);
-        }
-    }
-
-    @SubscribeEvent
-    public void tick(ClientTickEvent.Pre event) {
+    public static void tick(ClientTickEvent.Pre event) {
         CraftGR.getInstance().clientEvents().onClientTick();
     }
 
     @SubscribeEvent
-    public void renderHud(RenderGuiEvent.Post event) {
+    public static void renderHud(RenderGuiEvent.Post event) {
         Minecraft minecraft = CraftGR.getInstance().getMinecraft();
         if (minecraft.screen == null) {
             int mouseX = (int)(minecraft.mouseHandler.xpos() * (double)minecraft.getWindow().getGuiScaledWidth() / (double)minecraft.getWindow().getScreenWidth());
@@ -41,20 +26,20 @@ public class NeoForgeEvents {
     }
 
     @SubscribeEvent
-    public void renderScreen(ScreenEvent.Render.Post event) {
+    public static void renderScreen(ScreenEvent.Render.Post event) {
         CraftGR.getInstance().clientEvents().onGameRender(event.getGuiGraphics(), event.getMouseX(), event.getMouseY());
     }
 
     @SubscribeEvent
-    public void clickScreen(ScreenEvent.MouseButtonPressed.Pre event) {
+    public static void clickScreen(ScreenEvent.MouseButtonPressed.Pre event) {
         if (event.getButton() != 0) {
             return;
         }
-        event.setCanceled(CraftGR.getInstance().clientEvents().onMouseClick((int) event.getMouseX(), (int) event.getMouseY()));
+        event.setCanceled(!CraftGR.getInstance().clientEvents().onMouseClick((int) event.getMouseX(), (int) event.getMouseY()));
     }
 
     @SubscribeEvent
-    public void onGameShutdown(GameShuttingDownEvent event) {
+    public static void onGameShutdown(GameShuttingDownEvent event) {
         CraftGR.getInstance().clientEvents().onClientStop();
     }
 }

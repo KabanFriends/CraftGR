@@ -3,6 +3,7 @@ package io.github.kabanfriends.craftgr.neoforge;
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.util.ModUtil;
 import net.minecraft.client.Minecraft;
+import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
@@ -13,11 +14,12 @@ public class CraftGRNeoForge {
 
     private final CraftGR craftGR;
 
-    public CraftGRNeoForge() {
+    public CraftGRNeoForge(IEventBus modBus) {
         craftGR = new CraftGR(new NeoForgePlatform(Minecraft.getInstance()));
 
         // Events
-        NeoForge.EVENT_BUS.register(new NeoForgeEvents());
+        modBus.register(NeoForgeModEvents.class);
+        NeoForge.EVENT_BUS.register(NeoForgeGameEvents.class);
 
         // Config menu
         if (ModUtil.isConfigModAvailable()) {
