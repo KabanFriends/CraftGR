@@ -14,7 +14,7 @@ public class NeoForgeModEvents {
     }
 
     @SubscribeEvent
-    public static void onRegisterKeymapping(RegisterKeyMappingsEvent event) {
+    public static void onRegisterKeyMapping(RegisterKeyMappingsEvent event) {
         for (KeyMapping keyMapping : CraftGR.getInstance().getKeybinds().getKeyMappings()) {
             event.register(keyMapping);
         }
