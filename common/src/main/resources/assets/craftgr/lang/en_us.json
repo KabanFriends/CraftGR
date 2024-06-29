@@ -39,7 +39,7 @@
 
   "text.craftgr.config.category.advanced": "Advanced Settings",
   "text.craftgr.config.option.songProvider": "Song Provider",
-  "text.craftgr.config.option.songProvider.description": "The method to get current song information from Gensokyo Radio. Note: WebSocket provider is highly experimental and its use is discouraged.",
+  "text.craftgr.config.option.songProvider.description": "The method to get current song information from Gensokyo Radio.\nNote: WebSocket provider is highly experimental and its use is discouraged.",
   "text.craftgr.config.option.songProvider.JSON_API": "HTTPS API",
   "text.craftgr.config.option.songProvider.WEBSOCKET": "WebSocket",
   "text.craftgr.config.option.urlStream": "Streaming URL",
