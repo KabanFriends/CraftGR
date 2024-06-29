@@ -3,7 +3,6 @@ package io.github.kabanfriends.craftgr.event;
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.audio.RadioStream;
 import io.github.kabanfriends.craftgr.config.ModConfig;
-import io.github.kabanfriends.craftgr.handler.KeybindHandler;
 import io.github.kabanfriends.craftgr.overlay.SongInfoOverlay;
 import io.github.kabanfriends.craftgr.song.SongProviderType;
 import net.minecraft.client.gui.GuiGraphics;
@@ -36,7 +35,7 @@ public class ClientEvents {
 
     public void onClientTick() {
         craftGR.getRadioStream().tick();
-        KeybindHandler.tick();
+        craftGR.getKeybinds().tick();
     }
 
     public void onGameRender(GuiGraphics graphics, int mouseX, int mouseY) {

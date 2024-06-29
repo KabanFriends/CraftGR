@@ -5,6 +5,7 @@ import com.google.gson.JsonParser;
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.config.ModConfig;
 import io.github.kabanfriends.craftgr.util.*;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.logging.log4j.Level;
 
@@ -54,7 +55,7 @@ public class JsonAPISongProvider implements SongProvider {
             if (currentSong == null || !song.metadata().equals(currentSong.metadata())) {
                 startNewSong(song);
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             if (shouldRetry) {
                 // Stop any scheduled tasks
                 cancelIfNotNull(songEndTask);
@@ -87,8 +88,8 @@ public class JsonAPISongProvider implements SongProvider {
         HttpGet get = HttpUtil.get(ModConfig.get("urlInfoJson"));
 
         try (
-                ResponseHolder response = new ResponseHolder(CraftGR.getInstance().getHttpClient().execute(get));
-                InputStream stream = response.getResponse().getEntity().getContent();
+                CloseableHttpResponse response = CraftGR.getInstance().getHttpClient().execute(get);
+                InputStream stream = response.getEntity().getContent();
                 BufferedReader r = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8))
         ) {
             StringBuilder sb = new StringBuilder();
@@ -117,7 +118,7 @@ public class JsonAPISongProvider implements SongProvider {
                             TitleFixer.fixJapaneseString(JsonUtil.getValueWithDefault(songInfo, "CIRCLE", null, String.class)),
                             apiDuration,
                             JsonUtil.getValueWithDefault(songData, "ALBUMID", 0, int.class),
-                            albumArt == null ? null : ModConfig.get("urlAlbumArt") + albumArt,
+                            albumArt == null || albumArt.isEmpty() ? null : ModConfig.get("urlAlbumArt") + albumArt,
                             apiPlayed > apiDuration
                     ),
                     apiPlayed

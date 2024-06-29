@@ -52,17 +52,11 @@ public class RadioStateController implements Controller<Boolean> {
         }
 
         public void toggleSetting() {
-            if (!isAvailable()) return;
-
-            RadioStream stream = CraftGR.getInstance().getRadioStream();
-            RadioStream.State state = stream.getState();
-
-            if (state == RadioStream.State.PLAYING) {
-                stream.disconnect();
-            } else if (state != RadioStream.State.STOPPED && state != RadioStream.State.CONNECTING) {
-                stream.start();
+            if (!isAvailable()) {
+                return;
             }
 
+            CraftGR.getInstance().getRadioStream().toggle();
             option.setAvailable(isButtonActive());
             playDownSound();
         }
@@ -80,14 +74,16 @@ public class RadioStateController implements Controller<Boolean> {
 
             return switch (state) {
                 case STOPPED -> Component.translatable("text.craftgr.config.option.playback.stopped");
-                case RELOADING, CONNECTING -> Component.translatable("text.craftgr.config.option.playback.connecting");
+                case AWAIT_LOADING, CONNECTING -> Component.translatable("text.craftgr.config.option.playback.connecting");
                 case PLAYING -> Component.translatable("text.craftgr.config.option.playback.playing");
             };
         }
 
         @Override
         public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-            if (!isFocused()) return false;
+            if (!isFocused()) {
+                return false;
+            }
 
             if (keyCode == InputConstants.KEY_RETURN || keyCode == InputConstants.KEY_SPACE || keyCode == InputConstants.KEY_NUMPADENTER) {
                 toggleSetting();
@@ -99,7 +95,9 @@ public class RadioStateController implements Controller<Boolean> {
 
         @Override
         public boolean mouseClicked(double mouseX, double mouseY, int button) {
-            if (!isMouseOver(mouseX, mouseY) || !isAvailable()) return false;
+            if (!isMouseOver(mouseX, mouseY) || !isAvailable()) {
+                return false;
+            }
 
             toggleSetting();
             return true;
@@ -111,7 +109,7 @@ public class RadioStateController implements Controller<Boolean> {
 
             return switch (state) {
                 case STOPPED, PLAYING -> true;
-                case CONNECTING, RELOADING -> false;
+                case CONNECTING, AWAIT_LOADING -> false;
             };
         }
     }

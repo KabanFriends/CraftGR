@@ -1,5 +1,9 @@
 package io.github.kabanfriends.craftgr.song;
 
+import io.github.kabanfriends.craftgr.CraftGR;
+import io.github.kabanfriends.craftgr.util.ExceptionUtil;
+import org.apache.logging.log4j.Level;
+
 import java.util.function.Supplier;
 
 public enum SongProviderType {
@@ -15,6 +19,11 @@ public enum SongProviderType {
     }
 
     public SongProvider createProvider() {
-        return supplier.get();
+        try {
+            return supplier.get();
+        } catch (Exception e) {
+            CraftGR.getInstance().log(Level.ERROR, "Failed to create song provider: " + ExceptionUtil.getStackTrace(e));
+            return null;
+        }
     }
 }

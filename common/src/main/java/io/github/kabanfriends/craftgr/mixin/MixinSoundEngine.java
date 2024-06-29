@@ -16,13 +16,15 @@ public class MixinSoundEngine {
         RadioStream stream = CraftGR.getInstance().getRadioStream();
 
         if (stream.getState() == RadioStream.State.PLAYING) {
-            stream.disconnect(true);
+            stream.disconnect(RadioStream.State.AWAIT_LOADING);
         }
     }
 
     @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/sounds/SoundBufferLibrary;preload(Ljava/util/Collection;)Ljava/util/concurrent/CompletableFuture;", shift = At.Shift.AFTER), method = "loadLibrary()V")
     private void craftgr$startAudio(CallbackInfo ci) {
         RadioStream stream = CraftGR.getInstance().getRadioStream();
-        stream.start();
+        if (stream.getState() == RadioStream.State.AWAIT_LOADING) {
+            stream.start();
+        }
     }
 }

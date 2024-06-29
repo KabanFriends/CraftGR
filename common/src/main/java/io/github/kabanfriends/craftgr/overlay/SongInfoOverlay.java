@@ -20,6 +20,7 @@ import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.logging.log4j.Level;
 import org.joml.Vector2f;
@@ -32,6 +33,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class SongInfoOverlay extends Overlay {
 
@@ -70,6 +74,8 @@ public class SongInfoOverlay extends Overlay {
 
     private final CraftGR craftGR;
     private final ScrollingText songTitleText;
+
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
     private boolean expanded;
     private boolean muted;
@@ -278,7 +284,7 @@ public class SongInfoOverlay extends Overlay {
 
     public void onSongChanged() {
         updateSongTitle();
-        downloadAlbumArtTexture();
+        CraftGR.getInstance().getThreadExecutor().submit(() -> downloadAlbumArtTexture());
     }
 
     private Vector2i getOverlayCoordinate(OverlayPosition position, float width, float height) {
@@ -349,6 +355,10 @@ public class SongInfoOverlay extends Overlay {
     }
 
     private void downloadAlbumArtTexture() {
+        downloadAlbumArtTexture(0);
+    }
+
+    private void downloadAlbumArtTexture(int attempt) {
         Song song = craftGR.getSongProvider().getCurrentSong();
         if (song == null || song.metadata().albumArt() == null || song.metadata().albumArt().isEmpty()) {
             return;
@@ -357,39 +367,26 @@ public class SongInfoOverlay extends Overlay {
         TextureManager textureManager = craftGR.getMinecraft().getTextureManager();
         textureManager.release(ALBUM_ART_LOCATION);
 
-        int tries = 0;
-
-        do {
-            tries++;
-
-            try {
-                HttpGet get = HttpUtil.get(song.metadata().albumArt());
-
-                try (
-                        ResponseHolder response = new ResponseHolder(craftGR.getHttpClient().execute(get));
-                        InputStream stream = resizeImage(response.getResponse().getEntity().getContent())
-                ) {
-                    ThreadLocals.PNG_INFO_BYPASS_VALIDATION.set(true);
-                    NativeImage image = NativeImage.read(stream);
-
-                    craftGR.getMinecraft().execute(() -> textureManager.register(ALBUM_ART_LOCATION, new DynamicTexture(image)));
-                }
-                break;
-            } catch (Exception e) {
-                craftGR.log(Level.ERROR, "Error while creating album art texture (" + song.metadata().albumArt() + "): " + ExceptionUtil.getStackTrace(e));
-                textureManager.release(ALBUM_ART_LOCATION);
-            } finally {
-                ThreadLocals.PNG_INFO_BYPASS_VALIDATION.remove();
+        try {
+            HttpGet get = HttpUtil.get(song.metadata().albumArt());
+            try (
+                    CloseableHttpResponse response = craftGR.getHttpClient().execute(get);
+                    InputStream stream = resizeImage(response.getEntity().getContent())
+            ) {
+                ThreadLocals.PNG_INFO_BYPASS_VALIDATION.set(true);
+                NativeImage image = NativeImage.read(stream);
+                craftGR.getMinecraft().execute(() -> textureManager.register(ALBUM_ART_LOCATION, new DynamicTexture(image)));
             }
+        } catch (Exception e) {
+            craftGR.log(Level.ERROR, "Error while creating album art texture (" + song.metadata().albumArt() + ")" + ( attempt < ALBUM_ART_FETCH_TRIES ? ", retrying" : "") + ": " + ExceptionUtil.getStackTrace(e));
+            textureManager.release(ALBUM_ART_LOCATION);
 
-            if (tries < ALBUM_ART_FETCH_TRIES) {
-                craftGR.log(Level.INFO, "Retrying to create album art texture in " + ALBUM_ART_FETCH_DELAY_SECONDS + " seconds... (" + (ALBUM_ART_FETCH_TRIES - tries) + " tries left)");
+            if (attempt < ALBUM_ART_FETCH_TRIES) {
+                scheduler.schedule(() -> downloadAlbumArtTexture(attempt + 1), ALBUM_ART_FETCH_DELAY_SECONDS, TimeUnit.SECONDS);
             }
-
-            try {
-                Thread.sleep(ALBUM_ART_FETCH_DELAY_SECONDS * 1000L);
-            } catch (InterruptedException e) { }
-        } while (tries < ALBUM_ART_FETCH_TRIES);
+        } finally {
+            ThreadLocals.PNG_INFO_BYPASS_VALIDATION.remove();
+        }
     }
 
     @SuppressWarnings("ConstantConditions")

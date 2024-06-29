@@ -1,10 +1,12 @@
 package io.github.kabanfriends.craftgr.neoforge;
 
 import io.github.kabanfriends.craftgr.CraftGR;
+import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.event.RenderGuiEvent;
 import net.neoforged.neoforge.client.event.ScreenEvent;
 import net.neoforged.neoforge.event.GameShuttingDownEvent;
@@ -14,6 +16,13 @@ public class NeoForgeEvents {
     @SubscribeEvent
     public void onClientSetup(FMLClientSetupEvent event) {
         CraftGR.getInstance().clientEvents().onClientStart();
+    }
+
+    @SubscribeEvent
+    public void onRegisterKeymapping(RegisterKeyMappingsEvent event) {
+        for (KeyMapping keyMapping : CraftGR.getInstance().getKeybinds().getKeyMappings()) {
+            event.register(keyMapping);
+        }
     }
 
     @SubscribeEvent

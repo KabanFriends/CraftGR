@@ -3,8 +3,10 @@ package io.github.kabanfriends.craftgr;
 import io.github.kabanfriends.craftgr.audio.RadioStream;
 import io.github.kabanfriends.craftgr.config.ModConfig;
 import io.github.kabanfriends.craftgr.event.ClientEvents;
+import io.github.kabanfriends.craftgr.keybind.Keybinds;
 import io.github.kabanfriends.craftgr.platform.Platform;
 import io.github.kabanfriends.craftgr.overlay.SongInfoOverlay;
+import io.github.kabanfriends.craftgr.song.FallbackSongProvider;
 import io.github.kabanfriends.craftgr.song.SongProvider;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
@@ -36,10 +38,11 @@ public class CraftGR {
     private final ExecutorService executor;
     private final CloseableHttpClient httpClient;
     private final ClientEvents events;
+    private final Keybinds keybinds;
     private final SongInfoOverlay songInfoOverlay;
     private final RadioStream radioStream;
 
-    private SongProvider songProvider;
+    private SongProvider songProvider = new FallbackSongProvider();
 
     public CraftGR(Platform platform) {
         instance = this;
@@ -51,6 +54,7 @@ public class CraftGR {
         this.executor = Executors.newCachedThreadPool();
         this.httpClient = HttpClients.createDefault();
         this.events = new ClientEvents(this);
+        this.keybinds = new Keybinds(this);
         this.songInfoOverlay = new SongInfoOverlay(this);
         this.radioStream = new RadioStream(this);
     }
@@ -79,6 +83,10 @@ public class CraftGR {
         return config;
     }
 
+    public Keybinds getKeybinds() {
+        return keybinds;
+    }
+
     public SongProvider getSongProvider() {
         return songProvider;
     }
@@ -87,12 +95,16 @@ public class CraftGR {
         return radioStream;
     }
 
-    public void setSongProvider(SongProvider provider) {
+    public void setSongProvider(SongProvider newProvider) {
+        if (newProvider == null) {
+            return;
+        }
+
         if (songProvider != null) {
             songProvider.stop();
         }
 
-        songProvider = provider;
+        songProvider = newProvider;
         songProvider.start();
 
         CraftGR.getInstance().getSongInfoOverlay().onSongChanged();

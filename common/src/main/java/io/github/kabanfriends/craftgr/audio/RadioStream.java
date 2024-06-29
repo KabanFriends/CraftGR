@@ -7,7 +7,9 @@ import net.minecraft.Util;
 import net.minecraft.util.Mth;
 import org.apache.http.client.methods.*;
 import org.apache.logging.log4j.Level;
+import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -22,7 +24,7 @@ public class RadioStream {
 
     private State state;
     private AudioPlayer player;
-    private ResponseHolder response;
+    private CloseableHttpResponse response;
     private boolean audioFading;
     private boolean hasError;
     private long audioFadeStart;
@@ -31,7 +33,7 @@ public class RadioStream {
         this.craftGR = craftGR;
 
         this.hasError = false;
-        this.state = State.STOPPED;
+        this.state = State.AWAIT_LOADING;
         this.player = new AudioPlayer(craftGR);
         this.player.setBaseVolume(0.0f);
     }
@@ -56,6 +58,7 @@ public class RadioStream {
     }
 
     public void start() {
+        state = State.CONNECTING;
         craftGR.getThreadExecutor().submit(this::handlePlayback);
     }
 
@@ -87,37 +90,55 @@ public class RadioStream {
     }
 
     public void disconnect() {
-        disconnect(false);
+        disconnect(State.STOPPED);
     }
 
-    public void disconnect(boolean reloading) {
-        if (player != null) player.stop();
-        if (response != null && !response.isClosed()) response.close();
+    public void disconnect(@Nullable State nextState) {
+        if (player != null) {
+            player.stop();
+        }
+        if (response != null) {
+            try {
+                response.close();
+            } catch (IOException e) {
+                craftGR.log(Level.ERROR, "Error while closing the HTTP response: " + ExceptionUtil.getStackTrace(e));
+            }
+        }
 
         player = new AudioPlayer(craftGR);
         hasError = false;
-        state = reloading ? State.RELOADING : State.STOPPED;
+        if (nextState != null) {
+            state = nextState;
+        }
     }
 
     private void connect() throws ConnectionException {
         // Close any open streams
-        disconnect();
+        disconnect(null);
 
         state = State.CONNECTING;
-        craftGR.log(Level.INFO, "Connecting to the audio stream...");
+        craftGR.log(Level.INFO, "Connecting to the audio stream");
 
         try {
             if (response != null) response.close();
 
             HttpGet get = HttpUtil.get(ModConfig.get("urlStream"));
-            ResponseHolder response = new ResponseHolder(craftGR.getHttpClient().execute(get));
+            CloseableHttpResponse response = craftGR.getHttpClient().execute(get);
             this.response = response;
 
-            InputStream stream = response.getResponse().getEntity().getContent();
+            InputStream stream = response.getEntity().getContent();
 
             player.setStream(stream);
         } catch (Exception e) {
             throw new ConnectionException(e);
+        }
+    }
+
+    public void toggle() {
+        if (state == State.PLAYING) {
+            disconnect();
+        } else if (state != State.CONNECTING && state != State.AWAIT_LOADING) {
+            start();
         }
     }
 
@@ -137,6 +158,6 @@ public class RadioStream {
         STOPPED,
         CONNECTING,
         PLAYING,
-        RELOADING
+        AWAIT_LOADING
     }
 }

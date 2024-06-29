@@ -7,16 +7,6 @@ import net.minecraft.network.chat.MutableComponent;
 
 public class MessageUtil {
 
-    public static void sendMessage(String message) {
-        if (CraftGR.getInstance().getMinecraft().player == null) return;
-        CraftGR.getInstance().getMinecraft().player.displayClientMessage(Component.literal(message), false);
-    }
-
-    public static void sendTranslatableMessage(String key) {
-        if (CraftGR.getInstance().getMinecraft().player == null) return;
-        CraftGR.getInstance().getMinecraft().player.displayClientMessage(Component.translatable(key), false);
-    }
-
     public static void sendConnectingMessage() {
         if (CraftGR.getInstance().getMinecraft().player == null) return;
 

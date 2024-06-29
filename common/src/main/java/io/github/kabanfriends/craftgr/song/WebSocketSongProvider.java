@@ -38,6 +38,7 @@ public class WebSocketSongProvider extends WebSocketClient implements SongProvid
     @Override
     public void stop() {
         close();
+        scheduler.shutdownNow();
     }
 
     @Override
@@ -96,10 +97,12 @@ public class WebSocketSongProvider extends WebSocketClient implements SongProvid
                         apiPlayed
                 );
 
-                CraftGR.getInstance().getThreadExecutor().submit(CraftGR.getInstance().getSongInfoOverlay()::onSongChanged);
+                CraftGR.getInstance().getSongInfoOverlay().onSongChanged();
             }
         } catch (JsonParseException e) {
             CraftGR.getInstance().log(Level.WARN, "Received invalid WebSocket message (" + message + "): " + ExceptionUtil.getStackTrace(e));
+        } catch (Exception e) {
+            CraftGR.getInstance().log(Level.ERROR, "Failed to process WebSocket message: " + ExceptionUtil.getStackTrace(e));
         }
     }
 
