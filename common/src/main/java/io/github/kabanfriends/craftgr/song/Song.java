@@ -2,47 +2,55 @@ package io.github.kabanfriends.craftgr.song;
 
 public class Song {
 
-    private boolean intermission;
+    private final Metadata metadata;
+    private final long playedTime;
+    private final long localStartTime;
 
-    //SONGINFO
-    public String title;
-    public String artist;
-    public String album;
-    public String year;
-    public String circle;
-
-    //SONGTIMES
-    public long songStart;
-    public long songEnd;
-
-    //SONGDATA
-    public int albumId;
-
-    //MISC
-    public String albumArt;
-    public long offsetTime;
-
-    public Song(String title, String artist, String album, String year, String circle, long start, long end, int albumId, String albumArt, long offsetTime) {
-        this.title = title;
-        this.artist = artist;
-        this.album = album;
-        this.year = year;
-        this.circle = circle;
-
-        this.songStart = start;
-        this.songEnd = end;
-
-        this.albumId = albumId;
-
-        this.albumArt = albumArt;
-        this.offsetTime = offsetTime;
+    public Song(Metadata metadata, long playedTime) {
+        this.metadata = metadata;
+        this.playedTime = playedTime;
+        this.localStartTime = currentTime();
     }
 
-    public void setIntermission(boolean intermission) {
-        this.intermission = intermission;
+    public Metadata metadata() {
+        return metadata;
     }
 
-    public boolean isIntermission() {
-        return this.intermission;
+    public long getLocalPlayedTime() {
+        long played = playedTime + (currentTime() - localStartTime);
+        return Math.min(played, metadata().duration());
     }
+
+    protected long getAPIPlayedTime() {
+        return playedTime;
+    }
+
+    private static long currentTime() {
+        return System.currentTimeMillis() / 1000L;
+    }
+
+    /**
+     * Song metadata fetched from the Gensokyo Radio's API.
+     * Warning: Any time data here are based on the remote server's timestamp.
+     */
+    public record Metadata(
+            /* SONGINFO */
+            String title,
+            String artist,
+            String album,
+            String year,
+            String circle,
+
+            /* SONGTIMES */
+            long duration,
+
+            /* SONGDATA */
+            int albumId,
+
+            /* MISC */
+            String albumArt,
+
+            /* CraftGR */
+            boolean intermission
+    ) {}
 }

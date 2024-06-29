@@ -5,13 +5,11 @@
   "mixins": [
     "MixinAccessorAbstractSelectionList",
     "MixinGuiGraphics",
-    "MixinMinecraft",
     "MixinOptionEntry",
     "MixinOptionsSubScreen",
     "MixinPngInfo",
     "MixinSoundEngine",
-    "MixinSoundOptionsScreen",
-    "MixinTitleScreen"
+    "MixinSoundOptionsScreen"
   ],
   "server": [],
   "injectors": {

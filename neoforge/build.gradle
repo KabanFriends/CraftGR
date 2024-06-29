@@ -22,8 +22,9 @@ dependencies {
     shadowCommon(project(path: ":common", configuration: "transformProductionNeoForge")) { transitive false }
 
     shadowCommon "com.github.umjammer:jlayer:${rootProject.jlayer_version}"
-
-    implementation "com.github.umjammer:jlayer:${rootProject.jlayer_version}"
+    shadowCommon("org.java-websocket:Java-WebSocket:${rootProject.java_websocket_version}") {
+        exclude module: "slf4j-api"
+    }
 
     modLocalRuntime ("dev.isxander:yet-another-config-lib:${rootProject.yacl_version}-neoforge") { transitive false }
 }

@@ -1,7 +1,9 @@
 package io.github.kabanfriends.craftgr.gui;
 
 import io.github.kabanfriends.craftgr.CraftGR;
+import io.github.kabanfriends.craftgr.config.ModConfig;
 import io.github.kabanfriends.craftgr.util.ModUtil;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ComponentPath;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.*;
@@ -45,7 +47,11 @@ public class RadioOptionContainer extends AbstractContainerWidget {
                 CONFIG_BUTTON_SIZE,
                 CONFIG_BUTTON_SIZE,
                 CONFIG_BUTTON_SPRITES,
-                (button) -> CraftGR.getPlatform().openConfigScreen(),
+                (button) -> {
+                    Minecraft minecraft = CraftGR.getInstance().getMinecraft();
+                    ModConfig config = CraftGR.getInstance().getConfig();
+                    minecraft.setScreen(config.createScreen(minecraft.screen));
+                },
                 BUTTON_NARRATION_NAME
         );
 

@@ -22,19 +22,6 @@ public class RenderUtil {
         RenderSystem.enableDepthTest();
     }
 
-    public static void bindTexture(ResourceLocation texture, boolean depthTest) {
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderTexture(0, texture);
-        RenderSystem.enableBlend();
-        if (depthTest) {
-            RenderSystem.enableDepthTest();
-        }
-    }
-
-    public static void bindTexture(ResourceLocation texture) {
-        bindTexture(texture, false);
-    }
-
     public static void fill(PoseStack poseStack, float minX, float minY, float maxX, float maxY, int color, float opacity) {
         Matrix4f matrix4f = poseStack.last().pose();
 
@@ -69,7 +56,7 @@ public class RenderUtil {
     }
 
     public static float getUIScale(float uiScale) {
-        double mcScale = CraftGR.MC.getWindow().getGuiScale();
+        double mcScale = CraftGR.getInstance().getMinecraft().getWindow().getGuiScale();
 
         return (float) ((((double) UI_BASE_SCALE) * (((double) UI_BASE_SCALE) / mcScale)) * uiScale);
     }

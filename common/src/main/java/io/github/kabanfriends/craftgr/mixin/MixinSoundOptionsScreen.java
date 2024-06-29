@@ -2,9 +2,9 @@ package io.github.kabanfriends.craftgr.mixin;
 
 import com.mojang.serialization.Codec;
 import io.github.kabanfriends.craftgr.CraftGR;
-import io.github.kabanfriends.craftgr.config.GRConfig;
+import io.github.kabanfriends.craftgr.config.ModConfig;
 import io.github.kabanfriends.craftgr.gui.RadioOptionContainer;
-import io.github.kabanfriends.craftgr.handler.AudioPlayerHandler;
+import io.github.kabanfriends.craftgr.audio.RadioStream;
 import io.github.kabanfriends.craftgr.util.ThreadLocals;
 import net.minecraft.client.OptionInstance;
 import net.minecraft.client.gui.components.*;
@@ -39,9 +39,10 @@ public class MixinSoundOptionsScreen extends MixinOptionsSubScreen {
             Codec.doubleRange(0.0D, 1.0D),
             0.0D,
             (value) -> {
-                GRConfig.setValue("volume", (int)((double)value * 100.0D));
-                if (AudioPlayerHandler.getInstance().isPlaying()) {
-                    AudioPlayerHandler.getInstance().getAudioPlayer().setBaseVolume(1.0f);
+                ModConfig.set("volume", (int)((double)value * 100.0D));
+                RadioStream stream = CraftGR.getInstance().getRadioStream();
+                if (stream.getAudioPlayer().isPlaying()) {
+                    stream.getAudioPlayer().setBaseVolume(1.0f);
                 }
             });
 
@@ -65,6 +66,6 @@ public class MixinSoundOptionsScreen extends MixinOptionsSubScreen {
 
     @Override
     protected void craftgr$saveConfig(CallbackInfo ci) {
-        GRConfig.save();
+        CraftGR.getInstance().getConfig().save();
     }
 }

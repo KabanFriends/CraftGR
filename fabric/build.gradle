@@ -22,11 +22,12 @@ dependencies {
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
 
-    implementation "com.github.umjammer:jlayer:${rootProject.jlayer_version}"
-
     modApi("com.terraformersmc:modmenu:${rootProject.mod_menu_version}") { transitive(false) }
 
     include "com.github.umjammer:jlayer:${rootProject.jlayer_version}"
+    include("org.java-websocket:Java-WebSocket:${rootProject.java_websocket_version}") {
+        exclude module: "slf4j-api"
+    }
 
     modLocalRuntime("com.terraformersmc:modmenu:${rootProject.mod_menu_version}") { transitive(false) }
     modLocalRuntime "dev.isxander:yet-another-config-lib:${rootProject.yacl_version}-fabric"

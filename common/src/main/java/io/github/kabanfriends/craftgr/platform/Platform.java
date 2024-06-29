@@ -1,17 +1,24 @@
 package io.github.kabanfriends.craftgr.platform;
 
+import net.minecraft.client.Minecraft;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class Platform {
 
-    private PlatformType type;
+    private final Minecraft minecraft;
+    private final PlatformType type;
 
-    public Platform(PlatformType type) {
+    public Platform(Minecraft minecraft, PlatformType type) {
+        this.minecraft = minecraft;
         this.type = type;
     }
 
     public PlatformType getPlatformType() {
         return this.type;
+    }
+
+    public Minecraft getMinecraft() {
+        return minecraft;
     }
 
     public abstract boolean isModLoaded(String id);
@@ -20,11 +27,8 @@ public abstract class Platform {
 
     public abstract boolean isInModMenu();
 
-    public abstract void openConfigScreen();
-
     public enum PlatformType {
         FABRIC,
-        FORGE
+        NEOFORGE
     }
-
 }

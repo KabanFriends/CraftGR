@@ -1,8 +1,7 @@
 package io.github.kabanfriends.craftgr.neoforge;
 
-import io.github.kabanfriends.craftgr.CraftGR;
-import io.github.kabanfriends.craftgr.config.GRConfig;
 import io.github.kabanfriends.craftgr.platform.Platform;
+import net.minecraft.client.Minecraft;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.client.gui.ModListScreen;
@@ -11,8 +10,8 @@ import java.util.Optional;
 
 public class NeoForgePlatform extends Platform {
 
-    public NeoForgePlatform(PlatformType type) {
-        super(type);
+    public NeoForgePlatform(Minecraft minecraft) {
+        super(minecraft, PlatformType.NEOFORGE);
     }
 
     public boolean isModLoaded(String id) {
@@ -25,11 +24,6 @@ public class NeoForgePlatform extends Platform {
     }
 
     public boolean isInModMenu() {
-        return CraftGR.MC.screen instanceof ModListScreen;
+        return getMinecraft().screen instanceof ModListScreen;
     }
-
-    public void openConfigScreen() {
-        CraftGR.MC.setScreen(GRConfig.getConfigScreen(CraftGR.MC.screen));
-    }
-
 }

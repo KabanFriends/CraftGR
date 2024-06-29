@@ -37,7 +37,11 @@
   "text.craftgr.config.option.overlayScale": "Overlay Scale",
   "text.craftgr.config.option.overlayScale.description": "How large the song info overlay should be displayed.",
 
-  "text.craftgr.config.category.url": "Advanced Settings",
+  "text.craftgr.config.category.advanced": "Advanced Settings",
+  "text.craftgr.config.option.songProvider": "Song Provider",
+  "text.craftgr.config.option.songProvider.description": "The method to get current song information from Gensokyo Radio.\nNote: WebSocket provider is highly experimental and its use is discouraged.",
+  "text.craftgr.config.option.songProvider.JSON_API": "HTTPS API",
+  "text.craftgr.config.option.songProvider.WEBSOCKET": "WebSocket",
   "text.craftgr.config.option.urlStream": "Streaming URL",
   "text.craftgr.config.option.urlStream.description": "URL to stream the audio from. Only works with MP3 streams.",
   "text.craftgr.config.option.urlInfoJson": "Song Info URL",
@@ -51,7 +55,7 @@
 
   "text.craftgr.button.volume": "Gensokyo Radio",
   "text.craftgr.button.config.narration": "CraftGR Settings",
-  "text.craftgr.button.config.disabled": "Install YetAnotherConfigLib to open CraftGR settings menu.",
+  "text.craftgr.button.config.disabled": "Install YetAnotherConfigLib to configure CraftGR.",
 
   "text.craftgr.message.connecting": "Connecting...",
   "text.craftgr.message.reconnecting": "Reconnecting...",

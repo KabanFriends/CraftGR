@@ -9,9 +9,8 @@ import dev.isxander.yacl3.gui.AbstractWidget;
 import dev.isxander.yacl3.gui.YACLScreen;
 import dev.isxander.yacl3.gui.controllers.ControllerWidget;
 import dev.isxander.yacl3.impl.controller.AbstractControllerBuilderImpl;
-import io.github.kabanfriends.craftgr.handler.AudioPlayerHandler;
-import io.github.kabanfriends.craftgr.util.AudioPlayerUtil;
-import io.github.kabanfriends.craftgr.util.HandlerState;
+import io.github.kabanfriends.craftgr.CraftGR;
+import io.github.kabanfriends.craftgr.audio.RadioStream;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 
@@ -53,17 +52,11 @@ public class RadioStateController implements Controller<Boolean> {
         }
 
         public void toggleSetting() {
-            if (!isAvailable()) return;
-
-            AudioPlayerHandler handler = AudioPlayerHandler.getInstance();
-            HandlerState state = handler.getState();
-
-            if (state == HandlerState.ACTIVE) {
-                handler.stopPlayback();
-            } else if (state != HandlerState.INITIALIZING) {
-                AudioPlayerUtil.startPlaybackAsync();
+            if (!isAvailable()) {
+                return;
             }
 
+            CraftGR.getInstance().getRadioStream().toggle();
             option.setAvailable(isButtonActive());
             playDownSound();
         }
@@ -72,20 +65,25 @@ public class RadioStateController implements Controller<Boolean> {
         protected Component getValueText() {
             option.setAvailable(isButtonActive());
 
-            AudioPlayerHandler handler = AudioPlayerHandler.getInstance();
-            HandlerState state = handler.getState();
+            RadioStream stream = CraftGR.getInstance().getRadioStream();
+            RadioStream.State state = stream.getState();
+
+            if (stream.hasError()) {
+                return Component.translatable("text.craftgr.config.option.playback.fail").withStyle(ChatFormatting.RED);
+            }
 
             return switch (state) {
-                case NOT_INITIALIZED, STOPPED -> Component.translatable("text.craftgr.config.option.playback.stopped");
-                case RELOADING, INITIALIZING -> Component.translatable("text.craftgr.config.option.playback.connecting");
-                case READY, ACTIVE -> Component.translatable("text.craftgr.config.option.playback.playing");
-                case FAIL -> Component.translatable("text.craftgr.config.option.playback.fail").withStyle(ChatFormatting.RED);
+                case STOPPED -> Component.translatable("text.craftgr.config.option.playback.stopped");
+                case AWAIT_LOADING, CONNECTING -> Component.translatable("text.craftgr.config.option.playback.connecting");
+                case PLAYING -> Component.translatable("text.craftgr.config.option.playback.playing");
             };
         }
 
         @Override
         public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-            if (!isFocused()) return false;
+            if (!isFocused()) {
+                return false;
+            }
 
             if (keyCode == InputConstants.KEY_RETURN || keyCode == InputConstants.KEY_SPACE || keyCode == InputConstants.KEY_NUMPADENTER) {
                 toggleSetting();
@@ -97,19 +95,21 @@ public class RadioStateController implements Controller<Boolean> {
 
         @Override
         public boolean mouseClicked(double mouseX, double mouseY, int button) {
-            if (!isMouseOver(mouseX, mouseY) || !isAvailable()) return false;
+            if (!isMouseOver(mouseX, mouseY) || !isAvailable()) {
+                return false;
+            }
 
             toggleSetting();
             return true;
         }
 
         private boolean isButtonActive() {
-            AudioPlayerHandler handler = AudioPlayerHandler.getInstance();
-            HandlerState state = handler.getState();
+            RadioStream stream = CraftGR.getInstance().getRadioStream();
+            RadioStream.State state = stream.getState();
 
             return switch (state) {
-                case NOT_INITIALIZED, STOPPED, READY, ACTIVE, FAIL -> true;
-                case RELOADING, INITIALIZING -> false;
+                case STOPPED, PLAYING -> true;
+                case CONNECTING, AWAIT_LOADING -> false;
             };
         }
     }

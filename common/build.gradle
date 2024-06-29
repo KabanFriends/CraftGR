@@ -3,9 +3,10 @@ dependencies {
     // Do NOT use other classes from fabric loader
     modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
 
-    modImplementation "dev.isxander:yet-another-config-lib:${rootProject.yacl_version}-fabric"
+    modCompileOnly "dev.isxander:yet-another-config-lib:${rootProject.yacl_version}-fabric"
 
-    implementation "com.github.umjammer:jlayer:${rootProject.jlayer_version}"
+    compileOnly "com.github.umjammer:jlayer:${rootProject.jlayer_version}"
+    compileOnly "org.java-websocket:Java-WebSocket:${rootProject.java_websocket_version}"
 }
 
 loom {
