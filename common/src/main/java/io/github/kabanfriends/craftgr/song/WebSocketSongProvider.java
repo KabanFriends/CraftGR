@@ -66,6 +66,7 @@ public class WebSocketSongProvider extends WebSocketClient implements SongProvid
 
                 if (type.equals("welcome")) { // Get client ID
                     clientId = json.get("id").getAsInt();
+                    CraftGR.getInstance().log(Level.INFO, "WebSocket client is ready!");
 
                 } else if (type.equals("ping")) { // Response to ping requests
                     JsonObject response = new JsonObject();
@@ -104,9 +105,11 @@ public class WebSocketSongProvider extends WebSocketClient implements SongProvid
 
     @Override
     public void onClose(int code, String reason, boolean remote) {
-        CraftGR.getInstance().log(Level.INFO, "Connection closed by " + (remote ? "remote peer" : "us") + ", retrying connection (code: " + code + ", reason: " + reason + ")");
+        CraftGR.getInstance().log(Level.INFO, "Connection closed by " + (remote ? "remote peer, retrying connection" : "us") + " (code: " + code + ", reason: " + reason + ")");
 
-        scheduler.schedule(this::connect, RETRY_INTERVAL, TimeUnit.SECONDS);
+        if (remote) {
+            scheduler.schedule(this::connect, RETRY_INTERVAL, TimeUnit.SECONDS);
+        }
     }
 
     @Override
