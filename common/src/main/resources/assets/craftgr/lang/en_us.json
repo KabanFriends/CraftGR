@@ -37,7 +37,11 @@
   "text.craftgr.config.option.overlayScale": "Overlay Scale",
   "text.craftgr.config.option.overlayScale.description": "How large the song info overlay should be displayed.",
 
-  "text.craftgr.config.category.url": "Advanced Settings",
+  "text.craftgr.config.category.advanced": "Advanced Settings",
+  "text.craftgr.config.option.songProvider": "Song Provider",
+  "text.craftgr.config.option.songProvider.description": "The method to get current song information from Gensokyo Radio. Note: WebSocket provider is highly experimental and its use is discouraged.",
+  "text.craftgr.config.option.songProvider.JSON_API": "HTTPS API",
+  "text.craftgr.config.option.songProvider.WEBSOCKET": "WebSocket",
   "text.craftgr.config.option.urlStream": "Streaming URL",
   "text.craftgr.config.option.urlStream.description": "URL to stream the audio from. Only works with MP3 streams.",
   "text.craftgr.config.option.urlInfoJson": "Song Info URL",

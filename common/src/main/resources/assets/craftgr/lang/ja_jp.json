@@ -37,7 +37,11 @@
   "text.craftgr.config.option.overlayScale": "オーバーレイの大きさ",
   "text.craftgr.config.option.overlayScale.description": "楽曲オーバーレイが表示される大きさの設定です。拡大倍率を記入してください。",
 
-  "text.craftgr.config.category.url": "上級者向け設定",
+  "text.craftgr.config.category.advanced": "上級者向け設定",
+  "text.craftgr.config.option.songProvider": "楽曲情報プロバイダ",
+  "text.craftgr.config.option.songProvider.description": "再生中の楽曲の情報を取得する方法の設定です。 注: WebSocketプロバイダは実験的な機能であり、使用は推奨されません。",
+  "text.craftgr.config.option.songProvider.JSON_API": "HTTPS API",
+  "text.craftgr.config.option.songProvider.WEBSOCKET": "WebSocket",
   "text.craftgr.config.option.urlStream": "ストリーミング音源URL",
   "text.craftgr.config.option.urlStream.description": "音楽をストリーミングする音源のURLです。MP3の音源のみ使用できます。",
   "text.craftgr.config.option.urlInfoJson": "曲データURL",

@@ -59,7 +59,7 @@ public class ModConfig {
                     new ColorConfigField("overlayBgColor", new Color(99, 34, 121)),
                     new ColorConfigField("overlayBarColor", new Color(160, 150, 174))
             ),
-            new ConfigGroup(Component.translatable("text.craftgr.config.category.url"), true,
+            new ConfigGroup(Component.translatable("text.craftgr.config.category.advanced"), true,
                     new EnumConfigField("songProvider", SongProviderType.JSON_API)
                             .onApply((value) -> {
                                 CraftGR.getInstance().setSongProvider(((SongProviderType) value).createProvider());
