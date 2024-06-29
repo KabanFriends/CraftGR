@@ -4,16 +4,17 @@ import com.google.gson.JsonPrimitive;
 import dev.isxander.yacl3.api.Option;
 import dev.isxander.yacl3.api.OptionDescription;
 import dev.isxander.yacl3.api.controller.EnumControllerBuilder;
-import io.github.kabanfriends.craftgr.config.entry.GRConfigEntry;
+import io.github.kabanfriends.craftgr.config.ModConfig;
+import io.github.kabanfriends.craftgr.config.entry.ConfigField;
 import io.github.kabanfriends.craftgr.config.entry.OptionProvider;
 import net.minecraft.network.chat.Component;
 
-public class EnumConfigEntry<T extends Enum<T>> extends GRConfigEntry<T> {
+public class EnumConfigField<T extends Enum<T>> extends ConfigField<T> {
 
     protected final Class<T> enumClass;
     protected final T[] enumValues;
 
-    public EnumConfigEntry(String key, T value) {
+    public EnumConfigField(String key, T value) {
         super(key, value);
         enumClass = getDefaultValue().getDeclaringClass();
         enumValues = enumClass.getEnumConstants();
@@ -40,7 +41,7 @@ public class EnumConfigEntry<T extends Enum<T>> extends GRConfigEntry<T> {
     public OptionProvider<T> getOptionProvider() {
         return new OptionProvider<T>() {
             @Override
-            public Option<T> getOption() {
+            public Option<T> getOption(ModConfig config) {
                 return Option.<T>createBuilder()
                         .name(Component.translatable("text.craftgr.config.option." + getKey()))
                         .description(OptionDescription.of(Component.translatable("text.craftgr.config.option." + getKey() + ".description")))
@@ -48,7 +49,7 @@ public class EnumConfigEntry<T extends Enum<T>> extends GRConfigEntry<T> {
                                 .enumClass(enumClass)
                                 .formatValue((value) -> Component.translatable("text.craftgr.config.option." + getKey() + "." + value.name()))
                         )
-                        .binding(getDefaultValue(), EnumConfigEntry.this::getValue, EnumConfigEntry.this::apply)
+                        .binding(getDefaultValue(), () -> getValue(), (value) -> apply(config, value))
                         .build();
             }
         };

@@ -4,8 +4,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import io.github.kabanfriends.craftgr.CraftGR;
-import io.github.kabanfriends.craftgr.config.GRConfig;
-import io.github.kabanfriends.craftgr.render.overlay.impl.SongInfoOverlay;
+import io.github.kabanfriends.craftgr.config.ModConfig;
 import io.github.kabanfriends.craftgr.util.ExceptionUtil;
 import io.github.kabanfriends.craftgr.util.JsonUtil;
 import io.github.kabanfriends.craftgr.util.TitleFixer;
@@ -28,7 +27,7 @@ public class WebSocketSongProvider extends WebSocketClient implements SongProvid
     private int clientId;
 
     public WebSocketSongProvider() {
-        super(URI.create(GRConfig.getValue("urlWebSocket")));
+        super(URI.create(ModConfig.get("urlWebSocket")));
     }
 
     @Override
@@ -96,26 +95,23 @@ public class WebSocketSongProvider extends WebSocketClient implements SongProvid
                         apiPlayed
                 );
 
-                CraftGR.getThreadExecutor().submit(() -> {
-                    SongInfoOverlay.getInstance().updateSongTitle();
-                    SongInfoOverlay.getInstance().updateAlbumArtTexture();
-                });
+                CraftGR.getInstance().getThreadExecutor().submit(CraftGR.getInstance().getSongInfoOverlay()::onSongChanged);
             }
         } catch (JsonParseException e) {
-            CraftGR.log(Level.WARN, "Received invalid WebSocket message (" + message + "): " + ExceptionUtil.getStackTrace(e));
+            CraftGR.getInstance().log(Level.WARN, "Received invalid WebSocket message (" + message + "): " + ExceptionUtil.getStackTrace(e));
         }
     }
 
     @Override
     public void onClose(int code, String reason, boolean remote) {
-        CraftGR.log(Level.INFO, "Connection closed by " + (remote ? "remote peer" : "us") + ", retrying connection (code: " + code + ", reason: " + reason + ")");
+        CraftGR.getInstance().log(Level.INFO, "Connection closed by " + (remote ? "remote peer" : "us") + ", retrying connection (code: " + code + ", reason: " + reason + ")");
 
         scheduler.schedule(this::connect, RETRY_INTERVAL, TimeUnit.SECONDS);
     }
 
     @Override
     public void onError(Exception e) {
-        CraftGR.log(Level.ERROR, "WebSocket error: " + ExceptionUtil.getStackTrace(e));
+        CraftGR.getInstance().log(Level.ERROR, "WebSocket error: " + ExceptionUtil.getStackTrace(e));
     }
 
     private void send(JsonObject json) {

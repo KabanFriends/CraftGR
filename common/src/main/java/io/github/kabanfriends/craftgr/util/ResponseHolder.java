@@ -21,8 +21,7 @@ public class ResponseHolder implements AutoCloseable {
         try {
             response.close();
         } catch (IOException e) {
-            CraftGR.log(Level.ERROR, "Error while closing the response!");
-            e.printStackTrace();
+            CraftGR.getInstance().log(Level.ERROR, "Error while closing the response: " + ExceptionUtil.getStackTrace(e));
         }
         this.isClosed = true;
     }

@@ -1,8 +1,7 @@
 package io.github.kabanfriends.craftgr.audio;
 
 import io.github.kabanfriends.craftgr.CraftGR;
-import io.github.kabanfriends.craftgr.config.GRConfig;
-import io.github.kabanfriends.craftgr.util.ProcessResult;
+import io.github.kabanfriends.craftgr.config.ModConfig;
 import javazoom.jl.decoder.*;
 import net.minecraft.sounds.SoundSource;
 import org.apache.logging.log4j.Level;
@@ -17,29 +16,34 @@ import java.nio.ShortBuffer;
 // Code based on: https://github.com/PC-Logix/OpenFM/blob/1.12.2/src/main/java/pcl/OpenFM/player/MP3Player.java
 public class AudioPlayer {
 
-    private final Bitstream bitstream;
+    private final CraftGR craftGR;
     private final Decoder decoder;
 
+    private Bitstream bitstream;
     private IntBuffer buffer;
     private IntBuffer source;
     private float baseVolume = 1.0F;
     private boolean playing = false;
 
-    public AudioPlayer(InputStream stream) {
-        this.bitstream = new Bitstream(stream);
+    public AudioPlayer(CraftGR craftGR) {
+        this.craftGR = craftGR;
         this.decoder = new Decoder();
+    }
+
+    public void setStream(InputStream stream) {
+        this.bitstream = new Bitstream(stream);
     }
 
     protected int alError() {
         int error = AL10.alGetError();
         if (error != AL10.AL_NO_ERROR) {
-            CraftGR.log(Level.ERROR, String.format("AL10 Error: %d: %s", error, AL10.alGetString(error)));
+            craftGR.log(Level.ERROR, String.format("AL10 Error: %d: %s", error, AL10.alGetString(error)));
             return error;
         }
         return 0;
     }
 
-    public ProcessResult play() {
+    public void play() throws AudioPlayerException {
         try {
             this.source = BufferUtils.createIntBuffer(1);
             AL10.alGenSources(this.source);
@@ -48,25 +52,21 @@ public class AudioPlayer {
             AL10.alSourcei(this.source.get(0), AL10.AL_LOOPING, AL10.AL_FALSE);
             AL10.alSourcef(this.source.get(0), AL10.AL_PITCH, 1.0f);
 
-            AL10.alSourcef(this.source.get(0), AL10.AL_GAIN, this.baseVolume * (GRConfig.<Integer>getValue("volume") / 100f) * CraftGR.MC.options.getSoundSourceVolume(SoundSource.MASTER));
             alError();
 
             this.playing = true;
-            ProcessResult result = ProcessResult.SUCCESS;
+            boolean decoded;
 
-            while (this.playing && result == ProcessResult.SUCCESS) {
-                AL10.alSourcef(this.source.get(0), AL10.AL_GAIN, this.baseVolume * (GRConfig.<Integer>getValue("volume") / 100f) * CraftGR.MC.options.getSoundSourceVolume(SoundSource.MASTER));
-                result = decodeFrame();
-            }
+            do {
+                AL10.alSourcef(this.source.get(0), AL10.AL_GAIN, this.baseVolume * (ModConfig.<Integer>get("volume") / 100f) * craftGR.getMinecraft().options.getSoundSourceVolume(SoundSource.MASTER));
+                alError();
+            } while (this.playing && decodeFrame());
 
             close();
-            return result;
         } catch (Exception e) {
             if (this.playing) {
-                e.printStackTrace();
-                return ProcessResult.ERROR;
+                throw new AudioPlayerException(e);
             }
-            return ProcessResult.STOP;
         }
     }
 
@@ -82,13 +82,13 @@ public class AudioPlayer {
         }
     }
 
-    protected ProcessResult decodeFrame() {
+    protected boolean decodeFrame() throws AudioPlayerException {
         try {
             Header h = this.bitstream.readFrame();
 
             if (h == null) {
                 close();
-                return ProcessResult.STOP;
+                return false;
             }
 
             SampleBuffer output = (SampleBuffer) this.decoder.decodeFrame(h, this.bitstream);
@@ -116,13 +116,12 @@ public class AudioPlayer {
 
             this.bitstream.closeFrame();
 
-            return ProcessResult.SUCCESS;
+            return true;
         } catch (Exception e) {
             if (this.playing) {
-                e.printStackTrace();
-                return ProcessResult.ERROR;
+                throw new AudioPlayerException(e);
             }
-            return ProcessResult.STOP;
+            return false;
         }
     }
 
@@ -146,7 +145,7 @@ public class AudioPlayer {
     public void setBaseVolume(float f) {
         this.baseVolume = f;
         if (this.playing && this.source != null) {
-            float volume = f * (GRConfig.<Integer>getValue("volume") / 100f) * CraftGR.MC.options.getSoundSourceVolume(SoundSource.MASTER);
+            float volume = f * (ModConfig.<Integer>get("volume") / 100f) * craftGR.getMinecraft().options.getSoundSourceVolume(SoundSource.MASTER);
             AL10.alSourcef(this.source.get(0), AL10.AL_GAIN, volume);
         }
     }

@@ -1,4 +1,4 @@
-package io.github.kabanfriends.craftgr.render.widget;
+package io.github.kabanfriends.craftgr.overlay.widget;
 
 import net.minecraft.client.gui.GuiGraphics;
 

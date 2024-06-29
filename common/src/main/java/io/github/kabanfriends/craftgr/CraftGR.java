@@ -1,12 +1,11 @@
 package io.github.kabanfriends.craftgr;
 
-import io.github.kabanfriends.craftgr.config.GRConfig;
-import io.github.kabanfriends.craftgr.handler.OverlayHandler;
-import io.github.kabanfriends.craftgr.song.JsonAPISongProvider;
+import io.github.kabanfriends.craftgr.audio.RadioStream;
+import io.github.kabanfriends.craftgr.config.ModConfig;
+import io.github.kabanfriends.craftgr.event.ClientEvents;
 import io.github.kabanfriends.craftgr.platform.Platform;
-import io.github.kabanfriends.craftgr.render.overlay.impl.SongInfoOverlay;
-import io.github.kabanfriends.craftgr.song.SongProviderManager;
-import io.github.kabanfriends.craftgr.song.WebSocketSongProvider;
+import io.github.kabanfriends.craftgr.overlay.SongInfoOverlay;
+import io.github.kabanfriends.craftgr.song.SongProvider;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
@@ -22,55 +21,92 @@ import java.util.concurrent.Executors;
 
 public class CraftGR {
 
-    public static Logger LOGGER = LogManager.getLogger();
-
     public static final String MOD_ID = "craftgr";
     public static final String MOD_NAME = "CraftGR";
 
-    public static final Minecraft MC = Minecraft.getInstance();
+    public static final Component AUDIO_MUTED_ICON = Component.literal("M").withStyle(Style.EMPTY.withFont(ResourceLocation.fromNamespaceAndPath(CraftGR.MOD_ID, "icons")));
+    public static final Component RECONNECT_ICON = Component.literal("R").withStyle(Style.EMPTY.withFont(ResourceLocation.fromNamespaceAndPath(CraftGR.MOD_ID, "icons")));
 
-    public static final Component AUDIO_MUTED_ICON;
-    public static final Component RECONNECT_ICON;
+    private static CraftGR instance;
 
-    private static final ExecutorService EXECUTOR = Executors.newCachedThreadPool();
+    private final Minecraft minecraft;
+    private final Platform platform;
+    private final Logger logger;
+    private final ModConfig config;
+    private final ExecutorService executor;
+    private final CloseableHttpClient httpClient;
+    private final ClientEvents events;
+    private final SongInfoOverlay songInfoOverlay;
+    private final RadioStream radioStream;
 
-    static {
-        ResourceLocation iconFont = ResourceLocation.fromNamespaceAndPath(CraftGR.MOD_ID, "icons");
-        AUDIO_MUTED_ICON = Component.literal("M").withStyle(Style.EMPTY.withFont(iconFont));
-        RECONNECT_ICON = Component.literal("R").withStyle(Style.EMPTY.withFont(iconFont));
+    private SongProvider songProvider;
+
+    public CraftGR(Platform platform) {
+        instance = this;
+
+        this.minecraft = Minecraft.getInstance();
+        this.platform = platform;
+        this.logger = LogManager.getLogger();
+        this.config = new ModConfig(this);
+        this.executor = Executors.newCachedThreadPool();
+        this.httpClient = HttpClients.createDefault();
+        this.events = new ClientEvents(this);
+        this.songInfoOverlay = new SongInfoOverlay(this);
+        this.radioStream = new RadioStream(this);
     }
 
-    public static boolean renderSongOverlay;
-
-    private static Platform platform;
-    private static CloseableHttpClient httpClient;
-
-    public static void init(Platform platform) {
-        CraftGR.platform = platform;
-
-        GRConfig.init();
-
-        CraftGR.httpClient = HttpClients.createSystem();
-    }
-
-    public static void lateInit() {
-        OverlayHandler.addOverlay(new SongInfoOverlay(MC.getTextureManager()));
-        SongProviderManager.setProvider(new WebSocketSongProvider());
-    }
-
-    public static Platform getPlatform() {
+    public Platform getPlatform() {
         return platform;
     }
 
-    public static CloseableHttpClient getHttpClient() {
+    public CloseableHttpClient getHttpClient() {
         return httpClient;
     }
 
-    public static ExecutorService getThreadExecutor() {
-        return EXECUTOR;
+    public ExecutorService getThreadExecutor() {
+        return executor;
     }
 
-    public static void log(Level level, String message) {
-        LOGGER.log(level, "[" + MOD_NAME + "] " + message);
+    public SongInfoOverlay getSongInfoOverlay() {
+        return songInfoOverlay;
+    }
+
+    public Minecraft getMinecraft() {
+        return minecraft;
+    }
+
+    public ModConfig getConfig() {
+        return config;
+    }
+
+    public SongProvider getSongProvider() {
+        return songProvider;
+    }
+
+    public RadioStream getRadioStream() {
+        return radioStream;
+    }
+
+    public void setSongProvider(SongProvider provider) {
+        if (songProvider != null) {
+            songProvider.stop();
+        }
+
+        songProvider = provider;
+        songProvider.start();
+
+        CraftGR.getInstance().getSongInfoOverlay().onSongChanged();
+    }
+
+    public ClientEvents clientEvents() {
+        return events;
+    }
+
+    public void log(Level level, String message) {
+        logger.log(level, String.format("[%s] %s", MOD_NAME, message));
+    }
+
+    public static CraftGR getInstance() {
+        return instance;
     }
 }

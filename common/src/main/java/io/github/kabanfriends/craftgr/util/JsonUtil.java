@@ -9,7 +9,7 @@ public class JsonUtil {
     @SuppressWarnings("unchecked")
     public static <T> T getValueWithDefault(JsonObject json, String key, T defaultValue, Class<T> clazz) {
         JsonElement element = json.get(key);
-        if (element != null && element.isJsonPrimitive()) {
+        if (element != null && !element.isJsonNull() && element.isJsonPrimitive()) {
             JsonPrimitive value = element.getAsJsonPrimitive();
             if (value.isNumber()) {
                 Number number = value.getAsNumber();

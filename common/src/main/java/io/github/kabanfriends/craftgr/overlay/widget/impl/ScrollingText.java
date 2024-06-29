@@ -1,10 +1,10 @@
-package io.github.kabanfriends.craftgr.render.widget.impl;
+package io.github.kabanfriends.craftgr.overlay.widget.impl;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.kabanfriends.craftgr.CraftGR;
-import io.github.kabanfriends.craftgr.config.GRConfig;
-import io.github.kabanfriends.craftgr.render.widget.UIWidget;
+import io.github.kabanfriends.craftgr.config.ModConfig;
+import io.github.kabanfriends.craftgr.overlay.widget.UIWidget;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 
@@ -74,7 +74,7 @@ public class ScrollingText extends UIWidget {
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY) {
-        float scale = GRConfig.<Float>getValue("overlayScale") * 2;
+        float scale = ModConfig.<Float>get("overlayScale") * 2;
 
         int fontX = (int)getMovingX(x / 2f);
         int fontY = (int)y / 2;
@@ -83,25 +83,25 @@ public class ScrollingText extends UIWidget {
         int scissorY = (int)(scale * fontY);
 
         int scissorW = (int)(width * scale);
-        int scissorH = (int)(CraftGR.MC.font.lineHeight * scale);
+        int scissorH = (int)(CraftGR.getInstance().getMinecraft().font.lineHeight * scale);
 
         PoseStack poseStack = graphics.pose();
 
-        RenderSystem.enableScissor(scissorX, (CraftGR.MC.getWindow().getHeight() - scissorY - scissorH), scissorW, scissorH);
+        RenderSystem.enableScissor(scissorX, (CraftGR.getInstance().getMinecraft().getWindow().getHeight() - scissorY - scissorH), scissorW, scissorH);
 
         // Uncomment to debug
         //io.github.kabanfriends.craftgr.util.RenderUtil.fill(poseStack, 0, 0, CraftGR.MC.getWindow().getWidth(), CraftGR.MC.getWindow().getHeight(), 0x8F00FF00, 0.6f);
 
         poseStack.pushPose();
         poseStack.scale(2, 2, 2);
-        graphics.drawString(CraftGR.MC.font, component, fontX, fontY, Color.WHITE.getRGB());
+        graphics.drawString(CraftGR.getInstance().getMinecraft().font, component, fontX, fontY, Color.WHITE.getRGB());
         poseStack.popPose();
 
         RenderSystem.disableScissor();
     }
 
     private float getMovingX(float x) {
-        final float textWidth = CraftGR.MC.font.width(component);
+        final float textWidth = CraftGR.getInstance().getMinecraft().font.width(component);
 
         if (width < textWidth) {
             final float maxMove = width - textWidth;

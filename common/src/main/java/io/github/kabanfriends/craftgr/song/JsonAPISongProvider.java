@@ -3,8 +3,7 @@ package io.github.kabanfriends.craftgr.song;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.github.kabanfriends.craftgr.CraftGR;
-import io.github.kabanfriends.craftgr.config.GRConfig;
-import io.github.kabanfriends.craftgr.render.overlay.impl.SongInfoOverlay;
+import io.github.kabanfriends.craftgr.config.ModConfig;
 import io.github.kabanfriends.craftgr.util.*;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.logging.log4j.Level;
@@ -30,13 +29,12 @@ public class JsonAPISongProvider implements SongProvider {
 
     @Override
     public void start() {
-        CraftGR.getThreadExecutor().submit(() -> verifyCurrentSong(true));
+        CraftGR.getInstance().getThreadExecutor().submit(() -> verifyCurrentSong(true));
     }
 
     @Override
     public void stop() {
-        cancelIfNotNull(songEndTask);
-        cancelIfNotNull(songVerifyTask);
+        scheduler.shutdownNow();
     }
 
     @Override
@@ -65,7 +63,7 @@ public class JsonAPISongProvider implements SongProvider {
                 scheduler.schedule(() -> verifyCurrentSong(true), RETRY_INTERVAL, TimeUnit.SECONDS);
             }
 
-            CraftGR.log(Level.ERROR, "Error while fetching the song information" + (shouldRetry ? ", retrying" : "") + ": " + ExceptionUtil.getStackTrace(e));
+            CraftGR.getInstance().log(Level.ERROR, "Error while fetching the song information" + (shouldRetry ? ", retrying" : "") + ": " + ExceptionUtil.getStackTrace(e));
         }
     }
 
@@ -82,15 +80,14 @@ public class JsonAPISongProvider implements SongProvider {
         // Verify the current song every once in a while
         songVerifyTask = scheduler.scheduleWithFixedDelay(() -> verifyCurrentSong(false), VERIFY_INTERVAL, VERIFY_INTERVAL, TimeUnit.SECONDS);
 
-        SongInfoOverlay.getInstance().updateSongTitle();
-        SongInfoOverlay.getInstance().updateAlbumArtTexture();
+        CraftGR.getInstance().getSongInfoOverlay().onSongChanged();
     }
 
     private Song getSongFromAPI() throws IOException {
-        HttpGet get = HttpUtil.get(GRConfig.getValue("urlInfoJson"));
+        HttpGet get = HttpUtil.get(ModConfig.get("urlInfoJson"));
 
         try (
-                ResponseHolder response = new ResponseHolder(CraftGR.getHttpClient().execute(get));
+                ResponseHolder response = new ResponseHolder(CraftGR.getInstance().getHttpClient().execute(get));
                 InputStream stream = response.getResponse().getEntity().getContent();
                 BufferedReader r = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8))
         ) {
@@ -120,7 +117,7 @@ public class JsonAPISongProvider implements SongProvider {
                             TitleFixer.fixJapaneseString(JsonUtil.getValueWithDefault(songInfo, "CIRCLE", null, String.class)),
                             apiDuration,
                             JsonUtil.getValueWithDefault(songData, "ALBUMID", 0, int.class),
-                            albumArt == null ? null : GRConfig.getValue("urlAlbumArt") + albumArt,
+                            albumArt == null ? null : ModConfig.get("urlAlbumArt") + albumArt,
                             apiPlayed > apiDuration
                     ),
                     apiPlayed

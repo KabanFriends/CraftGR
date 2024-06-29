@@ -69,7 +69,7 @@ public class RenderUtil {
     }
 
     public static float getUIScale(float uiScale) {
-        double mcScale = CraftGR.MC.getWindow().getGuiScale();
+        double mcScale = CraftGR.getInstance().getMinecraft().getWindow().getGuiScale();
 
         return (float) ((((double) UI_BASE_SCALE) * (((double) UI_BASE_SCALE) / mcScale)) * uiScale);
     }

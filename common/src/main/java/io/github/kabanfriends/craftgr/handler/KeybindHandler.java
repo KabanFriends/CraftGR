@@ -1,17 +1,15 @@
 package io.github.kabanfriends.craftgr.handler;
 
 import io.github.kabanfriends.craftgr.CraftGR;
-import io.github.kabanfriends.craftgr.util.AudioPlayerUtil;
-import io.github.kabanfriends.craftgr.util.HandlerState;
-import io.github.kabanfriends.craftgr.util.MessageUtil;
+import io.github.kabanfriends.craftgr.audio.RadioStream;
 import net.minecraft.client.KeyMapping;
 
 public class KeybindHandler {
 
     public static KeyMapping toggleMuteKey;
 
-    public static void onClientTick() {
-        if (CraftGR.MC.screen == null) {
+    public static void tick() {
+        if (CraftGR.getInstance().getMinecraft().screen == null) {
             while (toggleMuteKey.consumeClick()) {
                 KeybindHandler.togglePlayback();
             }
@@ -19,16 +17,13 @@ public class KeybindHandler {
     }
 
     private static void togglePlayback() {
-        AudioPlayerHandler handler = AudioPlayerHandler.getInstance();
-        HandlerState state = handler.getState();
+        RadioStream stream = CraftGR.getInstance().getRadioStream();
+        RadioStream.State state = stream.getState();
 
-        if (state == HandlerState.ACTIVE) {
-            handler.stopPlayback();
-            MessageUtil.sendAudioStoppedMessage();
-        } else if (state != HandlerState.INITIALIZING && state != HandlerState.RELOADING) {
-            MessageUtil.sendConnectingMessage();
-            AudioPlayerUtil.startPlaybackAsync();
+        if (state == RadioStream.State.PLAYING) {
+            stream.disconnect();
+        } else if (state != RadioStream.State.CONNECTING && state != RadioStream.State.RELOADING) {
+            stream.start();
         }
     }
-
 }

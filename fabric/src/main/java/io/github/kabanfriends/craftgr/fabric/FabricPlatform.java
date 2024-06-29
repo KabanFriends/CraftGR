@@ -1,18 +1,17 @@
 package io.github.kabanfriends.craftgr.fabric;
 
 import com.terraformersmc.modmenu.gui.ModsScreen;
-import io.github.kabanfriends.craftgr.CraftGR;
-import io.github.kabanfriends.craftgr.config.GRConfig;
 import io.github.kabanfriends.craftgr.platform.Platform;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
+import net.minecraft.client.Minecraft;
 
 import java.util.Optional;
 
 public class FabricPlatform extends Platform {
 
-    public FabricPlatform(Platform.PlatformType type) {
-        super(type);
+    public FabricPlatform(Minecraft minecraft) {
+        super(minecraft, PlatformType.FABRIC);
     }
 
     public boolean isModLoaded(String id) {
@@ -25,14 +24,9 @@ public class FabricPlatform extends Platform {
     }
 
     public boolean isInModMenu() {
-        if (CraftGR.getPlatform().isModLoaded("modmenu")) {
-            return CraftGR.MC.screen instanceof ModsScreen;
+        if (isModLoaded("modmenu")) {
+            return getMinecraft().screen instanceof ModsScreen;
         }
         return false;
     }
-
-    public void openConfigScreen() {
-        CraftGR.MC.setScreen(GRConfig.getConfigScreen(CraftGR.MC.screen));
-    }
-
 }
