@@ -31,6 +31,8 @@ dependencies {
 
     modLocalRuntime("com.terraformersmc:modmenu:${rootProject.mod_menu_version}") { transitive(false) }
     modLocalRuntime "dev.isxander:yet-another-config-lib:${rootProject.yacl_version}-fabric"
+
+    localRuntime "org.java-websocket:Java-WebSocket:${rootProject.java_websocket_version}"
 }
 
 processResources {

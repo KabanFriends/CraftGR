@@ -39,18 +39,21 @@ public class ClientEvents {
     }
 
     public void onGameRender(GuiGraphics graphics, int mouseX, int mouseY) {
-        SongInfoOverlay overlay = craftGR.getSongInfoOverlay();
-        if (!overlay.isActive()) {
+        if (shouldRenderOverlay(craftGR)) {
             return;
         }
         craftGR.getSongInfoOverlay().render(graphics, mouseX, mouseY);
     }
 
     public boolean onMouseClick(int mouseX, int mouseY) {
-        SongInfoOverlay overlay = craftGR.getSongInfoOverlay();
-        if (!overlay.isActive()) {
+        if (shouldRenderOverlay(craftGR)) {
             return true;
         }
         return craftGR.getSongInfoOverlay().mouseClick(mouseX, mouseY);
+    }
+
+    private static boolean shouldRenderOverlay(CraftGR craftGR) {
+        SongInfoOverlay overlay = craftGR.getSongInfoOverlay();
+        return overlay.isActive() && !craftGR.getMinecraft().options.hideGui && !craftGR.getMinecraft().getDebugOverlay().showDebugScreen();
     }
 }
