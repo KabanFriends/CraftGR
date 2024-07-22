@@ -64,6 +64,8 @@ public class RadioStream {
 
     private void handlePlayback() {
         try {
+            craftGR.getThreadExecutor().submit(() -> craftGR.getSongProvider().verifyCurrentSong());
+
             MessageUtil.sendConnectingMessage();
             connect();
 
