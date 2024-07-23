@@ -39,14 +39,14 @@ public class ClientEvents {
     }
 
     public void onGameRender(GuiGraphics graphics, int mouseX, int mouseY) {
-        if (shouldRenderOverlay(craftGR)) {
+        if (!shouldRenderOverlay(craftGR)) {
             return;
         }
         craftGR.getSongInfoOverlay().render(graphics, mouseX, mouseY);
     }
 
     public boolean onMouseClick(int mouseX, int mouseY) {
-        if (shouldRenderOverlay(craftGR)) {
+        if (!shouldRenderOverlay(craftGR)) {
             return true;
         }
         return craftGR.getSongInfoOverlay().mouseClick(mouseX, mouseY);
