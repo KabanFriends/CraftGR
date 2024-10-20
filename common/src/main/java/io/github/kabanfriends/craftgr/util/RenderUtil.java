@@ -3,6 +3,7 @@ package io.github.kabanfriends.craftgr.util;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import io.github.kabanfriends.craftgr.CraftGR;
+import net.minecraft.client.renderer.CoreShaders;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 import org.joml.Matrix4f;
@@ -45,7 +46,7 @@ public class RenderUtil {
 
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
-        RenderSystem.setShader(GameRenderer::getPositionColorShader);
+        RenderSystem.setShader(CoreShaders.POSITION_COLOR);
         BufferBuilder bb = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
         bb.addVertex(matrix4f, minX, maxY, 0.0F).setColor(r, g, b, a);
         bb.addVertex(matrix4f, maxX, maxY, 0.0F).setColor(r, g, b, a);

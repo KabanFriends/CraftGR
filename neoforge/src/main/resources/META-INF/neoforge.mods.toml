@@ -18,14 +18,14 @@ config = "craftgr-common.mixins.json"
 [[dependencies.craftgr]]
 modId = "minecraft"
 type = "required"
-versionRange = "[1.21,)"
+versionRange = "[1.21.2-,)"
 ordering = "NONE"
 side = "CLIENT"
 
 [[dependencies.craftgr]]
 modId = "neoforge"
 type = "required"
-versionRange = "[21.0.0-beta,)"
+versionRange = "[21.2.0-,)"
 ordering = "NONE"
 side = "CLIENT"
 
