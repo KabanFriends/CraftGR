@@ -85,6 +85,10 @@ public class RadioStateController implements Controller<Boolean> {
                 return false;
             }
 
+            return _keyPressed(keyCode);
+        }
+
+        public boolean _keyPressed(int keyCode) {
             if (keyCode == InputConstants.KEY_RETURN || keyCode == InputConstants.KEY_SPACE || keyCode == InputConstants.KEY_NUMPADENTER) {
                 toggleSetting();
                 return true;
@@ -95,7 +99,15 @@ public class RadioStateController implements Controller<Boolean> {
 
         @Override
         public boolean mouseClicked(double mouseX, double mouseY, int button) {
-            if (!isMouseOver(mouseX, mouseY) || !isAvailable()) {
+            if (!isMouseOver(mouseX, mouseY)) {
+                return false;
+            }
+
+            return _mouseClicked();
+        }
+
+        public boolean _mouseClicked() {
+            if (!isAvailable()) {
                 return false;
             }
 
