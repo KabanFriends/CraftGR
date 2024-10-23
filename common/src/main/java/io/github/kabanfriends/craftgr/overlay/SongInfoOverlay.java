@@ -142,10 +142,7 @@ public class SongInfoOverlay extends Overlay {
             if (!song.metadata().intermission()) {
                 int dotWidth = font.width("...");
 
-                String year = null;
-                if (song.metadata().year() != null) {
-                    year = "(" + song.metadata().year() + ")";
-                }
+                String year = song.metadata().year() == null ? null : "(" + song.metadata().year() + ")";
 
                 String[] strings = {year, song.metadata().artist(), song.metadata().album(), song.metadata().circle()};
                 for (int i = 0; i < 4; i++) {
