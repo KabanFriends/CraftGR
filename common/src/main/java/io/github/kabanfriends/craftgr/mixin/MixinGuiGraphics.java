@@ -1,27 +1,32 @@
 package io.github.kabanfriends.craftgr.mixin;
 
-import net.minecraft.client.gui.Font;
+import com.mojang.blaze3d.platform.Window;
+import io.github.kabanfriends.craftgr.util.ThreadLocals;
+import io.github.kabanfriends.craftgr.util.render.UnscaledScreenRectangle;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
-import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipPositioner;
+import net.minecraft.client.gui.navigation.ScreenRectangle;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.List;
-
-// The purpose of this Mixin is to fix a client bug where the
-// batch text rendering in tooltips are never correctly flushed.
 @Mixin(GuiGraphics.class)
-public abstract class MixinGuiGraphics {
+public class MixinGuiGraphics {
 
-    @Shadow
-    protected abstract void flushIfUnmanaged();
+    @Inject(method = "applyScissor", at = @At("HEAD"))
+    private void craftgr$getScissorRectangle(ScreenRectangle rectangle, CallbackInfo ci) {
+       if (rectangle instanceof UnscaledScreenRectangle) {
+           ThreadLocals.SCISSOR_CURRENT_RECTANGLE.set(rectangle);
+       }
+    }
 
-    @Inject(method = "renderTooltipInternal", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;popPose()V",shift = At.Shift.AFTER))
-    private void craftgr$fixTooltip(Font font, List<ClientTooltipComponent> tooltips, int mouseX, int mouseY, ClientTooltipPositioner positioner, CallbackInfo ci) {
-        flushIfUnmanaged();
+    @Redirect(method = "applyScissor", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/platform/Window;getGuiScale()D"))
+    private double craftgr$patchScissorScale(Window window) {
+        if (ThreadLocals.SCISSOR_CURRENT_RECTANGLE.get() instanceof UnscaledScreenRectangle) {
+            ThreadLocals.SCISSOR_CURRENT_RECTANGLE.remove();
+            return 1.0;
+        }
+        return window.getGuiScale();
     }
 }

@@ -1,4 +1,0 @@
-accessWidener   v1      named
-accessible      class   net/minecraft/client/gui/components/OptionsList$Entry
-accessible      class   net/minecraft/client/gui/components/OptionsList$OptionEntry
-accessible      class   net/minecraft/client/gui/components/AbstractSelectionList$Entry

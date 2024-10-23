@@ -52,6 +52,9 @@ public class TitleFixer {
     }
 
     public static String fixJapaneseString(String input) {
+        if (input == null) {
+            return null;
+        }
 
         //Replace or remove special characters that are visible only in Minecraft font
         input = input.replaceAll("　", "  ");

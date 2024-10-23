@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 import java.util.List;
 
 @Mixin(OptionsList.OptionEntry.class)
-public class MixinOptionEntry {
+public class MixinOptionsListOptionEntry {
 
     @ModifyArg(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/components/OptionsList$Entry;<init>(Ljava/util/List;Lnet/minecraft/client/gui/screens/Screen;)V"))
     private static List<AbstractWidget> craftgr$initOptionEntry(List<AbstractWidget> list) {

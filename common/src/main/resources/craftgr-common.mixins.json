@@ -5,7 +5,7 @@
   "mixins": [
     "MixinAccessorAbstractSelectionList",
     "MixinGuiGraphics",
-    "MixinOptionEntry",
+    "MixinOptionsListOptionEntry",
     "MixinOptionsSubScreen",
     "MixinPngInfo",
     "MixinSoundEngine",

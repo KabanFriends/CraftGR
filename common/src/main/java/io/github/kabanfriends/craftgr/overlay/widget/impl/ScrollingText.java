@@ -1,10 +1,10 @@
 package io.github.kabanfriends.craftgr.overlay.widget.impl;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.config.ModConfig;
 import io.github.kabanfriends.craftgr.overlay.widget.UIWidget;
+import io.github.kabanfriends.craftgr.util.render.RenderUtil;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 
@@ -87,17 +87,17 @@ public class ScrollingText extends UIWidget {
 
         PoseStack poseStack = graphics.pose();
 
-        RenderSystem.enableScissor(scissorX, (CraftGR.getInstance().getMinecraft().getWindow().getHeight() - scissorY - scissorH), scissorW, scissorH);
+        RenderUtil.enableUnscaledScissor(graphics, scissorX, scissorY, scissorX + scissorW, scissorY + scissorH);
 
         // Uncomment to debug
-        //io.github.kabanfriends.craftgr.util.RenderUtil.fill(poseStack, 0, 0, CraftGR.MC.getWindow().getWidth(), CraftGR.MC.getWindow().getHeight(), 0x8F00FF00, 0.6f);
+        //RenderUtil.fill(poseStack, 0, 0, CraftGR.getInstance().getMinecraft().getWindow().getWidth(), CraftGR.getInstance().getMinecraft().getWindow().getHeight(), 0x8F00FF00, 0.6f);
 
         poseStack.pushPose();
         poseStack.scale(2, 2, 2);
         graphics.drawString(CraftGR.getInstance().getMinecraft().font, component, fontX, fontY, Color.WHITE.getRGB());
         poseStack.popPose();
 
-        RenderSystem.disableScissor();
+        graphics.disableScissor();
     }
 
     private float getMovingX(float x) {

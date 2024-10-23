@@ -12,7 +12,7 @@ dependencies {
 }
 
 loom {
-    accessWidenerPath = file("src/main/resources/craftgr.accesswidener")
+    accessWidenerPath = file("src/main/resources/craftgr-common.accesswidener")
 }
 
 architectury {

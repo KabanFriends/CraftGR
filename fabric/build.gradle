@@ -23,6 +23,7 @@ dependencies {
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
 
     modApi("com.terraformersmc:modmenu:${rootProject.mod_menu_version}") { transitive(false) }
+    modApi "dev.isxander:yet-another-config-lib:${rootProject.yacl_version}-fabric"
 
     include "com.github.umjammer:jlayer:${rootProject.jlayer_version}"
     include("org.java-websocket:Java-WebSocket:${rootProject.java_websocket_version}") {
@@ -33,6 +34,10 @@ dependencies {
     modLocalRuntime "dev.isxander:yet-another-config-lib:${rootProject.yacl_version}-fabric"
 
     localRuntime "org.java-websocket:Java-WebSocket:${rootProject.java_websocket_version}"
+}
+
+loom {
+    accessWidenerPath = file("src/main/resources/craftgr-fabric.accesswidener")
 }
 
 processResources {
