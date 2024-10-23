@@ -1,4 +1,4 @@
-package io.github.kabanfriends.craftgr.mixin;
+package io.github.kabanfriends.craftgr.fabric.mixin;
 
 import dev.isxander.yacl3.gui.OptionListWidget;
 import io.github.kabanfriends.craftgr.config.controller.RadioStateController;
@@ -8,10 +8,10 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(OptionListWidget.OptionEntry.class)
-public class MixinOptionListWidget {
+public class MixinOptionListWidgetOptionEntry {
 
     @Inject(method = "keyPressed", at = @At(value = "INVOKE", target = "Ldev/isxander/yacl3/gui/AbstractWidget;keyPressed(III)Z"), cancellable = true)
-    private void test(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable<Boolean> cir) {
+    private void craftgr$fixKeyPressed(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable<Boolean> cir) {
         if (!((MixinAccessorAbstractSelectionListEntry<?>)this).getList().getFocused().equals(this)) {
             return;
         }

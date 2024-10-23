@@ -26,7 +26,8 @@
     "server": []
   },
   "mixins": [
-    "craftgr-common.mixins.json"
+    "craftgr-common.mixins.json",
+    "craftgr-fabric.mixins.json"
   ],
   "depends": {
     "minecraft": ">=1.21.2-",

@@ -3,11 +3,8 @@
   "package": "io.github.kabanfriends.craftgr.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "MixinAbstractSelectionList",
     "MixinAccessorAbstractSelectionList",
-    "MixinAccessorAbstractSelectionListEntry",
-    "MixinOptionEntry",
-    "MixinOptionListWidget",
+    "MixinOptionsListOptionEntry",
     "MixinOptionsSubScreen",
     "MixinPngInfo",
     "MixinSoundEngine",

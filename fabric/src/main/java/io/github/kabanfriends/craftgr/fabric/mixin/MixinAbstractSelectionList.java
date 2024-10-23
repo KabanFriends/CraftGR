@@ -1,4 +1,4 @@
-package io.github.kabanfriends.craftgr.mixin;
+package io.github.kabanfriends.craftgr.fabric.mixin;
 
 import dev.isxander.yacl3.gui.OptionListWidget;
 import io.github.kabanfriends.craftgr.config.controller.RadioStateController;
@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 public class MixinAbstractSelectionList {
 
     @Redirect(method = "mouseClicked", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/components/AbstractSelectionList$Entry;mouseClicked(DDI)Z"))
-    private boolean test(AbstractSelectionList.Entry<?> entry, double mouseX, double mouseY, int button) {
+    private boolean craftgr$fixMouseClicked(AbstractSelectionList.Entry<?> entry, double mouseX, double mouseY, int button) {
         if (entry instanceof OptionListWidget.OptionEntry optionEntry) {
             if (optionEntry.widget instanceof RadioStateController.Element radioElement) {
                 return radioElement._mouseClicked();

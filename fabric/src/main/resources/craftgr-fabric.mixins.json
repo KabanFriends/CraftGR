@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "io.github.kabanfriends.craftgr.fabric.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "MixinAbstractSelectionList",
+    "MixinAccessorAbstractSelectionListEntry",
+    "MixinOptionListWidgetOptionEntry"
+  ],
+  "server": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
