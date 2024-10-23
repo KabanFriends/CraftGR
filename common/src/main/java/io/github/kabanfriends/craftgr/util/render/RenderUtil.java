@@ -1,11 +1,10 @@
-package io.github.kabanfriends.craftgr.util;
+package io.github.kabanfriends.craftgr.util.render;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import io.github.kabanfriends.craftgr.CraftGR;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.CoreShaders;
-import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.resources.ResourceLocation;
 import org.joml.Matrix4f;
 
 public class RenderUtil {
@@ -60,5 +59,9 @@ public class RenderUtil {
         double mcScale = CraftGR.getInstance().getMinecraft().getWindow().getGuiScale();
 
         return (float) ((((double) UI_BASE_SCALE) * (((double) UI_BASE_SCALE) / mcScale)) * uiScale);
+    }
+
+    public static void enableUnscaledScissor(GuiGraphics graphics, int x, int y, int width, int height) {
+        graphics.applyScissor(graphics.scissorStack.push(new UnscaledScreenRectangle(x, y, width - x, height -y)));
     }
 }

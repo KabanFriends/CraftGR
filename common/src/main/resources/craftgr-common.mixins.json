@@ -4,6 +4,7 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "MixinAccessorAbstractSelectionList",
+    "MixinGuiGraphics",
     "MixinOptionsListOptionEntry",
     "MixinOptionsSubScreen",
     "MixinPngInfo",

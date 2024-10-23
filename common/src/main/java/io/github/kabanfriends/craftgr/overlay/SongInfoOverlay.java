@@ -10,6 +10,7 @@ import io.github.kabanfriends.craftgr.audio.RadioStream;
 import io.github.kabanfriends.craftgr.overlay.widget.impl.ScrollingText;
 import io.github.kabanfriends.craftgr.song.Song;
 import io.github.kabanfriends.craftgr.util.*;
+import io.github.kabanfriends.craftgr.util.render.RenderUtil;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
