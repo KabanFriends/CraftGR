@@ -100,12 +100,17 @@ public class RadioOptionContainer extends AbstractContainerWidget {
     }
 
     @Override
-    protected boolean clicked(double mouseX, double mouseY) {
-        return isMouseOver(mouseX, mouseY);
+    public List<? extends GuiEventListener> children() {
+        return this.children;
     }
 
     @Override
-    public List<? extends GuiEventListener> children() {
-        return this.children;
+    protected int contentHeight() {
+        return 20;
+    }
+
+    @Override
+    protected double scrollRate() {
+        return 10.0;
     }
 }

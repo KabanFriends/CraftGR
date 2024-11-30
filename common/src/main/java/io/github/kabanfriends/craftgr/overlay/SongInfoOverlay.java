@@ -79,6 +79,7 @@ public class SongInfoOverlay extends Overlay {
 
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
+    private boolean albumArtLoaded;
     private boolean expanded;
     private boolean muted;
 
@@ -88,6 +89,7 @@ public class SongInfoOverlay extends Overlay {
         this.craftGR = craftGR;
         this.songTitleText = new ScrollingText(0, 0, Component.translatable("text.craftgr.song.unknown"));
         this.expanded = false;
+        this.albumArtLoaded = false;
 
         updateScrollWidth();
     }
@@ -365,6 +367,7 @@ public class SongInfoOverlay extends Overlay {
 
         TextureManager textureManager = craftGR.getMinecraft().getTextureManager();
         textureManager.release(ALBUM_ART_LOCATION);
+        albumArtLoaded = false;
 
         try {
             HttpGet get = HttpUtil.get(song.metadata().albumArt());
@@ -374,7 +377,10 @@ public class SongInfoOverlay extends Overlay {
             ) {
                 ThreadLocals.PNG_INFO_BYPASS_VALIDATION.set(true);
                 NativeImage image = NativeImage.read(stream);
-                craftGR.getMinecraft().execute(() -> textureManager.register(ALBUM_ART_LOCATION, new DynamicTexture(image)));
+                craftGR.getMinecraft().execute(() -> {
+                    textureManager.register(ALBUM_ART_LOCATION, new DynamicTexture(image));
+                    albumArtLoaded = true;
+                });
             }
         } catch (Exception e) {
             craftGR.log(Level.ERROR, "Error while creating album art texture (" + song.metadata().albumArt() + ")" + ( attempt < ALBUM_ART_FETCH_TRIES ? ", retrying" : "") + ": " + ExceptionUtil.getStackTrace(e));
@@ -393,7 +399,7 @@ public class SongInfoOverlay extends Overlay {
         Song song = craftGR.getSongProvider().getCurrentSong();
         return song != null &&
                 !song.metadata().intermission() &&
-                craftGR.getMinecraft().getTextureManager().getTexture(ALBUM_ART_LOCATION, null) != null;
+                albumArtLoaded;
     }
 
     private static String formatTime(long time) {

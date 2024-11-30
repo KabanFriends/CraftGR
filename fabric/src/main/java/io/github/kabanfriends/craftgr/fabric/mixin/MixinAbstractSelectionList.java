@@ -10,6 +10,8 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(AbstractSelectionList.class)
 public class MixinAbstractSelectionList {
 
+    // TODO: requires a YACL update, see if this fix is still needed - might want to check ContainerEventHandler?
+    /*
     @Redirect(method = "mouseClicked", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/components/AbstractSelectionList$Entry;mouseClicked(DDI)Z"))
     private boolean craftgr$fixMouseClicked(AbstractSelectionList.Entry<?> entry, double mouseX, double mouseY, int button) {
         if (entry instanceof OptionListWidget.OptionEntry optionEntry) {
@@ -19,4 +21,5 @@ public class MixinAbstractSelectionList {
         }
         return entry.mouseClicked(mouseX, mouseY, button);
     }
+    */
 }
