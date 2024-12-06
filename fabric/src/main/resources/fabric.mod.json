@@ -26,12 +26,11 @@
     "server": []
   },
   "mixins": [
-    "craftgr-common.mixins.json",
-    "craftgr-fabric.mixins.json"
+    "craftgr-common.mixins.json"
   ],
   "accessWidener": "craftgr-common.accesswidener",
   "depends": {
-    "minecraft": ">=1.21.2-",
+    "minecraft": ">=1.21.4-",
     "fabricloader": "*",
     "fabric-key-binding-api-v1": "*",
     "fabric-lifecycle-events-v1": "*",
@@ -39,7 +38,7 @@
     "fabric-screen-api-v1": "*"
   },
   "recommends": {
-    "yet_another_config_lib_v3": ">=3.6.0"
+    "yet_another_config_lib_v3": ">=3.6.1"
   },
   "suggests": {
     "modmenu": ">=12.0.0-"
