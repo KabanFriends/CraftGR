@@ -56,11 +56,11 @@ public class TitleFixer {
             return null;
         }
 
-        //Replace or remove special characters that are visible only in Minecraft font
+        // Replace or remove special characters that are visible only in Minecraft font
         input = input.replaceAll("　", "  ");
         input = input.replaceAll("\u200B", "");
 
-        //Combine separated voicing and semi-voicing symbols
+        // Combine separated voicing and semi-voicing symbols
         Character last = null;
         char current;
         StringBuilder line = new StringBuilder();
