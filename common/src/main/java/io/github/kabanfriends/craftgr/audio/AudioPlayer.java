@@ -3,6 +3,7 @@ package io.github.kabanfriends.craftgr.audio;
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.config.ModConfig;
 import javazoom.jl.decoder.*;
+import net.minecraft.Util;
 import net.minecraft.sounds.SoundSource;
 import org.apache.logging.log4j.Level;
 import org.lwjgl.BufferUtils;
@@ -22,15 +23,16 @@ public class AudioPlayer {
     private Bitstream bitstream;
     private IntBuffer buffer;
     private IntBuffer source;
-    private float baseVolume = 1.0F;
+
     private boolean playing = false;
 
-    public AudioPlayer(CraftGR craftGR) {
+    private boolean fading;
+    private long fadingStart;
+    private float fadingDuration;
+
+    public AudioPlayer(CraftGR craftGR, InputStream stream) {
         this.craftGR = craftGR;
         this.decoder = new Decoder();
-    }
-
-    public void setStream(InputStream stream) {
         this.bitstream = new Bitstream(stream);
     }
 
@@ -48,7 +50,19 @@ public class AudioPlayer {
             this.playing = true;
 
             do {
-                applyVolume();
+                float volume = ModConfig.<Integer>get("volume") / 100f * craftGR.getMinecraft().options.getSoundSourceVolume(SoundSource.MASTER);
+                if (fading) {
+                    System.out.println("Fading");
+                    float multiplier = (Util.getMillis() - fadingStart) / fadingDuration;
+                    volume *= multiplier;
+
+                    if (multiplier >= 1.0f) {
+                        fading = false;
+                    }
+                }
+
+                AL10.alSourcef(this.source.get(0), AL10.AL_GAIN, volume);
+                alError();
             } while (this.playing && decodeFrame());
 
             close();
@@ -86,15 +100,10 @@ public class AudioPlayer {
         }
     }
 
-    public void setBaseVolume(float f) {
-        this.baseVolume = f;
-        if (this.playing && this.source != null) {
-            applyVolume();
-        }
-    }
-
-    public float getBaseVolume() {
-        return this.baseVolume;
+    public void fadeIn(float fadingDurationMillis) {
+        fadingStart = Util.getMillis();
+        fadingDuration = fadingDurationMillis;
+        fading = true;
     }
 
     public boolean isPlaying() {
@@ -163,10 +172,5 @@ public class AudioPlayer {
             return error;
         }
         return 0;
-    }
-
-    private void applyVolume() {
-        AL10.alSourcef(this.source.get(0), AL10.AL_GAIN, this.baseVolume * (ModConfig.<Integer>get("volume") / 100f) * craftGR.getMinecraft().options.getSoundSourceVolume(SoundSource.MASTER));
-        alError();
     }
 }

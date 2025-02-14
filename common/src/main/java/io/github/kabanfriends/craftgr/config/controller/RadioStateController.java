@@ -74,7 +74,7 @@ public class RadioStateController implements Controller<Boolean> {
 
             return switch (state) {
                 case STOPPED -> Component.translatable("text.craftgr.config.option.playback.stopped");
-                case AWAIT_LOADING, CONNECTING -> Component.translatable("text.craftgr.config.option.playback.connecting");
+                case AWAIT_LOADING, STARTING, CONNECTING -> Component.translatable("text.craftgr.config.option.playback.connecting");
                 case PLAYING -> Component.translatable("text.craftgr.config.option.playback.playing");
             };
         }
@@ -121,7 +121,7 @@ public class RadioStateController implements Controller<Boolean> {
 
             return switch (state) {
                 case STOPPED, PLAYING -> true;
-                case CONNECTING, AWAIT_LOADING -> false;
+                case AWAIT_LOADING, STARTING, CONNECTING -> false;
             };
         }
     }

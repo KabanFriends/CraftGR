@@ -1,7 +1,6 @@
 package io.github.kabanfriends.craftgr.event;
 
 import io.github.kabanfriends.craftgr.CraftGR;
-import io.github.kabanfriends.craftgr.audio.RadioStream;
 import io.github.kabanfriends.craftgr.config.ModConfig;
 import io.github.kabanfriends.craftgr.overlay.SongInfoOverlay;
 import io.github.kabanfriends.craftgr.song.SongProviderType;
@@ -23,8 +22,7 @@ public class ClientEvents {
     }
 
     public void onClientStop() {
-        RadioStream stream = craftGR.getRadioStream();
-        stream.disconnect();
+        craftGR.getRadioStream().stop(false);
 
         try {
             craftGR.getSongProvider().stop();
@@ -34,7 +32,6 @@ public class ClientEvents {
     }
 
     public void onClientTick() {
-        craftGR.getRadioStream().tick();
         craftGR.getKeybinds().tick();
     }
 
