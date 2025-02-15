@@ -1,11 +1,8 @@
 package io.github.kabanfriends.craftgr.audio;
 
 import io.github.kabanfriends.craftgr.CraftGR;
-import io.github.kabanfriends.craftgr.config.ModConfig;
-import io.github.kabanfriends.craftgr.util.ExceptionUtil;
 import javazoom.jl.decoder.*;
 import net.minecraft.Util;
-import net.minecraft.sounds.SoundSource;
 import org.apache.logging.log4j.Level;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.openal.AL10;
@@ -25,7 +22,7 @@ public class AudioPlayer {
     private IntBuffer buffer;
     private IntBuffer source;
 
-    private float volume;
+    private float gain = 1.0f;
     private boolean playing = false;
 
     public AudioPlayer(CraftGR craftGR, InputStream stream) {
@@ -44,10 +41,10 @@ public class AudioPlayer {
             AL10.alSourcef(this.source.get(0), AL10.AL_PITCH, 1.0f);
 
             if (fadeIn) {
-                AL10.alSourcef(this.source.get(0), AL10.AL_GAIN, 0.0f);
+                applyGain(0.0f);
                 fadeIn(2000f);
             } else {
-                updateVolume(1.0f);
+                applyGain(1.0f);
             }
             alError();
 
@@ -93,10 +90,12 @@ public class AudioPlayer {
         }
     }
 
-    public void updateVolume(float multiplier) {
-        AL10.alSourcef(this.source.get(0), AL10.AL_GAIN,
-            multiplier * ModConfig.<Integer>get("volume") / 100f * craftGR.getMinecraft().options.getSoundSourceVolume(SoundSource.MASTER)
-        );
+    public void setGain(float gain) {
+        this.gain = gain;
+
+        if (this.playing) {
+            applyGain(1.0f);
+        }
     }
 
     public boolean isPlaying() {
@@ -148,13 +147,8 @@ public class AudioPlayer {
         }
     }
 
-    private boolean skipFrame() throws JavaLayerException {
-        Header h = this.bitstream.readFrame();
-        if (h == null) {
-            return false;
-        }
-        this.bitstream.closeFrame();
-        return true;
+    private void applyGain(float multiplier) {
+        AL10.alSourcef(this.source.get(0), AL10.AL_GAIN, (float) ((Math.exp(multiplier * this.gain) - 1) / (Math.E - 1)));
     }
 
     private void fadeIn(float fadingDurationMillis) {
@@ -162,7 +156,7 @@ public class AudioPlayer {
         craftGR.getThreadExecutor().submit(() -> {
             while (true) {
                 float multiplier = Math.min((Util.getMillis() - fadingStart) / fadingDurationMillis, 1.0f);
-                updateVolume(multiplier);
+                applyGain(multiplier);
 
                 if (multiplier >= 1.0f) {
                     break;

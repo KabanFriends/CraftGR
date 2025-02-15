@@ -3,6 +3,7 @@ package io.github.kabanfriends.craftgr.audio;
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.config.ModConfig;
 import io.github.kabanfriends.craftgr.util.*;
+import net.minecraft.sounds.SoundSource;
 import org.apache.http.client.methods.*;
 import org.apache.logging.log4j.Level;
 
@@ -48,6 +49,20 @@ public class Radio {
         state = awaitReload ? State.AWAIT_LOADING : State.STOPPED;
     }
 
+    public void toggle() {
+        if (state == State.PLAYING) {
+            stop(false);
+        } else if (state != State.CONNECTING && state != State.AWAIT_LOADING) {
+            start(false);
+        }
+    }
+
+    public void setVolume(int volume) {
+        if (state == State.PLAYING) {
+            audioPlayer.setGain(volume / 100f * craftGR.getMinecraft().options.getSoundSourceVolume(SoundSource.MASTER));
+        }
+    }
+
     private void handlePlayback(boolean fadeIn) {
         try {
             craftGR.getThreadExecutor().submit(() -> craftGR.getSongProvider().verifyCurrentSong());
@@ -58,6 +73,7 @@ public class Radio {
             MessageUtil.sendAudioStartedMessage();
             state = State.PLAYING;
 
+            setVolume(ModConfig.get("volume"));
             audioPlayer.play(fadeIn);
 
             MessageUtil.sendAudioStoppedMessage();
@@ -102,14 +118,6 @@ public class Radio {
             response.close();
         } catch (IOException e) {
             craftGR.log(Level.ERROR, "Error while closing the stream response: " + ExceptionUtil.getStackTrace(e));
-        }
-    }
-
-    public void toggle() {
-        if (state == State.PLAYING) {
-            stop(false);
-        } else if (state != State.CONNECTING && state != State.AWAIT_LOADING) {
-            start(false);
         }
     }
 

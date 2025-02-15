@@ -39,6 +39,9 @@ public class ModConfig {
                     new IntegerConfigField("volume", 50)
                             .setFormatter((value) -> Component.literal(value + "%"))
                             .setRange(0, 100)
+                            .onApply((value) -> {
+                                CraftGR.getInstance().getRadio().setVolume(value);
+                            })
             ),
             new ConfigGroup(Component.translatable("text.craftgr.config.category.overlay"), true,
                     new EnumConfigField("overlayVisibility", SongInfoOverlay.OverlayVisibility.MENU),

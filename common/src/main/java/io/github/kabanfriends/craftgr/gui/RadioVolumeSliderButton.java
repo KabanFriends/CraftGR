@@ -27,7 +27,6 @@ public class RadioVolumeSliderButton extends AbstractSliderButton {
     protected void applyValue() {
         int volume = (int) Mth.lerp(Mth.clamp(this.value, 0.0, 1.0), 0, 100);
         ModConfig.set("volume", volume);
-        Radio radio = CraftGR.getInstance().getRadio();
-        // TODO: set volume through radio instance
+        CraftGR.getInstance().getRadio().setVolume(volume);
     }
 }
