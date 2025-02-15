@@ -1,6 +1,6 @@
 package io.github.kabanfriends.craftgr;
 
-import io.github.kabanfriends.craftgr.audio.RadioStream;
+import io.github.kabanfriends.craftgr.audio.Radio;
 import io.github.kabanfriends.craftgr.config.ModConfig;
 import io.github.kabanfriends.craftgr.event.ClientEvents;
 import io.github.kabanfriends.craftgr.keybind.Keybinds;
@@ -40,7 +40,7 @@ public class CraftGR {
     private final ClientEvents events;
     private final Keybinds keybinds;
     private final SongInfoOverlay songInfoOverlay;
-    private final RadioStream radioStream;
+    private final Radio radio;
 
     private SongProvider songProvider = new FallbackSongProvider();
 
@@ -56,7 +56,7 @@ public class CraftGR {
         this.events = new ClientEvents(this);
         this.keybinds = new Keybinds(this);
         this.songInfoOverlay = new SongInfoOverlay(this);
-        this.radioStream = new RadioStream(this);
+        this.radio = new Radio(this);
     }
 
     public Platform getPlatform() {
@@ -91,8 +91,8 @@ public class CraftGR {
         return songProvider;
     }
 
-    public RadioStream getRadioStream() {
-        return radioStream;
+    public Radio getRadio() {
+        return radio;
     }
 
     public void setSongProvider(SongProvider newProvider) {

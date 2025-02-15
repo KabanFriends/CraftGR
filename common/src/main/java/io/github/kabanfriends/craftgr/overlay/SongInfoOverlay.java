@@ -6,7 +6,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import dev.isxander.yacl3.gui.YACLScreen;
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.config.ModConfig;
-import io.github.kabanfriends.craftgr.audio.RadioStream;
+import io.github.kabanfriends.craftgr.audio.Radio;
 import io.github.kabanfriends.craftgr.overlay.widget.impl.ScrollingText;
 import io.github.kabanfriends.craftgr.song.Song;
 import io.github.kabanfriends.craftgr.util.*;
@@ -165,8 +165,8 @@ public class SongInfoOverlay extends Overlay {
                 }
             }
 
-            RadioStream.State state = craftGR.getRadioStream().getState();
-            if (state == RadioStream.State.STOPPED) {
+            Radio.State state = craftGR.getRadio().getState();
+            if (state == Radio.State.STOPPED) {
                 if (!muted) {
                     muted = true;
                     updateScrollWidth();

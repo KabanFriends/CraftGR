@@ -10,7 +10,7 @@ import dev.isxander.yacl3.gui.YACLScreen;
 import dev.isxander.yacl3.gui.controllers.ControllerWidget;
 import dev.isxander.yacl3.impl.controller.AbstractControllerBuilderImpl;
 import io.github.kabanfriends.craftgr.CraftGR;
-import io.github.kabanfriends.craftgr.audio.RadioStream;
+import io.github.kabanfriends.craftgr.audio.Radio;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 
@@ -56,7 +56,7 @@ public class RadioStateController implements Controller<Boolean> {
                 return;
             }
 
-            CraftGR.getInstance().getRadioStream().toggle();
+            CraftGR.getInstance().getRadio().toggle();
             option.setAvailable(isButtonActive());
             playDownSound();
         }
@@ -65,10 +65,10 @@ public class RadioStateController implements Controller<Boolean> {
         protected Component getValueText() {
             option.setAvailable(isButtonActive());
 
-            RadioStream stream = CraftGR.getInstance().getRadioStream();
-            RadioStream.State state = stream.getState();
+            Radio radio = CraftGR.getInstance().getRadio();
+            Radio.State state = radio.getState();
 
-            if (stream.hasError()) {
+            if (radio.hasError()) {
                 return Component.translatable("text.craftgr.config.option.playback.fail").withStyle(ChatFormatting.RED);
             }
 
@@ -116,8 +116,8 @@ public class RadioStateController implements Controller<Boolean> {
         }
 
         private boolean isButtonActive() {
-            RadioStream stream = CraftGR.getInstance().getRadioStream();
-            RadioStream.State state = stream.getState();
+            Radio radio = CraftGR.getInstance().getRadio();
+            Radio.State state = radio.getState();
 
             return switch (state) {
                 case STOPPED, PLAYING -> true;

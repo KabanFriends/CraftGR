@@ -12,7 +12,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class RadioStream {
+public class Radio {
 
     private static final int RETRY_INTERVAL = 5;
 
@@ -24,7 +24,7 @@ public class RadioStream {
     private CloseableHttpResponse response;
     private boolean hasError;
 
-    public RadioStream(CraftGR craftGR) {
+    public Radio(CraftGR craftGR) {
         this.craftGR = craftGR;
 
         this.hasError = false;
@@ -58,10 +58,7 @@ public class RadioStream {
             MessageUtil.sendAudioStartedMessage();
             state = State.PLAYING;
 
-            if (fadeIn) {
-                audioPlayer.fadeIn(2000f);
-            }
-            audioPlayer.play();
+            audioPlayer.play(fadeIn);
 
             MessageUtil.sendAudioStoppedMessage();
             craftGR.log(Level.INFO, "Audio playback has been stopped!");

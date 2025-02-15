@@ -2,6 +2,7 @@ package io.github.kabanfriends.craftgr.audio;
 
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.config.ModConfig;
+import io.github.kabanfriends.craftgr.util.ExceptionUtil;
 import javazoom.jl.decoder.*;
 import net.minecraft.Util;
 import net.minecraft.sounds.SoundSource;
@@ -24,11 +25,8 @@ public class AudioPlayer {
     private IntBuffer buffer;
     private IntBuffer source;
 
+    private float volume;
     private boolean playing = false;
-
-    private boolean fading;
-    private long fadingStart;
-    private float fadingDuration;
 
     public AudioPlayer(CraftGR craftGR, InputStream stream) {
         this.craftGR = craftGR;
@@ -36,7 +34,7 @@ public class AudioPlayer {
         this.bitstream = new Bitstream(stream);
     }
 
-    public void play() throws AudioPlayerException {
+    public void play(boolean fadeIn) throws AudioPlayerException {
         try {
             this.source = BufferUtils.createIntBuffer(1);
             AL10.alGenSources(this.source);
@@ -45,25 +43,20 @@ public class AudioPlayer {
             AL10.alSourcei(this.source.get(0), AL10.AL_LOOPING, AL10.AL_FALSE);
             AL10.alSourcef(this.source.get(0), AL10.AL_PITCH, 1.0f);
 
+            if (fadeIn) {
+                AL10.alSourcef(this.source.get(0), AL10.AL_GAIN, 0.0f);
+                fadeIn(2000f);
+            } else {
+                updateVolume(1.0f);
+            }
             alError();
 
             this.playing = true;
-
-            do {
-                float volume = ModConfig.<Integer>get("volume") / 100f * craftGR.getMinecraft().options.getSoundSourceVolume(SoundSource.MASTER);
-                if (fading) {
-                    System.out.println("Fading");
-                    float multiplier = (Util.getMillis() - fadingStart) / fadingDuration;
-                    volume *= multiplier;
-
-                    if (multiplier >= 1.0f) {
-                        fading = false;
-                    }
+            while (this.playing) {
+                if (!decodeFrame()) {
+                    break;
                 }
-
-                AL10.alSourcef(this.source.get(0), AL10.AL_GAIN, volume);
-                alError();
-            } while (this.playing && decodeFrame());
+            };
 
             close();
         } catch (Exception e) {
@@ -100,10 +93,10 @@ public class AudioPlayer {
         }
     }
 
-    public void fadeIn(float fadingDurationMillis) {
-        fadingStart = Util.getMillis();
-        fadingDuration = fadingDurationMillis;
-        fading = true;
+    public void updateVolume(float multiplier) {
+        AL10.alSourcef(this.source.get(0), AL10.AL_GAIN,
+            multiplier * ModConfig.<Integer>get("volume") / 100f * craftGR.getMinecraft().options.getSoundSourceVolume(SoundSource.MASTER)
+        );
     }
 
     public boolean isPlaying() {
@@ -162,6 +155,20 @@ public class AudioPlayer {
         }
         this.bitstream.closeFrame();
         return true;
+    }
+
+    private void fadeIn(float fadingDurationMillis) {
+        long fadingStart = Util.getMillis();
+        craftGR.getThreadExecutor().submit(() -> {
+            while (true) {
+                float multiplier = Math.min((Util.getMillis() - fadingStart) / fadingDurationMillis, 1.0f);
+                updateVolume(multiplier);
+
+                if (multiplier >= 1.0f) {
+                    break;
+                }
+            }
+        });
     }
 
     private int alError() {

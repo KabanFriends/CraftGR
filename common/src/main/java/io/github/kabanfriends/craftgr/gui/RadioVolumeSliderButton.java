@@ -1,5 +1,7 @@
 package io.github.kabanfriends.craftgr.gui;
 
+import io.github.kabanfriends.craftgr.CraftGR;
+import io.github.kabanfriends.craftgr.audio.Radio;
 import io.github.kabanfriends.craftgr.config.ModConfig;
 import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.network.chat.CommonComponents;
@@ -25,5 +27,7 @@ public class RadioVolumeSliderButton extends AbstractSliderButton {
     protected void applyValue() {
         int volume = (int) Mth.lerp(Mth.clamp(this.value, 0.0, 1.0), 0, 100);
         ModConfig.set("volume", volume);
+        Radio radio = CraftGR.getInstance().getRadio();
+        // TODO: set volume through radio instance
     }
 }

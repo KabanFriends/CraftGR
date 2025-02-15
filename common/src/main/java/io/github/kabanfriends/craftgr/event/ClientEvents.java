@@ -22,7 +22,7 @@ public class ClientEvents {
     }
 
     public void onClientStop() {
-        craftGR.getRadioStream().stop(false);
+        craftGR.getRadio().stop(false);
 
         try {
             craftGR.getSongProvider().stop();
