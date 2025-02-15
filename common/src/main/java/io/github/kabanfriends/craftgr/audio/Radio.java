@@ -70,6 +70,7 @@ public class Radio {
             MessageUtil.sendConnectingMessage();
             connect();
 
+            craftGR.log(Level.INFO, "Started audio playback");
             MessageUtil.sendAudioStartedMessage();
             state = State.PLAYING;
 
@@ -77,7 +78,7 @@ public class Radio {
             audioPlayer.play(fadeIn);
 
             MessageUtil.sendAudioStoppedMessage();
-            craftGR.log(Level.INFO, "Audio playback has been stopped!");
+            craftGR.log(Level.INFO, "Stopped audio playback");
 
         } catch (ConnectionException e) {
             craftGR.log(Level.ERROR, "Error while connecting to the audio stream: " + ExceptionUtil.getStackTrace(e));
