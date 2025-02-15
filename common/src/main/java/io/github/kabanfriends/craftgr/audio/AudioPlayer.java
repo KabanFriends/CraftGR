@@ -17,8 +17,8 @@ public class AudioPlayer {
 
     private final CraftGR craftGR;
     private final Decoder decoder;
+    private final Bitstream bitstream;
 
-    private Bitstream bitstream;
     private IntBuffer buffer;
     private IntBuffer source;
 
