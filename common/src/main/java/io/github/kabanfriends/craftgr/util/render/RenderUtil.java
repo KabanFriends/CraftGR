@@ -22,7 +22,7 @@ public class RenderUtil {
         RenderSystem.enableDepthTest();
     }
 
-    public static void fill(PoseStack poseStack, float minX, float minY, float maxX, float maxY, int color, float opacity) {
+    public static void fill(PoseStack poseStack, float minX, float minY, float maxX, float maxY, int color) {
         Matrix4f matrix4f = poseStack.last().pose();
 
         if (minX < maxX) {
@@ -40,8 +40,6 @@ public class RenderUtil {
         float g = (float) (color >> 8 & 255) / 255.0F;
         float b = (float) (color & 255) / 255.0F;
         float a = (float) (color >> 24 & 255) / 255.0F;
-
-        a = a * opacity;
 
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();

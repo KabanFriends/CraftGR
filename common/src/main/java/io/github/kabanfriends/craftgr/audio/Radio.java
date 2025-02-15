@@ -129,6 +129,10 @@ public class Radio {
         return hasError;
     }
 
+    public AudioPlayer getAudioPlayer() {
+        return audioPlayer;
+    }
+
     public enum State {
         AWAIT_LOADING,
         STARTING,

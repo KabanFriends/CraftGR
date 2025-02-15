@@ -24,6 +24,8 @@
   "text.craftgr.config.option.overlayPosition.TOP_RIGHT": "Top right",
   "text.craftgr.config.option.overlayPosition.BOTTOM_LEFT": "Bottom left",
   "text.craftgr.config.option.overlayPosition.BOTTOM_RIGHT": "Bottom right",
+  "text.craftgr.config.option.showVisualizer": "Show Audio Visualizer",
+  "text.craftgr.config.option.showVisualizer.description": "Whether to show the audio waveform on the song overlay while playing songs.",
   "text.craftgr.config.option.openAlbum": "Click Overlay to Open Album Info",
   "text.craftgr.config.option.openAlbum.description": "Whether to open the album info webpage or not when clicking the song overlay.",
   "text.craftgr.config.option.hideAlbumArt": "Hide Album Cover",

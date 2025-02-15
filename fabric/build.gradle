@@ -25,6 +25,7 @@ dependencies {
     modApi("com.terraformersmc:modmenu:${rootProject.mod_menu_version}") { transitive(false) }
     modApi "dev.isxander:yet-another-config-lib:${rootProject.yacl_version}-fabric"
 
+    include "org.apache.commons:commons-math3:${rootProject.math3_version}"
     include "com.github.umjammer:jlayer:${rootProject.jlayer_version}"
     include("org.java-websocket:Java-WebSocket:${rootProject.java_websocket_version}") {
         exclude module: "slf4j-api"
@@ -33,6 +34,7 @@ dependencies {
     modRuntimeOnly("com.terraformersmc:modmenu:${rootProject.mod_menu_version}") { transitive(false) }
     modRuntimeOnly "dev.isxander:yet-another-config-lib:${rootProject.yacl_version}-fabric"
 
+    runtimeOnly "org.apache.commons:commons-math3:${rootProject.math3_version}"
     runtimeOnly "com.github.umjammer:jlayer:${rootProject.jlayer_version}"
     runtimeOnly "org.java-websocket:Java-WebSocket:${rootProject.java_websocket_version}"
 }

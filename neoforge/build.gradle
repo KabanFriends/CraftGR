@@ -21,6 +21,7 @@ dependencies {
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionNeoForge")) { transitive false }
 
+    include "org.apache.commons:commons-math3:${rootProject.math3_version}"
     include "com.github.umjammer:jlayer:${rootProject.jlayer_version}"
     include("org.java-websocket:Java-WebSocket:${rootProject.java_websocket_version}") {
         exclude module: "slf4j-api"
@@ -30,6 +31,7 @@ dependencies {
         exclude module: "kotlinforforge-neoforge"
     }
 
+    runtimeOnly "org.apache.commons:commons-math3:${rootProject.math3_version}"
     runtimeOnly "com.github.umjammer:jlayer:${rootProject.jlayer_version}"
     runtimeOnly "org.java-websocket:Java-WebSocket:${rootProject.java_websocket_version}"
     runtimeOnly "org.quiltmc.parsers:gson:0.2.1"

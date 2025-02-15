@@ -5,6 +5,8 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.isxander.yacl3.gui.YACLScreen;
 import io.github.kabanfriends.craftgr.CraftGR;
+import io.github.kabanfriends.craftgr.audio.AudioPlayer;
+import io.github.kabanfriends.craftgr.audio.FreqRenderer;
 import io.github.kabanfriends.craftgr.config.ModConfig;
 import io.github.kabanfriends.craftgr.audio.Radio;
 import io.github.kabanfriends.craftgr.overlay.widget.impl.ScrollingText;
@@ -127,7 +129,25 @@ public class SongInfoOverlay extends Overlay {
         RenderUtil.setZLevelPre(poseStack, 400);
         poseStack.scale(RenderUtil.getUIScale(scale), RenderUtil.getUIScale(scale), RenderUtil.getUIScale(scale));
 
-        RenderUtil.fill(poseStack, x, y, x + width, y + ART_SIZE + ART_TOP_PADDING + ART_BOTTOM_PADDING, ModConfig.<Color>get("overlayBgColor").getRGB() + 0xFF000000, 0.6f);
+        RenderUtil.fill(poseStack, x, y, x + width, y + height, ModConfig.<Color>get("overlayBgColor").getRGB() + 0x99000000);
+
+        boolean showVisualizer = ModConfig.<Boolean>get("showVisualizer") &&
+                craftGR.getRadio().getState() == Radio.State.PLAYING &&
+                craftGR.getRadio().getAudioPlayer().getFreqRenderer() != null;
+
+        if (showVisualizer) {
+            FreqRenderer freq = craftGR.getRadio().getAudioPlayer().getFreqRenderer();
+
+            double[] bands = freq.calculateBandsNow();
+            float barWidth = width / bands.length;
+
+            for (int i = 0; i < bands.length; i++) {
+                float barX = x + (bands.length - i - 1) * barWidth;
+                float barY = y + ART_TOP_PADDING + ART_SIZE + ART_BOTTOM_PADDING;
+
+                RenderUtil.fill(poseStack, barX, barY, barX + barWidth, barY - (float) bands[i] * (ART_SIZE + ART_BOTTOM_PADDING), 0x40000000);
+            }
+        }
 
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
 
@@ -180,16 +200,18 @@ public class SongInfoOverlay extends Overlay {
 
         poseStack.popPose();
 
-        if (song == null || song.metadata().intermission()) {
-            RenderUtil.fill(poseStack, x, y + ART_SIZE + ART_TOP_PADDING + ART_BOTTOM_PADDING, x + width, y + height, ModConfig.<Color>get("overlayBgColor").getRGB() + 0xFF000000, 0.6f);
-        } else {
+        if (song != null && !song.metadata().intermission()) {
+            RenderUtil.fill(poseStack, x, y + ART_TOP_PADDING + ART_SIZE + ART_BOTTOM_PADDING, x + (float) song.getLocalPlayedTime() / song.metadata().duration() * width, y + height, 0x40FFFFFF);
+            if (showVisualizer) {
+                RenderUtil.fill(poseStack, x + (float) song.getLocalPlayedTime() / song.metadata().duration() * width, y + ART_TOP_PADDING + ART_SIZE + ART_BOTTOM_PADDING, x + width, y + height, 0x40000000);
+            }
+
             graphics.drawString(minecraft.font, formatTime(song.getLocalPlayedTime()), x + ART_LEFT_PADDING, y + ART_TOP_PADDING + ART_SIZE + ART_TIMER_SPACE_HEIGHT, COLOR_WHITE);
 
             int timerWidth = font.width(formatTime(song.metadata().duration()));
             graphics.drawString(minecraft.font, formatTime(song.metadata().duration()), x + (int) width - timerWidth - TIMER_RIGHT_PADDING, y + ART_TOP_PADDING + ART_SIZE + ART_TIMER_SPACE_HEIGHT, COLOR_WHITE);
-
-            RenderUtil.fill(poseStack, x, y + ART_TOP_PADDING + ART_SIZE + ART_BOTTOM_PADDING, x + (float) song.getLocalPlayedTime() / song.metadata().duration() * width, y + height, ModConfig.<Color>get("overlayBarColor").getRGB() + 0xFF000000, 0.6f);
-            RenderUtil.fill(poseStack, x + (float) song.getLocalPlayedTime() / song.metadata().duration() * width, y + ART_TOP_PADDING + ART_SIZE + ART_BOTTOM_PADDING, x + width, y + height, ModConfig.<Color>get("overlayBgColor").getRGB() + 0xFF000000, 0.6f);
+        } else if (showVisualizer) {
+            RenderUtil.fill(poseStack, x, y + ART_SIZE + ART_TOP_PADDING + ART_BOTTOM_PADDING, x + width, y + height, 0x40000000);
         }
 
         songTitleText.setX(x + ART_LEFT_PADDING + albumArtWidth + ART_INFO_SPACE_WIDTH);
