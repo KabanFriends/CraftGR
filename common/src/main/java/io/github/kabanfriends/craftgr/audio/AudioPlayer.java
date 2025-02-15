@@ -165,13 +165,11 @@ public class AudioPlayer {
         });
     }
 
-    private int alError() {
+    private void alError() {
         int error = AL10.alGetError();
         if (error != AL10.AL_NO_ERROR) {
             craftGR.log(Level.WARN, String.format("AL10 Error: %d: %s", error, AL10.alGetString(error)));
             Thread.dumpStack();
-            return error;
         }
-        return 0;
     }
 }
