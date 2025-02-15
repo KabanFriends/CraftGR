@@ -55,10 +55,6 @@ allprojects {
         options.encoding = "UTF-8"
         options.release = 21
     }
-
-    java {
-        withSourcesJar()
-    }
 }
 
 build {

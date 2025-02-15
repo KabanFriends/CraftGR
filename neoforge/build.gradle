@@ -21,12 +21,18 @@ dependencies {
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionNeoForge")) { transitive false }
 
-    shadowCommon "com.github.umjammer:jlayer:${rootProject.jlayer_version}"
-    shadowCommon("org.java-websocket:Java-WebSocket:${rootProject.java_websocket_version}") {
+    include "com.github.umjammer:jlayer:${rootProject.jlayer_version}"
+    include("org.java-websocket:Java-WebSocket:${rootProject.java_websocket_version}") {
         exclude module: "slf4j-api"
     }
 
-    modLocalRuntime ("dev.isxander:yet-another-config-lib:${rootProject.yacl_version}-neoforge") { transitive false }
+    modRuntimeOnly("dev.isxander:yet-another-config-lib:${rootProject.yacl_version}-neoforge") {
+        exclude module: "kotlinforforge-neoforge"
+    }
+
+    runtimeOnly "com.github.umjammer:jlayer:${rootProject.jlayer_version}"
+    runtimeOnly "org.java-websocket:Java-WebSocket:${rootProject.java_websocket_version}"
+    runtimeOnly "org.quiltmc.parsers:gson:0.2.1"
 }
 
 processResources {
@@ -49,12 +55,8 @@ remapJar {
     input.set shadowJar.archiveFile
     dependsOn shadowJar
     archiveClassifier.set "mc${rootProject.minecraft_version}-neoforge"
-}
 
-sourcesJar {
-    def commonSources = project(":common").sourcesJar
-    dependsOn commonSources
-    from commonSources.archiveFile.map { zipTree(it) }
+    atAccessWideners.add("craftgr.accesswidener")
 }
 
 components.java {

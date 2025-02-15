@@ -28,7 +28,7 @@
   "mixins": [
     "craftgr-common.mixins.json"
   ],
-  "accessWidener": "craftgr-common.accesswidener",
+  "accessWidener": "craftgr.accesswidener",
   "depends": {
     "minecraft": ">=1.21.4-",
     "fabricloader": "*",
