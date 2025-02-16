@@ -147,7 +147,11 @@ public class AudioPlayer {
             }
         }
 
-        freqBuffer.add(new FreqSample(freqRenderer, samples));
+        // For some reason, the original samples array is mutable so we have to copy values before buffering
+        short[] capturedSamples = new short[samples.length];
+        System.arraycopy(samples, 0, capturedSamples, 0, samples.length);
+
+        freqBuffer.add(new FreqSample(freqRenderer, capturedSamples));
 
         AL10.alGenBuffers(this.buffer);
         ShortBuffer shortBuffer = BufferUtils.createShortBuffer(output.getBufferLength()).put(samples, 0, output.getBufferLength());

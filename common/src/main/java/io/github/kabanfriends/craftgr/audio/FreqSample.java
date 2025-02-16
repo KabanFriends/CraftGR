@@ -13,18 +13,12 @@ public class FreqSample {
     private final short[] samples;
     private final double bandwidth;
 
-    private final double[] spectrum;
+    private double[] spectrum;
 
     public FreqSample(FreqRenderer renderer, short[] samples) {
         this.renderer = renderer;
         this.samples = samples;
         this.bandwidth = (2.0 / samples.length) * (renderer.getSampleRate() / 2.0);
-
-        Complex[] transform = FFT.transform(convertArray(samples), TransformType.FORWARD);
-        spectrum = new double[transform.length];
-        for (int i = 0; i < spectrum.length; i++) {
-            spectrum[i] = Math.sqrt(transform[i].getReal() * transform[i].getReal() + transform[i].getImaginary() * transform[i].getImaginary());
-        }
     }
 
     public short[] getSamples() {
@@ -36,6 +30,10 @@ public class FreqSample {
     }
 
     public Bands calculateBands(int numBands) {
+        if (spectrum == null) {
+            calculateFFT();
+        }
+
         int octaves = renderer.getOctaves();
         double bandsPerOctave = (numBands + 1.0) / octaves;
 
@@ -62,6 +60,15 @@ public class FreqSample {
         }
 
         return new Bands(averages, maxValue);
+    }
+
+    private double[] calculateFFT() {
+        Complex[] transform = FFT.transform(convertArray(samples), TransformType.FORWARD);
+        spectrum = new double[transform.length];
+        for (int i = 0; i < spectrum.length; i++) {
+            spectrum[i] = Math.sqrt(transform[i].getReal() * transform[i].getReal() + transform[i].getImaginary() * transform[i].getImaginary());
+        }
+        return spectrum;
     }
 
     private double calculateAverage(double lowFreq, double highFreq) {
