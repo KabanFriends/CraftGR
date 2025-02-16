@@ -35,12 +35,12 @@ public class FreqSample {
         return bandwidth;
     }
 
-    public double[] calculateBands(int numBands) {
+    public Bands calculateBands(int numBands) {
         int octaves = renderer.getOctaves();
         double bandsPerOctave = (numBands + 1.0) / octaves;
 
-        //double[] averages = new double[octaves * FreqRenderer.BANDS_PER_OCTAVE];
         double[] averages = new double[numBands];
+        double maxValue = 0;
 
         int j = 0;
         for (int i = 0; i < octaves; i++) {
@@ -54,10 +54,14 @@ public class FreqSample {
             for (; j < i * bandsPerOctave; j++) {
                 averages[j] = calculateAverage(f, f + freqStep);
                 f += freqStep;
+
+                if (averages[j] > maxValue) {
+                    maxValue = averages[j];
+                }
             }
         }
 
-        return averages;
+        return new Bands(averages, maxValue);
     }
 
     private double calculateAverage(double lowFreq, double highFreq) {
@@ -89,4 +93,6 @@ public class FreqSample {
         }
         return newArray;
     }
+
+    public record Bands(double[] values, double maxValue) {}
 }

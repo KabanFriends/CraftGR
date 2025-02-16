@@ -2,7 +2,8 @@ package io.github.kabanfriends.craftgr.audio;
 
 public class FreqRenderer {
 
-    private static final double SMOOTHING_FACTOR = 0.60;
+    private static final double BAND_SMOOTHING_FACTOR = 0.6000;
+    private static final double MINMAX_SMOOTHING_FACTOR = 0.9999;
     private static final int MIN_BANDWIDTH = 200;
 
     private final AudioPlayer audioPlayer;
@@ -12,8 +13,7 @@ public class FreqRenderer {
     private final int numBands;
     private final double[] smoothedBands;
 
-    private double maxValue;
-    private double minValue;
+    private double smoothedMax = -1;
 
     public FreqRenderer(AudioPlayer audioPlayer, int sampleRate, int numBands) {
         this.audioPlayer = audioPlayer;
@@ -36,28 +36,22 @@ public class FreqRenderer {
             return new double[numBands];
         }
 
-        double[] averages = sample.calculateBands(numBands);
+        FreqSample.Bands bands = sample.calculateBands(numBands);
 
         for (int i = 0; i < numBands; i++) {
-            double current = averages[i];
-
-            smoothedBands[i] = SMOOTHING_FACTOR * smoothedBands[i] + ((1 - SMOOTHING_FACTOR) * current);
-
-            if (smoothedBands[i] > maxValue) {
-                maxValue = smoothedBands[i];
-            }
-            if (smoothedBands[i] < minValue) {
-                minValue = smoothedBands[i];
-            }
+            smoothedBands[i] = BAND_SMOOTHING_FACTOR * smoothedBands[i] + (1 - BAND_SMOOTHING_FACTOR) * bands.values()[i];
         }
 
-        double range = maxValue - minValue;
-        double scaleFactor = range + Double.MIN_VALUE;
+        if (bands.maxValue() > smoothedMax) {
+            smoothedMax = bands.maxValue();
+        } else {
+            smoothedMax = MINMAX_SMOOTHING_FACTOR * smoothedMax + (1 - MINMAX_SMOOTHING_FACTOR) * bands.maxValue();
+        }
 
         double[] out = new double[numBands];
         for (int i = 0; i < numBands; i++) {
-            double value = ((smoothedBands[i] - minValue) / scaleFactor);
-            out[i] = Math.clamp(value * amplifier(value), 0, 1);
+            double value = amplify(smoothedBands[i] / (smoothedMax + Double.MIN_VALUE));
+            out[i] = Math.clamp(value, 0, 1);
         }
 
         return out;
@@ -71,13 +65,7 @@ public class FreqRenderer {
         return octaves;
     }
 
-    private static double amplifier(double value) {
-        double a = 90;
-        double b = 10;
-        return value * a * Math.pow(Math.E, -b * value) + 1;
-    }
-
-    private static double toDb(double value) {
-        return value == 0 ? 0 : 10 * Math.log10(value);
+    private static double amplify(double x) {
+        return 1 - Math.pow(1 - x, 3);
     }
 }
