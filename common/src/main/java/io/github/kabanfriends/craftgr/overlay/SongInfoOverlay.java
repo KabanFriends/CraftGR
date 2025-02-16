@@ -201,12 +201,13 @@ public class SongInfoOverlay extends Overlay {
         poseStack.popPose();
 
         if (song != null && !song.metadata().intermission()) {
-            RenderUtil.fill(poseStack, x, y + ART_TOP_PADDING + ART_SIZE + ART_BOTTOM_PADDING, x + (float) song.getLocalPlayedTime() / song.metadata().duration() * width, y + height, 0x40FFFFFF);
+            long durationMillis = song.metadata().duration() * 1000L;
+            RenderUtil.fill(poseStack, x, y + ART_TOP_PADDING + ART_SIZE + ART_BOTTOM_PADDING, x + (float) song.getLocalPlayedTime() / durationMillis * width, y + height, 0x40FFFFFF);
             if (showVisualizer) {
-                RenderUtil.fill(poseStack, x + (float) song.getLocalPlayedTime() / song.metadata().duration() * width, y + ART_TOP_PADDING + ART_SIZE + ART_BOTTOM_PADDING, x + width, y + height, 0x40000000);
+                RenderUtil.fill(poseStack, x + (float) song.getLocalPlayedTime() / durationMillis * width, y + ART_TOP_PADDING + ART_SIZE + ART_BOTTOM_PADDING, x + width, y + height, 0x40000000);
             }
 
-            graphics.drawString(minecraft.font, formatTime(song.getLocalPlayedTime()), x + ART_LEFT_PADDING, y + ART_TOP_PADDING + ART_SIZE + ART_TIMER_SPACE_HEIGHT, COLOR_WHITE);
+            graphics.drawString(minecraft.font, formatTime(song.getLocalPlayedTime() / 1000L), x + ART_LEFT_PADDING, y + ART_TOP_PADDING + ART_SIZE + ART_TIMER_SPACE_HEIGHT, COLOR_WHITE);
 
             int timerWidth = font.width(formatTime(song.metadata().duration()));
             graphics.drawString(minecraft.font, formatTime(song.metadata().duration()), x + (int) width - timerWidth - TIMER_RIGHT_PADDING, y + ART_TOP_PADDING + ART_SIZE + ART_TIMER_SPACE_HEIGHT, COLOR_WHITE);
