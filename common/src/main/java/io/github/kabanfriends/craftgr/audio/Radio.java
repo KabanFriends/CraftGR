@@ -59,7 +59,7 @@ public class Radio {
 
     public void setVolume(int volume) {
         if (state == State.PLAYING) {
-            audioPlayer.setGain(volume / 100f * craftGR.getMinecraft().options.getSoundSourceVolume(SoundSource.MASTER));
+            audioPlayer.setGain(volume / 100f);
         }
     }
 
