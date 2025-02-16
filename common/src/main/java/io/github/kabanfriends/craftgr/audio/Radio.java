@@ -67,29 +67,29 @@ public class Radio {
         try {
             craftGR.getThreadExecutor().submit(() -> craftGR.getSongProvider().verifyCurrentSong());
 
-            MessageUtil.sendConnectingMessage();
+            ActionBarMessage.CONNECTING.show();
             connect();
 
             craftGR.log(Level.INFO, "Started audio playback");
-            MessageUtil.sendAudioStartedMessage();
+            ActionBarMessage.PLAYBACK_STARTED.show();
             state = State.PLAYING;
 
             setVolume(ModConfig.get("volume"));
             audioPlayer.play(fadeIn);
 
-            MessageUtil.sendAudioStoppedMessage();
+            ActionBarMessage.PLAYBACK_STOPPED.show();
             craftGR.log(Level.INFO, "Stopped audio playback");
 
         } catch (ConnectionException e) {
             craftGR.log(Level.ERROR, "Error while connecting to the audio stream: " + ExceptionUtil.getStackTrace(e));
             state = State.STOPPED;
             hasError = true;
-            MessageUtil.sendConnectionErrorMessage();
+            ActionBarMessage.CONNECTION_ERROR.show();
 
         } catch (AudioPlayerException e) {
             craftGR.log(Level.ERROR, "Error during audio playback, reconnecting: " + ExceptionUtil.getStackTrace(e));
             scheduler.schedule(() -> {
-                MessageUtil.sendReconnectingMessage();
+                ActionBarMessage.RECONNECTING.show();
                 handlePlayback(false);
             }, RETRY_INTERVAL, TimeUnit.SECONDS);
         }
