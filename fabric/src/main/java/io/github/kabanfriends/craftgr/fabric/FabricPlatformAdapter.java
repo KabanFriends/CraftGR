@@ -1,15 +1,15 @@
 package io.github.kabanfriends.craftgr.fabric;
 
 import com.terraformersmc.modmenu.gui.ModsScreen;
-import io.github.kabanfriends.craftgr.platform.Platform;
+import io.github.kabanfriends.craftgr.platform.PlatformAdapter;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 
-public class FabricPlatform implements Platform {
+public class FabricPlatformAdapter implements PlatformAdapter {
 
     private final Minecraft minecraft;
 
-    public FabricPlatform(Minecraft minecraft) {
+    public FabricPlatformAdapter(Minecraft minecraft) {
         this.minecraft = minecraft;
     }
 

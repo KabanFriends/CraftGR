@@ -12,7 +12,7 @@ public class CraftGRFabric implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        craftGR = new CraftGR(new FabricPlatform(Minecraft.getInstance()));
+        craftGR = new CraftGR(new FabricPlatformAdapter(Minecraft.getInstance()));
 
         // Keybinds
         for (KeyMapping keyMapping : craftGR.getKeybinds().getKeyMappings()) {

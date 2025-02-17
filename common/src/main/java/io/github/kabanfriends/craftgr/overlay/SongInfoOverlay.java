@@ -5,7 +5,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import dev.isxander.yacl3.gui.YACLScreen;
 import io.github.kabanfriends.craftgr.CraftGR;
-import io.github.kabanfriends.craftgr.audio.AudioPlayer;
 import io.github.kabanfriends.craftgr.audio.FreqRenderer;
 import io.github.kabanfriends.craftgr.config.ModConfig;
 import io.github.kabanfriends.craftgr.audio.Radio;
@@ -247,7 +246,7 @@ public class SongInfoOverlay extends Overlay {
         if (minecraft.screen instanceof ConnectScreen) return true;
         if (minecraft.screen instanceof GenericMessageScreen) return true;
 
-        if (craftGR.getPlatform().isInModMenu()) return true;
+        if (craftGR.getPlatformAdapter().isInModMenu()) return true;
 
         if (ModUtil.isConfigModAvailable() && minecraft.screen instanceof YACLScreen) return true;
 

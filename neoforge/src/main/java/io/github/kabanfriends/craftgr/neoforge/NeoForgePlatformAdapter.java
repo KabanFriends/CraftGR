@@ -1,15 +1,15 @@
 package io.github.kabanfriends.craftgr.neoforge;
 
-import io.github.kabanfriends.craftgr.platform.Platform;
+import io.github.kabanfriends.craftgr.platform.PlatformAdapter;
 import net.minecraft.client.Minecraft;
 import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.client.gui.ModListScreen;
 
-public class NeoForgePlatform implements Platform {
+public class NeoForgePlatformAdapter implements PlatformAdapter {
 
     private final Minecraft minecraft;
 
-    public NeoForgePlatform(Minecraft minecraft) {
+    public NeoForgePlatformAdapter(Minecraft minecraft) {
         this.minecraft = minecraft;
     }
 
