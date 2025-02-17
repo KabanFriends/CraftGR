@@ -3,7 +3,6 @@ package io.github.kabanfriends.craftgr.audio;
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.config.ModConfig;
 import io.github.kabanfriends.craftgr.util.*;
-import net.minecraft.sounds.SoundSource;
 import org.apache.http.client.methods.*;
 import org.apache.logging.log4j.Level;
 
