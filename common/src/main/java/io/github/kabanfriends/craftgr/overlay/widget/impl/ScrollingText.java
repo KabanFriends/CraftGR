@@ -80,25 +80,25 @@ public class ScrollingText extends UIWidget {
         int fontX = (int) getMovingX(x / 2f);
         int fontY = (int) y / 2;
 
-        int scissorX = (int) (scale * (int)(x / 2f));
-        int scissorY = (int) (scale * fontY);
+        int scissorX = (int) (scale * (int)(x / 2f)) - 1;
+        int scissorY = (int) (scale * fontY) - 1;
 
-        int scissorW = (int) (width * scale);
-        int scissorH = (int) (CraftGR.getInstance().getMinecraft().font.lineHeight * scale);
+        int scissorW = (int) (width * scale) + 2;
+        int scissorH = (int) (CraftGR.getInstance().getMinecraft().font.lineHeight * scale) + 2;
 
         PoseStack poseStack = graphics.pose();
 
-        RenderUtil.enableUnscaledScissor(graphics, scissorX, scissorY, scissorX + scissorW, scissorY + scissorH);
-
-        // Uncomment to debug
-        //RenderUtil.fill(poseStack, 0, 0, CraftGR.getInstance().getMinecraft().getWindow().getWidth(), CraftGR.getInstance().getMinecraft().getWindow().getHeight(), 0x8F00FF00, 0.6f);
-
         poseStack.pushPose();
         poseStack.scale(2, 2, 2);
+        poseStack.translate(x % 2 / 2f, y % 2 / 2f, 0); // Cancel out int rounding difference
+        RenderUtil.enableUnscaledScissor(graphics, scissorX, scissorY, scissorX + scissorW, scissorY + scissorH);
+        // Uncomment to debug
+        //RenderUtil.fill(poseStack, 0, 0, CraftGR.getInstance().getMinecraft().getWindow().getWidth(), CraftGR.getInstance().getMinecraft().getWindow().getHeight(), 0x8F00FF00);
+
         graphics.drawString(CraftGR.getInstance().getMinecraft().font, component, fontX, fontY, Color.WHITE.getRGB());
-        poseStack.popPose();
 
         graphics.disableScissor();
+        poseStack.popPose();
     }
 
     private float getMovingX(float x) {

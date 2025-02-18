@@ -52,7 +52,7 @@ public class SongInfoOverlay extends Overlay {
     public static final int INFO_TOP_PADDING = 8;
     public static final int INFO_RIGHT_PADDING = 6;
     public static final int INFO_LINE_HEIGHT = 20;
-    public static final int YEAR_ARTIST_SPACE_HEIGHT = 7;
+    public static final int YEAR_ARTIST_SPACE_HEIGHT = 8;
 
     public static final int TIMER_RIGHT_PADDING = 6;
     public static final int ART_TIMER_SPACE_HEIGHT = 4;
@@ -153,9 +153,9 @@ public class SongInfoOverlay extends Overlay {
         if (!ModConfig.<Boolean>get("hideAlbumArt")) {
             graphics.blit(RenderType::guiTextured, shouldRenderAlbumArt() ? ALBUM_ART_LOCATION : ALBUM_ART_PLACEHOLDER_LOCATION, x + ART_LEFT_PADDING, y + ART_TOP_PADDING, 0f, 0f, ART_SIZE, ART_SIZE, ART_SIZE, ART_SIZE);
         }
-
         poseStack.pushPose();
         poseStack.scale(2, 2, 2);
+        poseStack.translate(x % 2 / 2f, y % 2 / 2f, 0); // Cancel out int rounding difference
 
         Song song = craftGR.getSongProvider().getCurrentSong();
 
@@ -165,6 +165,7 @@ public class SongInfoOverlay extends Overlay {
 
                 String year = song.metadata().year() == null ? null : "(" + song.metadata().year() + ")";
 
+                // Possibly in the future these should be moved into separate widgets...
                 String[] strings = {year, song.metadata().artist(), song.metadata().album(), song.metadata().circle()};
                 for (int i = 0; i < 4; i++) {
                     String str = strings[i];
