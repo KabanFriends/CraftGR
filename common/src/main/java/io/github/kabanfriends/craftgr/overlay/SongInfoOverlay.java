@@ -113,9 +113,9 @@ public class SongInfoOverlay extends Overlay {
 
         int albumArtWidth = ModConfig.get("hideAlbumArt") ? -ART_LEFT_PADDING : ART_SIZE;
 
-        Vector2f size = getOverlaySize();
-        float width = size.x();
-        float height = size.y();
+        Vector2i size = getOverlaySize();
+        int width = size.x();
+        int height = size.y();
 
         OverlayPosition position = ModConfig.get("overlayPosition");
         Vector2i coords = getOverlayCoordinate(position, width, height);
@@ -138,7 +138,7 @@ public class SongInfoOverlay extends Overlay {
             FreqRenderer freq = craftGR.getRadio().getAudioPlayer().getFreqRenderer();
 
             double[] bands = freq.calculateBandsNow();
-            float barWidth = width / bands.length;
+            float barWidth = (float) width / bands.length;
 
             for (int i = 0; i < bands.length; i++) {
                 float barX = x + (bands.length - i - 1) * barWidth;
@@ -265,9 +265,9 @@ public class SongInfoOverlay extends Overlay {
             float scaledX = mouseX / RenderUtil.getUIScale(scale);
             float scaledY = mouseY / RenderUtil.getUIScale(scale);
 
-            Vector2f size = getOverlaySize();
-            float width = size.x();
-            float height = size.y();
+            Vector2i size = getOverlaySize();
+            int width = size.x();
+            int height = size.y();
 
             OverlayPosition position = ModConfig.get("overlayPosition");
             Vector2i coords = getOverlayCoordinate(position, width, height);
@@ -324,13 +324,13 @@ public class SongInfoOverlay extends Overlay {
         };
     }
 
-    private Vector2f getOverlaySize() {
+    private Vector2i getOverlaySize() {
         int albumArtWidth;
         if (ModConfig.get("hideAlbumArt")) albumArtWidth = -ART_LEFT_PADDING;
         else albumArtWidth = ART_SIZE;
 
-        float width;
-        float height = ART_TOP_PADDING + ART_SIZE + ART_BOTTOM_PADDING + PROGRESS_BAR_HEIGHT;
+        int width;
+        int height = ART_TOP_PADDING + ART_SIZE + ART_BOTTOM_PADDING + PROGRESS_BAR_HEIGHT;
 
         if (expanded) {
             int maxWidth = getMaxTextWidth();
@@ -344,7 +344,7 @@ public class SongInfoOverlay extends Overlay {
             width = ART_LEFT_PADDING + albumArtWidth + ART_INFO_SPACE_WIDTH + ModConfig.<Integer>get("overlayWidth") * 2 + INFO_RIGHT_PADDING;
         }
 
-        return new Vector2f(width, height);
+        return new Vector2i(width, height);
     }
 
     private int getMaxTextWidth() {
