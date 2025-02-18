@@ -4,51 +4,51 @@ import java.util.HashMap;
 
 public class TitleFixer {
 
-    private static final HashMap<String, String[]> TABLE;
+    private static final HashMap<Character, char[]> TABLE;
     static {
         TABLE = new HashMap<>();
 
-        TABLE.put("か", new String[]{"が"});
-        TABLE.put("き", new String[]{"ぎ"});
-        TABLE.put("く", new String[]{"ぐ"});
-        TABLE.put("け", new String[]{"げ"});
-        TABLE.put("こ", new String[]{"ご"});
-        TABLE.put("さ", new String[]{"ざ"});
-        TABLE.put("し", new String[]{"じ"});
-        TABLE.put("す", new String[]{"ず"});
-        TABLE.put("せ", new String[]{"ぜ"});
-        TABLE.put("そ", new String[]{"ぞ"});
-        TABLE.put("た", new String[]{"だ"});
-        TABLE.put("ち", new String[]{"ぢ"});
-        TABLE.put("つ", new String[]{"づ"});
-        TABLE.put("て", new String[]{"で"});
-        TABLE.put("と", new String[]{"ど"});
-        TABLE.put("は", new String[]{"ば", "ぱ"});
-        TABLE.put("ひ", new String[]{"び", "ぴ"});
-        TABLE.put("ふ", new String[]{"ぶ", "ぷ"});
-        TABLE.put("へ", new String[]{"べ", "ぺ"});
-        TABLE.put("ほ", new String[]{"ぼ", "ぽ"});
+        TABLE.put('か', new char[]{'が'});
+        TABLE.put('き', new char[]{'ぎ'});
+        TABLE.put('く', new char[]{'ぐ'});
+        TABLE.put('け', new char[]{'げ'});
+        TABLE.put('こ', new char[]{'ご'});
+        TABLE.put('さ', new char[]{'ざ'});
+        TABLE.put('し', new char[]{'じ'});
+        TABLE.put('す', new char[]{'ず'});
+        TABLE.put('せ', new char[]{'ぜ'});
+        TABLE.put('そ', new char[]{'ぞ'});
+        TABLE.put('た', new char[]{'だ'});
+        TABLE.put('ち', new char[]{'ぢ'});
+        TABLE.put('つ', new char[]{'づ'});
+        TABLE.put('て', new char[]{'で'});
+        TABLE.put('と', new char[]{'ど'});
+        TABLE.put('は', new char[]{'ば', 'ぱ'});
+        TABLE.put('ひ', new char[]{'び', 'ぴ'});
+        TABLE.put('ふ', new char[]{'ぶ', 'ぷ'});
+        TABLE.put('へ', new char[]{'べ', 'ぺ'});
+        TABLE.put('ほ', new char[]{'ぼ', 'ぽ'});
 
-        TABLE.put("カ", new String[]{"ガ"});
-        TABLE.put("キ", new String[]{"ギ"});
-        TABLE.put("ク", new String[]{"グ"});
-        TABLE.put("ケ", new String[]{"ゲ"});
-        TABLE.put("コ", new String[]{"ゴ"});
-        TABLE.put("サ", new String[]{"ザ"});
-        TABLE.put("シ", new String[]{"ジ"});
-        TABLE.put("ス", new String[]{"ズ"});
-        TABLE.put("セ", new String[]{"ゼ"});
-        TABLE.put("ソ", new String[]{"ゾ"});
-        TABLE.put("タ", new String[]{"ダ"});
-        TABLE.put("チ", new String[]{"ヂ"});
-        TABLE.put("ツ", new String[]{"ヅ"});
-        TABLE.put("テ", new String[]{"デ"});
-        TABLE.put("ト", new String[]{"ド"});
-        TABLE.put("ハ", new String[]{"バ", "パ"});
-        TABLE.put("ヒ", new String[]{"ビ", "ピ"});
-        TABLE.put("フ", new String[]{"ブ", "プ"});
-        TABLE.put("ヘ", new String[]{"ベ", "ペ"});
-        TABLE.put("ホ", new String[]{"ボ", "ポ"});
+        TABLE.put('カ', new char[]{'ガ'});
+        TABLE.put('キ', new char[]{'ギ'});
+        TABLE.put('ク', new char[]{'グ'});
+        TABLE.put('ケ', new char[]{'ゲ'});
+        TABLE.put('コ', new char[]{'ゴ'});
+        TABLE.put('サ', new char[]{'ザ'});
+        TABLE.put('シ', new char[]{'ジ'});
+        TABLE.put('ス', new char[]{'ズ'});
+        TABLE.put('セ', new char[]{'ゼ'});
+        TABLE.put('ソ', new char[]{'ゾ'});
+        TABLE.put('タ', new char[]{'ダ'});
+        TABLE.put('チ', new char[]{'ヂ'});
+        TABLE.put('ツ', new char[]{'ヅ'});
+        TABLE.put('テ', new char[]{'デ'});
+        TABLE.put('ト', new char[]{'ド'});
+        TABLE.put('ハ', new char[]{'バ', 'パ'});
+        TABLE.put('ヒ', new char[]{'ビ', 'ピ'});
+        TABLE.put('フ', new char[]{'ブ', 'プ'});
+        TABLE.put('ヘ', new char[]{'ベ', 'ペ'});
+        TABLE.put('ホ', new char[]{'ボ', 'ポ'});
     }
 
     public static String fixJapaneseString(String input) {
@@ -56,38 +56,42 @@ public class TitleFixer {
             return null;
         }
 
-        //Replace or remove special characters that are visible only in Minecraft font
+        // Replace or remove special characters that are visible only in Minecraft font
         input = input.replaceAll("　", "  ");
         input = input.replaceAll("\u200B", "");
 
-        //Combine separated voicing and semi-voicing symbols
-        String last = "";
-        String current = "";
+        // Combine separated voicing and semi-voicing symbols
+        Character last = null;
+        char current;
         StringBuilder line = new StringBuilder();
 
-        for ( int i = 0; i < input.length(); i++ ) {
-            current = input.substring(i, i + 1);
+        for (int i = 0; i < input.length(); i++) {
+            current = input.charAt(i);
 
-            if (current.equals("゙")) {
-                line.append(getFixedChar(last, 0));
-                last = "";
-            } else if (current.equals("゚")) {
-                line.append(getFixedChar(last, 1));
-                last = "";
+            if (current == '゙' && last != null) {
+                line.append(fixCharacter(last, 0));
+                last = null;
+            } else if (current == '゚' && last != null) {
+                line.append(fixCharacter(last, 1));
+                last = null;
             } else {
-                line.append(last);
+                if (last != null) {
+                    line.append(last);
+                }
                 last = current;
             }
         }
-        line.append(last);
+        if (last != null) {
+            line.append(last);
+        }
 
         return line.toString();
     }
 
-    private static String getFixedChar(String base, int type) {
+    private static String fixCharacter(char base, int type) {
         if (TABLE.containsKey(base)) {
-            String[] value = TABLE.get(base);
-            if (value.length >= type + 1) return value[type];
+            char[] value = TABLE.get(base);
+            if (value.length >= type + 1) return String.valueOf(value[type]);
         }
 
         if (type == 0) return base + "゛";

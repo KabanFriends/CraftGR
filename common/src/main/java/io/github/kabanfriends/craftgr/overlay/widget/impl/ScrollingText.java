@@ -5,6 +5,7 @@ import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.config.ModConfig;
 import io.github.kabanfriends.craftgr.overlay.widget.UIWidget;
 import io.github.kabanfriends.craftgr.util.render.RenderUtil;
+import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 
@@ -107,7 +108,7 @@ public class ScrollingText extends UIWidget {
             final float maxMove = width - textWidth;
 
             if (lastTime == 0) {
-                lastTime = System.currentTimeMillis();
+                lastTime = Util.getMillis();
             }
 
             if (state == State.WAITING) {
@@ -117,7 +118,7 @@ public class ScrollingText extends UIWidget {
                     state = moveDifference >= 0 ? State.LEFT : State.RIGHT;
                 }
             } else {
-                moveDifference = startPos + (System.currentTimeMillis() - lastTime) * (state == State.LEFT ? -stepSize : stepSize) / 32f;
+                moveDifference = startPos + (Util.getMillis() - lastTime) * (state == State.LEFT ? -stepSize : stepSize) / 32f;
                 if (state == State.LEFT ? moveDifference <= maxMove : moveDifference >= 0) {
                     moveDifference = state == State.LEFT ? maxMove : 0;
                     lastTime = 0;
@@ -131,7 +132,7 @@ public class ScrollingText extends UIWidget {
     }
 
     protected boolean hasWaitTimePassed() {
-        return System.currentTimeMillis() - waitTime >= lastTime;
+        return Util.getMillis() - waitTime >= lastTime;
     }
 
     private enum State {

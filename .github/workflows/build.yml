@@ -25,12 +25,12 @@ jobs:
           chmod +x ./gradlew
           ./gradlew build
       - name: Upload Fabric artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: fabric
           path: fabric/build/libs/
       - name: Upload NeoForge artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: neoforge
           path: neoforge/build/libs/

@@ -1,10 +1,10 @@
 package io.github.kabanfriends.craftgr;
 
-import io.github.kabanfriends.craftgr.audio.RadioStream;
+import io.github.kabanfriends.craftgr.audio.Radio;
 import io.github.kabanfriends.craftgr.config.ModConfig;
 import io.github.kabanfriends.craftgr.event.ClientEvents;
 import io.github.kabanfriends.craftgr.keybind.Keybinds;
-import io.github.kabanfriends.craftgr.platform.Platform;
+import io.github.kabanfriends.craftgr.platform.PlatformAdapter;
 import io.github.kabanfriends.craftgr.overlay.SongInfoOverlay;
 import io.github.kabanfriends.craftgr.song.FallbackSongProvider;
 import io.github.kabanfriends.craftgr.song.SongProvider;
@@ -32,7 +32,7 @@ public class CraftGR {
     private static CraftGR instance;
 
     private final Minecraft minecraft;
-    private final Platform platform;
+    private final PlatformAdapter platformAdapter;
     private final Logger logger;
     private final ModConfig config;
     private final ExecutorService executor;
@@ -40,15 +40,15 @@ public class CraftGR {
     private final ClientEvents events;
     private final Keybinds keybinds;
     private final SongInfoOverlay songInfoOverlay;
-    private final RadioStream radioStream;
+    private final Radio radio;
 
     private SongProvider songProvider = new FallbackSongProvider();
 
-    public CraftGR(Platform platform) {
+    public CraftGR(PlatformAdapter platformAdapter) {
         instance = this;
 
         this.minecraft = Minecraft.getInstance();
-        this.platform = platform;
+        this.platformAdapter = platformAdapter;
         this.logger = LogManager.getLogger();
         this.config = new ModConfig(this);
         this.executor = Executors.newCachedThreadPool();
@@ -56,11 +56,11 @@ public class CraftGR {
         this.events = new ClientEvents(this);
         this.keybinds = new Keybinds(this);
         this.songInfoOverlay = new SongInfoOverlay(this);
-        this.radioStream = new RadioStream(this);
+        this.radio = new Radio(this);
     }
 
-    public Platform getPlatform() {
-        return platform;
+    public PlatformAdapter getPlatformAdapter() {
+        return platformAdapter;
     }
 
     public CloseableHttpClient getHttpClient() {
@@ -91,8 +91,8 @@ public class CraftGR {
         return songProvider;
     }
 
-    public RadioStream getRadioStream() {
-        return radioStream;
+    public Radio getRadio() {
+        return radio;
     }
 
     public void setSongProvider(SongProvider newProvider) {

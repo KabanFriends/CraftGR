@@ -15,7 +15,7 @@ public class CraftGRNeoForge {
     private final CraftGR craftGR;
 
     public CraftGRNeoForge(IEventBus modBus) {
-        craftGR = new CraftGR(new NeoForgePlatform(Minecraft.getInstance()));
+        craftGR = new CraftGR(new NeoForgePlatformAdapter(Minecraft.getInstance()));
 
         // Events
         modBus.register(NeoForgeModEvents.class);

@@ -25,23 +25,27 @@ dependencies {
     modApi("com.terraformersmc:modmenu:${rootProject.mod_menu_version}") { transitive(false) }
     modApi "dev.isxander:yet-another-config-lib:${rootProject.yacl_version}-fabric"
 
+    include "org.apache.commons:commons-math3:${rootProject.math3_version}"
     include "com.github.umjammer:jlayer:${rootProject.jlayer_version}"
     include("org.java-websocket:Java-WebSocket:${rootProject.java_websocket_version}") {
         exclude module: "slf4j-api"
     }
 
-    modLocalRuntime("com.terraformersmc:modmenu:${rootProject.mod_menu_version}") { transitive(false) }
-    modLocalRuntime "dev.isxander:yet-another-config-lib:${rootProject.yacl_version}-fabric"
+    modRuntimeOnly("com.terraformersmc:modmenu:${rootProject.mod_menu_version}") { transitive(false) }
+    modRuntimeOnly "dev.isxander:yet-another-config-lib:${rootProject.yacl_version}-fabric"
 
-    localRuntime "org.java-websocket:Java-WebSocket:${rootProject.java_websocket_version}"
-}
-
-loom {
-    accessWidenerPath = file("src/main/resources/craftgr-fabric.accesswidener")
+    runtimeOnly "org.apache.commons:commons-math3:${rootProject.math3_version}"
+    runtimeOnly "com.github.umjammer:jlayer:${rootProject.jlayer_version}"
+    runtimeOnly "org.java-websocket:Java-WebSocket:${rootProject.java_websocket_version}"
 }
 
 processResources {
     inputs.property "version", rootProject.version
+
+    // Dev
+    from(project(":common").file("src/main/resources/craftgr.accesswidener")) {
+        into("/");
+    }
 
     filesMatching("fabric.mod.json") {
         expand "version": rootProject.version
@@ -59,12 +63,6 @@ remapJar {
     input.set shadowJar.archiveFile
     dependsOn shadowJar
     archiveClassifier.set "mc${rootProject.minecraft_version}-fabric"
-}
-
-sourcesJar {
-    def commonSources = project(":common").sourcesJar
-    dependsOn commonSources
-    from commonSources.archiveFile.map { zipTree(it) }
 }
 
 components.java {

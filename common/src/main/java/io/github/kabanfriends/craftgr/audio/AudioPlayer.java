@@ -1,9 +1,9 @@
 package io.github.kabanfriends.craftgr.audio;
 
 import io.github.kabanfriends.craftgr.CraftGR;
-import io.github.kabanfriends.craftgr.config.ModConfig;
+import io.github.kabanfriends.craftgr.util.RingBuffer;
 import javazoom.jl.decoder.*;
-import net.minecraft.sounds.SoundSource;
+import net.minecraft.Util;
 import org.apache.logging.log4j.Level;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.openal.AL10;
@@ -16,25 +16,30 @@ import java.nio.ShortBuffer;
 // Code based on: https://github.com/PC-Logix/OpenFM/blob/1.12.2/src/main/java/pcl/OpenFM/player/MP3Player.java
 public class AudioPlayer {
 
+    private static final int MAGNITUDE_BUFFER_CAPACITY = 512;
+
     private final CraftGR craftGR;
     private final Decoder decoder;
+    private final Bitstream bitstream;
 
-    private Bitstream bitstream;
+    private final RingBuffer<FreqSample> freqBuffer;
+
+    private FreqRenderer freqRenderer;
     private IntBuffer buffer;
     private IntBuffer source;
-    private float baseVolume = 1.0F;
+
+    private float gain = 1.0f;
     private boolean playing = false;
 
-    public AudioPlayer(CraftGR craftGR) {
+    public AudioPlayer(CraftGR craftGR, InputStream stream) {
         this.craftGR = craftGR;
         this.decoder = new Decoder();
-    }
-
-    public void setStream(InputStream stream) {
         this.bitstream = new Bitstream(stream);
+
+        this.freqBuffer = new RingBuffer<>(MAGNITUDE_BUFFER_CAPACITY);
     }
 
-    public void play() throws AudioPlayerException {
+    public void play(boolean fadeIn) throws AudioPlayerException {
         try {
             this.source = BufferUtils.createIntBuffer(1);
             AL10.alGenSources(this.source);
@@ -43,16 +48,23 @@ public class AudioPlayer {
             AL10.alSourcei(this.source.get(0), AL10.AL_LOOPING, AL10.AL_FALSE);
             AL10.alSourcef(this.source.get(0), AL10.AL_PITCH, 1.0f);
 
+            if (fadeIn) {
+                applyGain(0.0f);
+                fadeIn(2000f);
+            } else {
+                applyGain(1.0f);
+            }
             alError();
 
             this.playing = true;
-
-            do {
-                applyVolume();
-            } while (this.playing && decodeFrame());
+            while (this.playing) {
+                if (!decodeFrame()) {
+                    break;
+                }
+            };
 
             close();
-        } catch (Exception e) {
+        } catch (JavaLayerException e) {
             if (this.playing) {
                 throw new AudioPlayerException(e);
             }
@@ -81,92 +93,107 @@ public class AudioPlayer {
             AL10.alDeleteBuffers(this.buffer);
             alError();
         }
-        if (this.bitstream != null) {
-            this.bitstream.close();
+        this.bitstream.close();
+    }
+
+    public void setGain(float gain) {
+        this.gain = gain;
+
+        if (this.playing) {
+            applyGain(1.0f);
         }
     }
 
-    public void setBaseVolume(float f) {
-        this.baseVolume = f;
-        if (this.playing && this.source != null) {
-            applyVolume();
-        }
-    }
-
-    public float getBaseVolume() {
-        return this.baseVolume;
+    public FreqRenderer getFreqRenderer() {
+        return this.freqRenderer;
     }
 
     public boolean isPlaying() {
         return this.playing;
     }
 
-    private boolean decodeFrame() throws AudioPlayerException {
-        try {
-            Header h = this.bitstream.readFrame();
-
-            if (h == null) {
-                close();
-                return false;
-            }
-
-            SampleBuffer output = (SampleBuffer) this.decoder.decodeFrame(h, this.bitstream);
-            short[] samples = output.getBuffer();
-
-            if (this.buffer == null) {
-                this.buffer = BufferUtils.createIntBuffer(1);
-            } else {
-                int processed = AL10.alGetSourcei(this.source.get(0), AL10.AL_BUFFERS_PROCESSED);
-                if (processed > 0) {
-                    AL10.alSourceUnqueueBuffers(this.source.get(0), this.buffer);
-                }
-            }
-
-            AL10.alGenBuffers(this.buffer);
-            ShortBuffer shortBuffer = BufferUtils.createShortBuffer(output.getBufferLength()).put(samples, 0, output.getBufferLength());
-            ShortBuffer data = (ShortBuffer) ((Buffer) shortBuffer).flip();
-            AL10.alBufferData(this.buffer.get(0), (output.getChannelCount() > 1) ? AL10.AL_FORMAT_STEREO16 : AL10.AL_FORMAT_MONO16, data, output.getSampleFrequency());
-            AL10.alSourceQueueBuffers(this.source.get(0), buffer);
-            alError();
-
-            int state = AL10.alGetSourcei(this.source.get(0), AL10.AL_SOURCE_STATE);
-            if (this.playing && state != AL10.AL_PLAYING) {
-                AL10.alSourcePlay(this.source.get(0));
-            }
-            alError();
-
-            this.bitstream.closeFrame();
-
-            return true;
-        } catch (Exception e) {
-            if (this.playing) {
-                throw new AudioPlayerException(e);
-            }
-            return false;
+    protected FreqSample getFreqSampleNow() {
+        int index = AL10.alGetSourcei(this.source.get(0), AL10.AL_BUFFERS_PROCESSED);
+        alError();
+        if (index >= freqBuffer.size()) {
+            return null;
         }
+        return freqBuffer.get(index);
     }
 
-    private boolean skipFrame() throws JavaLayerException {
+    private boolean decodeFrame() throws JavaLayerException {
         Header h = this.bitstream.readFrame();
+
         if (h == null) {
+            close();
             return false;
         }
+
+        SampleBuffer output = (SampleBuffer) this.decoder.decodeFrame(h, this.bitstream);
+        short[] samples = output.getBuffer();
+
+        if (this.freqRenderer == null) {
+            this.freqRenderer = new FreqRenderer(this, output.getSampleFrequency(), 30);
+        }
+
+        if (this.buffer == null) {
+            this.buffer = BufferUtils.createIntBuffer(1);
+        } else {
+            int processed = AL10.alGetSourcei(this.source.get(0), AL10.AL_BUFFERS_PROCESSED);
+            freqBuffer.removeHeadN(processed);
+            while (processed > 0) {
+                AL10.alSourceUnqueueBuffers(this.source.get(0), this.buffer);
+                processed--;
+            }
+        }
+
+        // For some reason, the original samples array is mutable so we have to copy values before buffering
+        short[] capturedSamples = new short[samples.length];
+        System.arraycopy(samples, 0, capturedSamples, 0, samples.length);
+
+        freqBuffer.add(new FreqSample(freqRenderer, capturedSamples));
+
+        AL10.alGenBuffers(this.buffer);
+        ShortBuffer shortBuffer = BufferUtils.createShortBuffer(output.getBufferLength()).put(samples, 0, output.getBufferLength());
+        ShortBuffer data = (ShortBuffer) ((Buffer) shortBuffer).flip();
+        AL10.alBufferData(this.buffer.get(0), (output.getChannelCount() > 1) ? AL10.AL_FORMAT_STEREO16 : AL10.AL_FORMAT_MONO16, data, output.getSampleFrequency());
+        AL10.alSourceQueueBuffers(this.source.get(0), buffer);
+        alError();
+
+        int state = AL10.alGetSourcei(this.source.get(0), AL10.AL_SOURCE_STATE);
+        if (this.playing && state != AL10.AL_PLAYING) {
+            AL10.alSourcePlay(this.source.get(0));
+        }
+        alError();
+
         this.bitstream.closeFrame();
+
         return true;
     }
 
-    private int alError() {
+    private void applyGain(float multiplier) {
+        AL10.alSourcef(this.source.get(0), AL10.AL_GAIN, (float) ((Math.exp(multiplier * this.gain) - 1) / (Math.E - 1)));
+    }
+
+    private void fadeIn(float fadingDurationMillis) {
+        long fadingStart = Util.getMillis();
+        craftGR.getThreadExecutor().submit(() -> {
+            while (true) {
+                float multiplier = Math.min((Util.getMillis() - fadingStart) / fadingDurationMillis, 1.0f);
+                applyGain(multiplier);
+
+                if (multiplier >= 1.0f) {
+                    break;
+                }
+            }
+        });
+    }
+
+    private void alError() {
         int error = AL10.alGetError();
         if (error != AL10.AL_NO_ERROR) {
             craftGR.log(Level.WARN, String.format("AL10 Error: %d: %s", error, AL10.alGetString(error)));
             Thread.dumpStack();
-            return error;
         }
-        return 0;
-    }
-
-    private void applyVolume() {
-        AL10.alSourcef(this.source.get(0), AL10.AL_GAIN, this.baseVolume * (ModConfig.<Integer>get("volume") / 100f) * craftGR.getMinecraft().options.getSoundSourceVolume(SoundSource.MASTER));
-        alError();
     }
 }

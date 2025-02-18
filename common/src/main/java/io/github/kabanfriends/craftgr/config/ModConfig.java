@@ -39,10 +39,14 @@ public class ModConfig {
                     new IntegerConfigField("volume", 50)
                             .setFormatter((value) -> Component.literal(value + "%"))
                             .setRange(0, 100)
+                            .onApply((value) -> {
+                                CraftGR.getInstance().getRadio().setVolume(value);
+                            })
             ),
             new ConfigGroup(Component.translatable("text.craftgr.config.category.overlay"), true,
                     new EnumConfigField("overlayVisibility", SongInfoOverlay.OverlayVisibility.MENU),
                     new EnumConfigField("overlayPosition", SongInfoOverlay.OverlayPosition.TOP_RIGHT),
+                    new BooleanConfigField("showVisualizer", true),
                     new BooleanConfigField("hideAlbumArt", false),
                     new BooleanConfigField("openAlbum", true),
                     new IntegerConfigField("overlayWidth", 115)
@@ -56,8 +60,7 @@ public class ModConfig {
                             }),
                     new FloatConfigField("overlayScale", 1.0f)
                             .setFormatter(value -> Component.literal(value + "×")),
-                    new ColorConfigField("overlayBgColor", new Color(99, 34, 121)),
-                    new ColorConfigField("overlayBarColor", new Color(160, 150, 174))
+                    new ColorConfigField("overlayBgColor", new Color(99, 34, 121))
             ),
             new ConfigGroup(Component.translatable("text.craftgr.config.category.advanced"), true,
                     new EnumConfigField("songProvider", SongProviderType.JSON_API)

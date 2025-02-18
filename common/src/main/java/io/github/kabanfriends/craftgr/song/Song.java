@@ -1,5 +1,7 @@
 package io.github.kabanfriends.craftgr.song;
 
+import net.minecraft.Util;
+
 public class Song {
 
     private final Metadata metadata;
@@ -17,8 +19,8 @@ public class Song {
     }
 
     public long getLocalPlayedTime() {
-        long played = playedTime + (currentTime() - localStartTime);
-        return Math.min(played, metadata().duration());
+        long played = getAPIPlayedTime() * 1000L + (currentTime() - localStartTime);
+        return Math.min(played, metadata().duration() * 1000L);
     }
 
     protected long getAPIPlayedTime() {
@@ -26,7 +28,7 @@ public class Song {
     }
 
     private static long currentTime() {
-        return System.currentTimeMillis() / 1000L;
+        return Util.getMillis();
     }
 
     /**

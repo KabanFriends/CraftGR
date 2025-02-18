@@ -15,7 +15,7 @@ public class Keybinds {
                             GLFW.GLFW_KEY_M,
                             "key.category.craftgr"
                     ),
-                    () -> CraftGR.getInstance().getRadioStream().toggle()
+                    () -> CraftGR.getInstance().getRadio().toggle()
             )
     };
 

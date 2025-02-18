@@ -16,7 +16,7 @@ logoFile = "icon.png"
 config = "craftgr-common.mixins.json"
 
 [[accessTransformers]]
-file = "accesstransformer.cfg"
+file = "META-INF/accesstransformer.cfg"
 
 [[dependencies.craftgr]]
 modId = "minecraft"
