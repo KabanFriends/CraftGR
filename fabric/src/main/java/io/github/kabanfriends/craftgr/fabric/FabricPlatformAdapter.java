@@ -1,6 +1,7 @@
 package io.github.kabanfriends.craftgr.fabric;
 
 import com.terraformersmc.modmenu.gui.ModsScreen;
+import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.platform.PlatformAdapter;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
@@ -11,6 +12,12 @@ public class FabricPlatformAdapter implements PlatformAdapter {
 
     public FabricPlatformAdapter(Minecraft minecraft) {
         this.minecraft = minecraft;
+    }
+
+    @Override
+    public String getModVersion() {
+        //noinspection OptionalGetWithoutIsPresent
+        return FabricLoader.getInstance().getModContainer(CraftGR.MOD_ID).get().getMetadata().getVersion().toString();
     }
 
     @Override

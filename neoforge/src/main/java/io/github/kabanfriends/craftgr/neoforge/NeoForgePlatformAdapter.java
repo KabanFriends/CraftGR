@@ -1,5 +1,6 @@
 package io.github.kabanfriends.craftgr.neoforge;
 
+import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.platform.PlatformAdapter;
 import net.minecraft.client.Minecraft;
 import net.neoforged.fml.ModList;
@@ -11,6 +12,12 @@ public class NeoForgePlatformAdapter implements PlatformAdapter {
 
     public NeoForgePlatformAdapter(Minecraft minecraft) {
         this.minecraft = minecraft;
+    }
+
+    @Override
+    public String getModVersion() {
+        //noinspection OptionalGetWithoutIsPresent
+        return ModList.get().getModContainerById(CraftGR.MOD_ID).get().getModInfo().getVersion().toString();
     }
 
     @Override

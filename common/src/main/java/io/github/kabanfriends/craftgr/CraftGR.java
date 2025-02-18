@@ -52,7 +52,9 @@ public class CraftGR {
         this.logger = LogManager.getLogger();
         this.config = new ModConfig(this);
         this.executor = Executors.newCachedThreadPool();
-        this.httpClient = HttpClients.createDefault();
+        this.httpClient = HttpClients.custom()
+                .setUserAgent("Minecraft-CraftGR/" + platformAdapter.getModVersion())
+                .build();
         this.events = new ClientEvents(this);
         this.keybinds = new Keybinds(this);
         this.songInfoOverlay = new SongInfoOverlay(this);
