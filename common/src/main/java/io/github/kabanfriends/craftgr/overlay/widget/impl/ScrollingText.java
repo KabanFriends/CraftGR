@@ -77,14 +77,14 @@ public class ScrollingText extends UIWidget {
     public void render(GuiGraphics graphics, int mouseX, int mouseY) {
         float scale = ModConfig.<Float>get("overlayScale") * 2;
 
-        int fontX = (int)getMovingX(x / 2f);
-        int fontY = (int)y / 2;
+        int fontX = (int) getMovingX(x / 2f);
+        int fontY = (int) y / 2;
 
-        int scissorX = (int)(scale * (int)(x / 2f));
-        int scissorY = (int)(scale * fontY);
+        int scissorX = (int) (scale * (int)(x / 2f));
+        int scissorY = (int) (scale * fontY);
 
-        int scissorW = (int)(width * scale);
-        int scissorH = (int)(CraftGR.getInstance().getMinecraft().font.lineHeight * scale);
+        int scissorW = (int) (width * scale);
+        int scissorH = (int) (CraftGR.getInstance().getMinecraft().font.lineHeight * scale);
 
         PoseStack poseStack = graphics.pose();
 
