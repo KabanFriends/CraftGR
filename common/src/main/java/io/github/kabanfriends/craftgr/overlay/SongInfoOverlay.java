@@ -20,13 +20,14 @@ import net.minecraft.client.gui.screens.*;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.logging.log4j.Level;
-import org.joml.Vector2f;
 import org.joml.Vector2i;
 
 import javax.imageio.ImageIO;
@@ -72,6 +73,8 @@ public class SongInfoOverlay extends Overlay {
     
     private static final int COLOR_WHITE = 0xFFFFFF;
 
+    private static final ResourceLocation HIGHLIGHTED_BORDER_SPRITE = ResourceLocation.fromNamespaceAndPath(CraftGR.MOD_ID, "highlighted_border");
+
     private static final ResourceLocation ALBUM_ART_PLACEHOLDER_LOCATION = ResourceLocation.fromNamespaceAndPath(CraftGR.MOD_ID, "textures/album_placeholder.png");
     private static final ResourceLocation ALBUM_ART_LOCATION = ResourceLocation.fromNamespaceAndPath(CraftGR.MOD_ID, "album");
 
@@ -98,21 +101,24 @@ public class SongInfoOverlay extends Overlay {
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY) {
         Minecraft minecraft = craftGR.getMinecraft();
-        OverlayVisibility visibility = ModConfig.get("overlayVisibility");
-
-        if (minecraft.screen == null) {
-            if (visibility != SongInfoOverlay.OverlayVisibility.ALWAYS) return;
-        } else {
-            if (visibility == SongInfoOverlay.OverlayVisibility.NONE) return;
-            if (visibility == SongInfoOverlay.OverlayVisibility.CHAT && !(minecraft.screen instanceof ChatScreen)) return;
-        }
-
         Font font = minecraft.font;
 
         float scale = ModConfig.get("overlayScale");
 
         int albumArtWidth = ModConfig.get("hideAlbumArt") ? -ART_LEFT_PADDING : ART_SIZE;
 
+        // Mouse hover detection
+        if (isHovered(mouseX, mouseY)) {
+            if (!expanded) {
+                expanded = true;
+                updateScrollWidth();
+            }
+        } else if (expanded) {
+            expanded = false;
+            updateScrollWidth();
+        }
+
+        // Determine overlay size and position
         Vector2i size = getOverlaySize();
         int width = size.x();
         int height = size.y();
@@ -153,6 +159,11 @@ public class SongInfoOverlay extends Overlay {
         if (!ModConfig.<Boolean>get("hideAlbumArt")) {
             graphics.blit(RenderType::guiTextured, shouldRenderAlbumArt() ? ALBUM_ART_LOCATION : ALBUM_ART_PLACEHOLDER_LOCATION, x + ART_LEFT_PADDING, y + ART_TOP_PADDING, 0f, 0f, ART_SIZE, ART_SIZE, ART_SIZE, ART_SIZE);
         }
+
+        if (isClickable() && isHovered(mouseX, mouseY)) {
+            graphics.blitSprite(RenderType::guiTextured, HIGHLIGHTED_BORDER_SPRITE, x - 2, y - 2, width + 4, height + 4);
+        }
+
         poseStack.pushPose();
         poseStack.scale(2, 2, 2);
         poseStack.translate(x % 2 / 2f, y % 2 / 2f, 0); // Cancel out int rounding difference
@@ -220,68 +231,23 @@ public class SongInfoOverlay extends Overlay {
         songTitleText.render(graphics, mouseX, mouseY);
 
         RenderUtil.setZLevelPost(poseStack);
-
-        // Mouse hover detection
-        float mouseScaledX = mouseX / RenderUtil.getUIScale(scale);
-        float mouseScaledY = mouseY / RenderUtil.getUIScale(scale);
-
-        if (mouseScaledX >= x && mouseScaledX <= x + width && mouseScaledY >= y && mouseScaledY <= y + height) {
-            if (!expanded) {
-                expanded = true;
-                updateScrollWidth();
-            }
-        } else if (expanded) {
-            expanded = false;
-            updateScrollWidth();
-        }
     }
 
     @Override
     public boolean mouseClick(int mouseX, int mouseY) {
-        Minecraft minecraft = craftGR.getMinecraft();
-
-        if (minecraft.screen instanceof ConfirmLinkScreen) return true;
-        if (minecraft.screen instanceof LevelLoadingScreen) return true;
-        if (minecraft.screen instanceof ReceivingLevelScreen) return true;
-        if (minecraft.screen instanceof ProgressScreen) return true;
-        if (minecraft.screen instanceof ConnectScreen) return true;
-        if (minecraft.screen instanceof GenericMessageScreen) return true;
-
-        if (craftGR.getPlatformAdapter().isInModMenu()) return true;
-
-        if (ModUtil.isConfigModAvailable() && minecraft.screen instanceof YACLScreen) return true;
-
-        OverlayVisibility visibility = ModConfig.get("overlayVisibility");
-
-        if (visibility == OverlayVisibility.NONE) return true;
-        if (visibility == OverlayVisibility.CHAT && !(minecraft.screen instanceof ChatScreen)) return true;
+        if (!isClickable()) return true;
 
         Song song = craftGR.getSongProvider().getCurrentSong();
-
         if (song != null && ModConfig.<Boolean>get("openAlbum")) {
-            if (song.metadata().intermission()) return true;
+            if (isHovered(mouseX, mouseY)) {
+                craftGR.getMinecraft().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
 
-            float scale = ModConfig.get("overlayScale");
-
-            float scaledX = mouseX / RenderUtil.getUIScale(scale);
-            float scaledY = mouseY / RenderUtil.getUIScale(scale);
-
-            Vector2i size = getOverlaySize();
-            int width = size.x();
-            int height = size.y();
-
-            OverlayPosition position = ModConfig.get("overlayPosition");
-            Vector2i coords = getOverlayCoordinate(position, width, height);
-            int x = coords.x();
-            int y = coords.y();
-
-            if (scaledX >= x && scaledX <= x + width && scaledY >= y && scaledY <= y + height) {
                 String link = "https://gensokyoradio.net/music/album/" + song.metadata().albumId();
-                Screen oldScreen = minecraft.screen;
+                Screen oldScreen = craftGR.getMinecraft().screen;
 
-                minecraft.setScreen(new ConfirmLinkScreen((result) -> {
+                craftGR.getMinecraft().setScreen(new ConfirmLinkScreen((result) -> {
                     if (result) Util.getPlatform().openUri(link);
-                    minecraft.setScreen(oldScreen);
+                    craftGR.getMinecraft().setScreen(oldScreen);
                 }, link, true));
 
                 return false;
@@ -309,6 +275,23 @@ public class SongInfoOverlay extends Overlay {
     public void onSongChanged() {
         updateSongTitle();
         CraftGR.getInstance().getThreadExecutor().submit(() -> downloadAlbumArtTexture());
+    }
+
+    public boolean shouldRender() {
+        if (!isActive()) return false;
+        if (craftGR.getMinecraft().options.hideGui) return false;
+        if (craftGR.getMinecraft().getDebugOverlay().showDebugScreen()) return false;
+
+        OverlayVisibility visibility = ModConfig.get("overlayVisibility");
+
+        if (craftGR.getMinecraft().screen == null) {
+            if (visibility != SongInfoOverlay.OverlayVisibility.ALWAYS) return false;
+        } else {
+            if (visibility == SongInfoOverlay.OverlayVisibility.NONE) return false;
+            if (visibility == SongInfoOverlay.OverlayVisibility.CHAT && !(craftGR.getMinecraft().screen instanceof ChatScreen)) return false;
+        }
+
+        return true;
     }
 
     private Vector2i getOverlayCoordinate(OverlayPosition position, float width, float height) {
@@ -423,6 +406,48 @@ public class SongInfoOverlay extends Overlay {
         return song != null &&
                 !song.metadata().intermission() &&
                 albumArtLoaded;
+    }
+
+    private boolean isHovered(int mouseX, int mouseY) {
+        float scale = ModConfig.get("overlayScale");
+
+        float scaledX = mouseX / RenderUtil.getUIScale(scale);
+        float scaledY = mouseY / RenderUtil.getUIScale(scale);
+
+        Vector2i size = getOverlaySize();
+        int width = size.x();
+        int height = size.y();
+
+        OverlayPosition position = ModConfig.get("overlayPosition");
+        Vector2i coords = getOverlayCoordinate(position, width, height);
+        int x = coords.x();
+        int y = coords.y();
+
+        return scaledX >= x && scaledX <= x + width && scaledY >= y && scaledY <= y + height;
+    }
+
+    private boolean isClickable() {
+        if (!shouldRender()) return false;
+
+        if (!ModConfig.<Boolean>get("openAlbum")) return false;
+
+        if (craftGR.getMinecraft().screen instanceof ConfirmLinkScreen) return false;
+        if (craftGR.getMinecraft().screen instanceof LevelLoadingScreen) return false;
+        if (craftGR.getMinecraft().screen instanceof ReceivingLevelScreen) return false;
+        if (craftGR.getMinecraft().screen instanceof ProgressScreen) return false;
+        if (craftGR.getMinecraft().screen instanceof ConnectScreen) return false;
+        if (craftGR.getMinecraft().screen instanceof GenericMessageScreen) return false;
+
+        if (craftGR.getPlatformAdapter().isInModMenu()) return false;
+        if (ModUtil.isConfigModAvailable() && craftGR.getMinecraft().screen instanceof YACLScreen) return false;
+
+        if (Screen.hasShiftDown()) return false;
+
+        Song song = craftGR.getSongProvider().getCurrentSong();
+        if (song == null) return false;
+        if (song.metadata().intermission()) return false;
+
+        return true;
     }
 
     private static String formatTime(long time) {

@@ -11,6 +11,10 @@
         {
             "type": "single",
             "resource": "craftgr:config_highlighted"
+        },
+        {
+            "type": "single",
+            "resource": "craftgr:highlighted_border"
         }
     ]
 }
