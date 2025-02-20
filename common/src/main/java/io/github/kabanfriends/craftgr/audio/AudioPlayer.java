@@ -1,6 +1,7 @@
 package io.github.kabanfriends.craftgr.audio;
 
 import io.github.kabanfriends.craftgr.CraftGR;
+import io.github.kabanfriends.craftgr.util.ExceptionUtil;
 import io.github.kabanfriends.craftgr.util.RingBuffer;
 import javazoom.jl.decoder.*;
 import net.minecraft.Util;
@@ -39,53 +40,47 @@ public class AudioPlayer {
         this.freqBuffer = new RingBuffer<>(MAGNITUDE_BUFFER_CAPACITY);
     }
 
-    public void play(boolean fadeIn) throws AudioPlayerException {
-        try {
-            this.source = BufferUtils.createIntBuffer(1);
-            AL10.alGenSources(this.source);
-            alError();
+    public void play(boolean fadeIn) throws JavaLayerException {
+        this.source = BufferUtils.createIntBuffer(1);
+        AL10.alGenSources(this.source);
+        alError();
 
-            AL10.alSourcei(this.source.get(0), AL10.AL_LOOPING, AL10.AL_FALSE);
-            AL10.alSourcef(this.source.get(0), AL10.AL_PITCH, 1.0f);
+        AL10.alSourcei(this.source.get(0), AL10.AL_LOOPING, AL10.AL_FALSE);
+        AL10.alSourcef(this.source.get(0), AL10.AL_PITCH, 1.0f);
 
-            if (fadeIn) {
-                applyGain(0.0f);
-                fadeIn(2000f);
-            } else {
-                applyGain(1.0f);
-            }
-            alError();
+        if (fadeIn) {
+            applyGain(0.0f);
+            fadeIn(2000f);
+        } else {
+            applyGain(1.0f);
+        }
+        alError();
 
-            this.playing = true;
-            while (this.playing) {
+        this.playing = true;
+        while (this.playing) {
+            try {
                 if (!decodeFrame()) {
                     break;
                 }
-            };
-
-            close();
-        } catch (JavaLayerException e) {
-            if (this.playing) {
-                throw new AudioPlayerException(e);
+            } catch (JavaLayerException e) {
+                close();
+                throw e;
             }
-        }
+        };
+
+        close();
     }
 
     public void stop() {
         this.playing = false;
         if (this.source != null) {
-            AL10.alSourcef(this.source.get(0), AL10.AL_GAIN, 0.0f);
-            AL10.alSourceStop(this.source.get());
             alError();
         }
     }
 
-    public void close() throws BitstreamException {
+    public void close() {
         if (this.source != null) {
-            int state = AL10.alGetSourcei(this.source.get(0), AL10.AL_SOURCE_STATE);
-            if (state != AL10.AL_PLAYING && state != AL10.AL_PAUSED) {
-                AL10.alSourcei(this.source.get(0), AL10.AL_BUFFER, 0);
-            }
+            AL10.alSourceStop(this.source.get(0));
             AL10.alDeleteSources(this.source);
             alError();
         }
@@ -93,7 +88,12 @@ public class AudioPlayer {
             AL10.alDeleteBuffers(this.buffer);
             alError();
         }
-        this.bitstream.close();
+
+        try {
+            this.bitstream.close();
+        } catch (BitstreamException e) {
+            craftGR.log(Level.ERROR, "Could not close bitstream: " + ExceptionUtil.getStackTrace(e));
+        }
     }
 
     public void setGain(float gain) {
@@ -121,15 +121,29 @@ public class AudioPlayer {
         return freqBuffer.get(index);
     }
 
-    private boolean decodeFrame() throws JavaLayerException {
-        Header h = this.bitstream.readFrame();
+    private boolean decodeFrame() throws BitstreamException, DecoderException {
+        Header header;
+        try {
+            header = this.bitstream.readFrame();
+        } catch (BitstreamException e) {
+            if (e.getErrorCode() == BitstreamErrors.STREAM_ERROR ||
+                e.getErrorCode() == BitstreamErrors.UNEXPECTED_EOF ||
+                e.getErrorCode() == BitstreamErrors.STREAM_EOF) {
 
-        if (h == null) {
+                // If client closed the stream, do not throw errors
+                if (!playing) {
+                    return false;
+                }
+            }
+            throw e;
+        }
+
+        if (header == null) {
             close();
             return false;
         }
 
-        SampleBuffer output = (SampleBuffer) this.decoder.decodeFrame(h, this.bitstream);
+        SampleBuffer output = (SampleBuffer) this.decoder.decodeFrame(header, this.bitstream);
         short[] samples = output.getBuffer();
 
         if (this.freqRenderer == null) {
