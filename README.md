@@ -1,7 +1,7 @@
 <div align="center">
 <img src="https://raw.githubusercontent.com/KabanFriends/creation/master/images/craftgr/logo_256.png" alt="CraftGR" width="200" height="200">
 <h1>CraftGR</h1>
-Touhou Project music player for Minecraft
+A Touhou Project music player for Minecraft
 <br><br>
 
 [![Build](https://github.com/KabanFriends/CraftGR/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/KabanFriends/CraftGR/actions/workflows/build.yml)
@@ -14,21 +14,21 @@ Touhou Project music player for Minecraft
 </div>
 
 # About this mod
-CraftGR is a music player mod for Minecraft designed specifically for [Gensokyo Radio](https://gensokyoradio.net/),
-which streams fan-made Touhou Project songs in the game. It also has a customizable HUD display that shows information of the songs.
+CraftGR is a music player mod designed specifically for streaming Touhou Project fan-made arrangements from [Gensokyo Radio](https://gensokyoradio.net/).
+It features a customizable overlay with the song information and a sound visualizer.
 
-This mod is compatible with [Fabric](https://fabricmc.net/) and [NeoForge](https://neoforged.net/). [YetAnotherConfigLib](https://modrinth.com/mod/yacl) is required to access the mod's config menu.
+This mod is compatible with [Fabric](https://fabricmc.net/) and [NeoForge](https://neoforged.net/). [YetAnotherConfigLib](https://modrinth.com/mod/yacl) is required to access the mod configuration menu.
 
 # Preview
-![HUD Preview 1](https://github.com/KabanFriends/creation/blob/master/images/craftgr/song_1.png)
-![HUD Preview 2](https://github.com/KabanFriends/creation/blob/master/images/craftgr/song_2.png)
+![HUD Preview 1](https://raw.githubusercontent.com/KabanFriends/creation/refs/heads/master/images/craftgr/song_1.png)
+![HUD Preview 2](https://raw.githubusercontent.com/KabanFriends/creation/refs/heads/master/images/craftgr/song_2.png)
 
 # Compiling
-To compile this mod, run the following command:
+Run the following command to compile this mod manually.
 ```shell
 ./gradlew build
 ```
-The mod JAR file compatible for each mod loader will be created under the `./<loader>/build/libs` directory.
+If the compiling finishes successfully, the mod file will be generated under the `./<loader>/build/libs` directory for the respective mod loader.
 
 # Attributions
 - CraftGR is an open source project under [LGPL-3.0](https://github.com/KabanFriends/CraftGR/blob/master/LICENSE) license
