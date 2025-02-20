@@ -60,6 +60,6 @@ public class RenderUtil {
     }
 
     public static void enableUnscaledScissor(GuiGraphics graphics, int x, int y, int width, int height) {
-        graphics.applyScissor(graphics.scissorStack.push(new UnscaledScreenRectangle(x, y, width - x, height -y)));
+        graphics.applyScissor(graphics.scissorStack.push(new UnscaledScreenRectangle(x, y, width, height)));
     }
 }
