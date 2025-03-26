@@ -17,14 +17,15 @@ public class MixinSoundEngine {
 
     @Inject(method = "reload", at = @At("HEAD"))
     private void craftgr$stopAudio(CallbackInfo ci) {
-        CraftGR.getInstance().getRadio().stop(true);
+        if (CraftGR.getInstance().getRadio().getState() == Radio.State.PLAYING) {
+            CraftGR.getInstance().getRadio().stop(true);
+        }
     }
 
     @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/sounds/SoundBufferLibrary;preload(Ljava/util/Collection;)Ljava/util/concurrent/CompletableFuture;", shift = At.Shift.AFTER), method = "loadLibrary()V")
     private void craftgr$startAudio(CallbackInfo ci) {
-        Radio radio = CraftGR.getInstance().getRadio();
-        if (radio.getState() == Radio.State.AWAIT_LOADING) {
-            radio.start(craftgr$firstLoad);
+        if (CraftGR.getInstance().getRadio().getState() == Radio.State.AWAIT_LOADING) {
+            CraftGR.getInstance().getRadio().start(craftgr$firstLoad);
         }
         craftgr$firstLoad = false;
     }
