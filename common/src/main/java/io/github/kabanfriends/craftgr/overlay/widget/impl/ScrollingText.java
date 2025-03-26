@@ -91,7 +91,7 @@ public class ScrollingText extends UIWidget {
         poseStack.pushPose();
         poseStack.scale(2, 2, 2);
         poseStack.translate(x % 2 / 2f, y % 2 / 2f, 0); // Cancel out int rounding difference
-        RenderUtil.enableUnscaledScissor(graphics, scissorX, scissorY, scissorX + scissorW, scissorY + scissorH);
+        RenderUtil.enableUnscaledScissor(graphics, scissorX, scissorY, scissorW, scissorH);
         // Uncomment to debug
         //RenderUtil.fill(poseStack, 0, 0, CraftGR.getInstance().getMinecraft().getWindow().getWidth(), CraftGR.getInstance().getMinecraft().getWindow().getHeight(), 0x8F00FF00);
 
