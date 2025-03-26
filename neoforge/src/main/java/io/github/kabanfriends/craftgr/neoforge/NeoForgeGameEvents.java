@@ -1,7 +1,9 @@
 package io.github.kabanfriends.craftgr.neoforge;
 
+import com.mojang.blaze3d.platform.Window;
 import io.github.kabanfriends.craftgr.CraftGR;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.MouseHandler;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RenderGuiEvent;
@@ -17,10 +19,12 @@ public class NeoForgeGameEvents {
 
     @SubscribeEvent
     public static void renderHud(RenderGuiEvent.Post event) {
-        Minecraft minecraft = CraftGR.getInstance().getMinecraft();
-        if (minecraft.screen == null) {
-            int mouseX = (int)(minecraft.mouseHandler.xpos() * (double)minecraft.getWindow().getGuiScaledWidth() / (double)minecraft.getWindow().getScreenWidth());
-            int mouseY = (int)(minecraft.mouseHandler.ypos() * (double)minecraft.getWindow().getGuiScaledHeight() / (double)minecraft.getWindow().getScreenHeight());
+        MouseHandler mouseHandler = Minecraft.getInstance().mouseHandler;
+        Window window = Minecraft.getInstance().getWindow();
+
+        if (Minecraft.getInstance().screen == null) {
+            int mouseX = (int) (mouseHandler.xpos() * (double) window.getGuiScaledWidth() / (double) window.getScreenWidth());
+            int mouseY = (int) (mouseHandler.ypos() * (double) window.getGuiScaledHeight() / (double) window.getScreenHeight());
             CraftGR.getInstance().clientEvents().onGameRender(event.getGuiGraphics(), mouseX, mouseY);
         }
     }

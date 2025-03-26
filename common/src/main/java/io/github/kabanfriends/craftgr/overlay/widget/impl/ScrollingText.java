@@ -1,11 +1,11 @@
 package io.github.kabanfriends.craftgr.overlay.widget.impl;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.config.ModConfig;
 import io.github.kabanfriends.craftgr.overlay.widget.UIWidget;
 import io.github.kabanfriends.craftgr.util.render.RenderUtil;
 import net.minecraft.Util;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 
@@ -84,7 +84,7 @@ public class ScrollingText extends UIWidget {
         int scissorY = (int) (scale * fontY) - 1;
 
         int scissorW = (int) (width * scale) + 2;
-        int scissorH = (int) (CraftGR.getInstance().getMinecraft().font.lineHeight * scale) + 2;
+        int scissorH = (int) (Minecraft.getInstance().font.lineHeight * scale) + 2;
 
         PoseStack poseStack = graphics.pose();
 
@@ -93,16 +93,16 @@ public class ScrollingText extends UIWidget {
         poseStack.translate(x % 2 / 2f, y % 2 / 2f, 0); // Cancel out int rounding difference
         RenderUtil.enableUnscaledScissor(graphics, scissorX, scissorY, scissorW, scissorH);
         // Uncomment to debug
-        //RenderUtil.fill(poseStack, 0, 0, CraftGR.getInstance().getMinecraft().getWindow().getWidth(), CraftGR.getInstance().getMinecraft().getWindow().getHeight(), 0x8F00FF00);
+        //RenderUtil.fill(graphics, net.minecraft.client.renderer.RenderType.gui(), 0, 0, Minecraft.getInstance().getWindow().getWidth(), Minecraft.getInstance().getWindow().getHeight(), 0x8F00FF00);
 
-        graphics.drawString(CraftGR.getInstance().getMinecraft().font, component, fontX, fontY, Color.WHITE.getRGB());
+        graphics.drawString(Minecraft.getInstance().font, component, fontX, fontY, Color.WHITE.getRGB());
 
         graphics.disableScissor();
         poseStack.popPose();
     }
 
     private float getMovingX(float x) {
-        final float textWidth = CraftGR.getInstance().getMinecraft().font.width(component);
+        final float textWidth = Minecraft.getInstance().font.width(component);
 
         if (width < textWidth) {
             final float maxMove = width - textWidth;

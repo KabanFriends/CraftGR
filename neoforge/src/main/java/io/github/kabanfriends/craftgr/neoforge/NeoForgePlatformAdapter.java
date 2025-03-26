@@ -8,12 +8,6 @@ import net.neoforged.neoforge.client.gui.ModListScreen;
 
 public class NeoForgePlatformAdapter implements PlatformAdapter {
 
-    private final Minecraft minecraft;
-
-    public NeoForgePlatformAdapter(Minecraft minecraft) {
-        this.minecraft = minecraft;
-    }
-
     @Override
     public String getModVersion() {
         //noinspection OptionalGetWithoutIsPresent
@@ -27,6 +21,6 @@ public class NeoForgePlatformAdapter implements PlatformAdapter {
 
     @Override
     public boolean isInModMenu() {
-        return minecraft.screen instanceof ModListScreen;
+        return Minecraft.getInstance().screen instanceof ModListScreen;
     }
 }
