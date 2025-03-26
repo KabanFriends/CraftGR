@@ -30,12 +30,10 @@ public enum ActionBarMessage {
     }
 
     public void show() {
-        Minecraft minecraft = CraftGR.getInstance().getMinecraft();
-
-        if (minecraft.player == null) {
+        if (Minecraft.getInstance().player == null) {
             return;
         }
 
-        minecraft.player.displayClientMessage(Component.empty().append(icon).append(SPACE).append(body), true);
+        Minecraft.getInstance().player.displayClientMessage(Component.empty().append(icon).append(SPACE).append(body), true);
     }
 }

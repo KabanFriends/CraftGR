@@ -4,13 +4,10 @@ import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.config.ModConfig;
 import io.github.kabanfriends.craftgr.util.ModUtil;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.ComponentPath;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
-import net.minecraft.client.gui.navigation.FocusNavigationEvent;
-import net.minecraft.client.gui.navigation.ScreenDirection;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -48,7 +45,7 @@ public class RadioOptionContainer extends AbstractContainerWidget {
                 CONFIG_BUTTON_SIZE,
                 CONFIG_BUTTON_SPRITES,
                 (button) -> {
-                    Minecraft minecraft = CraftGR.getInstance().getMinecraft();
+                    Minecraft minecraft = Minecraft.getInstance();
                     ModConfig config = CraftGR.getInstance().getConfig();
                     minecraft.setScreen(config.createScreen(minecraft.screen));
                 },

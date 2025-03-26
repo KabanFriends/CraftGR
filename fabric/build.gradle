@@ -31,8 +31,8 @@ dependencies {
         exclude module: "slf4j-api"
     }
 
-    modRuntimeOnly("com.terraformersmc:modmenu:${rootProject.mod_menu_version}") { transitive(false) }
-    modRuntimeOnly "dev.isxander:yet-another-config-lib:${rootProject.yacl_version}-fabric"
+    //modRuntimeOnly("com.terraformersmc:modmenu:${rootProject.mod_menu_version}") { transitive(false) }
+    //modRuntimeOnly "dev.isxander:yet-another-config-lib:${rootProject.yacl_version}-fabric"
 
     runtimeOnly "org.apache.commons:commons-math3:${rootProject.math3_version}"
     runtimeOnly "com.github.umjammer:jlayer:${rootProject.jlayer_version}"

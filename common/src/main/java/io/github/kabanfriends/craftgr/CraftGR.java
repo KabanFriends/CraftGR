@@ -8,7 +8,6 @@ import io.github.kabanfriends.craftgr.platform.PlatformAdapter;
 import io.github.kabanfriends.craftgr.overlay.SongInfoOverlay;
 import io.github.kabanfriends.craftgr.song.FallbackSongProvider;
 import io.github.kabanfriends.craftgr.song.SongProvider;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
@@ -31,7 +30,6 @@ public class CraftGR {
 
     private static CraftGR instance;
 
-    private final Minecraft minecraft;
     private final PlatformAdapter platformAdapter;
     private final Logger logger;
     private final ModConfig config;
@@ -47,7 +45,6 @@ public class CraftGR {
     public CraftGR(PlatformAdapter platformAdapter) {
         instance = this;
 
-        this.minecraft = Minecraft.getInstance();
         this.platformAdapter = platformAdapter;
         this.logger = LogManager.getLogger();
         this.config = new ModConfig(this);
@@ -75,10 +72,6 @@ public class CraftGR {
 
     public SongInfoOverlay getSongInfoOverlay() {
         return songInfoOverlay;
-    }
-
-    public Minecraft getMinecraft() {
-        return minecraft;
     }
 
     public ModConfig getConfig() {
