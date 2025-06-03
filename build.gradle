@@ -14,13 +14,10 @@ project.ext.set("platforms", platforms)
 subprojects {
     apply plugin: "dev.architectury.loom"
 
-    loom {
-        silentMojangMappingsLicense()
-    }
-
     repositories {
         mavenCentral()
         maven { url "https://jitpack.io" }
+        maven { url "https://maven.parchmentmc.org" }
         maven { url "https://maven.shedaniel.me/" }
         maven { url "https://maven.neoforged.net/releases" }
         maven { url "https://maven.isxander.dev/releases" }
@@ -30,7 +27,10 @@ subprojects {
 
     dependencies {
         minecraft "com.mojang:minecraft:${project.minecraft_version}"
-        mappings loom.officialMojangMappings()
+        mappings loom.layered() {
+            officialMojangMappings()
+            parchment("org.parchmentmc.data:parchment-${project.minecraft_version}:${project.parchment_version}@zip")
+        }
     }
 }
 
