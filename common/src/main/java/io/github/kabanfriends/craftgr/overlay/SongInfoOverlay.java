@@ -1,8 +1,6 @@
 package io.github.kabanfriends.craftgr.overlay;
 
 import com.mojang.blaze3d.platform.NativeImage;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import dev.isxander.yacl3.gui.YACLScreen;
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.audio.FreqRenderer;
@@ -11,13 +9,13 @@ import io.github.kabanfriends.craftgr.audio.Radio;
 import io.github.kabanfriends.craftgr.overlay.widget.impl.ScrollingText;
 import io.github.kabanfriends.craftgr.song.Song;
 import io.github.kabanfriends.craftgr.util.*;
-import io.github.kabanfriends.craftgr.util.render.RenderUtil;
+import io.github.kabanfriends.craftgr.util.RenderUtil;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.*;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -28,6 +26,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.logging.log4j.Level;
+import org.joml.Matrix3x2fStack;
 import org.joml.Vector2i;
 
 import javax.imageio.ImageIO;
@@ -70,8 +69,6 @@ public class SongInfoOverlay extends Overlay {
 
     private static final int ALBUM_ART_FETCH_TRIES = 3;
     private static final int ALBUM_ART_FETCH_DELAY_SECONDS = 4;
-    
-    private static final int COLOR_WHITE = 0xFFFFFF;
 
     private static final ResourceLocation HIGHLIGHTED_BORDER_SPRITE = ResourceLocation.fromNamespaceAndPath(CraftGR.MOD_ID, "highlighted_border");
 
@@ -128,12 +125,10 @@ public class SongInfoOverlay extends Overlay {
         int y = coords.y();
 
         // Rendering
-        PoseStack poseStack = graphics.pose();
+        Matrix3x2fStack matrixStack = graphics.pose();
 
-        RenderUtil.setZLevelPre(poseStack, 400);
-        poseStack.scale(RenderUtil.getUIScale(scale), RenderUtil.getUIScale(scale), RenderUtil.getUIScale(scale));
-
-        RenderUtil.fill(graphics, RenderType.gui(), x, y, x + width, y + height, ModConfig.<Color>get("overlayBgColor").getRGB() + 0x99000000);
+        matrixStack.scale(RenderUtil.getUIScale(scale), RenderUtil.getUIScale(scale));
+        graphics.fill(x, y, x + width, y + height, ModConfig.<Color>get("overlayBgColor").getRGB() + 0x99000000);
 
         boolean showVisualizer = ModConfig.<Boolean>get("showVisualizer") &&
                 craftGR.getRadio().getState() == Radio.State.PLAYING &&
@@ -149,23 +144,20 @@ public class SongInfoOverlay extends Overlay {
                 float barX = x + (bands.length - i - 1) * barWidth;
                 float barY = y + ART_TOP_PADDING + ART_SIZE + ART_BOTTOM_PADDING;
 
-                RenderUtil.fill(graphics, RenderType.gui(), barX, barY, barX + barWidth, barY - (float) bands[i] * (ART_SIZE + ART_BOTTOM_PADDING), 0x40000000);
+                graphics.fill((int) barX, (int) barY, (int) (barX + barWidth), (int) (barY - (float) bands[i] * (ART_SIZE + ART_BOTTOM_PADDING)), 0x40000000);
             }
         }
 
-        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
-
         if (!ModConfig.<Boolean>get("hideAlbumArt")) {
-            graphics.blit(RenderType::guiTextured, shouldRenderAlbumArt() ? ALBUM_ART_LOCATION : ALBUM_ART_PLACEHOLDER_LOCATION, x + ART_LEFT_PADDING, y + ART_TOP_PADDING, 0f, 0f, ART_SIZE, ART_SIZE, ART_SIZE, ART_SIZE);
+            graphics.blit(RenderPipelines.GUI_TEXTURED, shouldRenderAlbumArt() ? ALBUM_ART_LOCATION : ALBUM_ART_PLACEHOLDER_LOCATION, x + ART_LEFT_PADDING, y + ART_TOP_PADDING, 0f, 0f, ART_SIZE, ART_SIZE, ART_SIZE, ART_SIZE);
         }
 
         if (isClickable() && isHovered(mouseX, mouseY)) {
-            graphics.blitSprite(RenderType::guiTextured, HIGHLIGHTED_BORDER_SPRITE, x - 2, y - 2, width + 4, height + 4);
+            graphics.blitSprite(RenderPipelines.GUI_TEXTURED, HIGHLIGHTED_BORDER_SPRITE, x - 2, y - 2, width + 4, height + 4);
         }
 
-        poseStack.pushPose();
-        poseStack.scale(2, 2, 2);
-        poseStack.translate(x % 2 / 2f, y % 2 / 2f, 0); // Cancel out int rounding difference
+        matrixStack.pushMatrix();
+        matrixStack.scale(2, 2);
 
         Song song = craftGR.getSongProvider().getCurrentSong();
 
@@ -201,35 +193,33 @@ public class SongInfoOverlay extends Overlay {
                     muted = true;
                     updateScrollWidth();
                 }
-                graphics.drawString(Minecraft.getInstance().font, CraftGR.AUDIO_MUTED_ICON, (x + (int) width - MUTED_ICON_RIGHT_PADDING - MUTED_ICON_SIZE) / 2, (y + MUTED_ICON_TOP_PADDING) / 2, COLOR_WHITE);
+                graphics.drawString(Minecraft.getInstance().font, CraftGR.AUDIO_MUTED_ICON, (x + (int) width - MUTED_ICON_RIGHT_PADDING - MUTED_ICON_SIZE) / 2, (y + MUTED_ICON_TOP_PADDING) / 2, 0xFFFFFFFF);
             } else if (muted) {
                 muted = false;
                 updateScrollWidth();
             }
         }
 
-        poseStack.popPose();
+        matrixStack.popMatrix();
 
         if (song != null && !song.metadata().intermission()) {
             long durationMillis = song.metadata().duration() * 1000L;
-            RenderUtil.fill(graphics, RenderType.gui(), x, y + ART_TOP_PADDING + ART_SIZE + ART_BOTTOM_PADDING, x + (float) song.getLocalPlayedTime() / durationMillis * width, y + height, 0x40FFFFFF);
+            graphics.fill(x, y + ART_TOP_PADDING + ART_SIZE + ART_BOTTOM_PADDING, (int) (x + (float) song.getLocalPlayedTime() / durationMillis * width), y + height, 0x40FFFFFF);
             if (showVisualizer) {
-                RenderUtil.fill(graphics, RenderType.gui(), x + (float) song.getLocalPlayedTime() / durationMillis * width, y + ART_TOP_PADDING + ART_SIZE + ART_BOTTOM_PADDING, x + width, y + height, 0x40000000);
+                graphics.fill((int) (x + (float) song.getLocalPlayedTime() / durationMillis * width), y + ART_TOP_PADDING + ART_SIZE + ART_BOTTOM_PADDING, x + width, y + height, 0x40000000);
             }
 
-            graphics.drawString(Minecraft.getInstance().font, formatTime(song.getLocalPlayedTime() / 1000L), x + ART_LEFT_PADDING, y + ART_TOP_PADDING + ART_SIZE + ART_TIMER_SPACE_HEIGHT, COLOR_WHITE);
+            graphics.drawString(Minecraft.getInstance().font, formatTime(song.getLocalPlayedTime() / 1000L), x + ART_LEFT_PADDING, y + ART_TOP_PADDING + ART_SIZE + ART_TIMER_SPACE_HEIGHT, 0xFFFFFFFF);
 
             int timerWidth = font.width(formatTime(song.metadata().duration()));
-            graphics.drawString(Minecraft.getInstance().font, formatTime(song.metadata().duration()), x + (int) width - timerWidth - TIMER_RIGHT_PADDING, y + ART_TOP_PADDING + ART_SIZE + ART_TIMER_SPACE_HEIGHT, COLOR_WHITE);
+            graphics.drawString(Minecraft.getInstance().font, formatTime(song.metadata().duration()), x + (int) width - timerWidth - TIMER_RIGHT_PADDING, y + ART_TOP_PADDING + ART_SIZE + ART_TIMER_SPACE_HEIGHT, 0xFFFFFFFF);
         } else if (showVisualizer) {
-            RenderUtil.fill(graphics, RenderType.gui(), x, y + ART_SIZE + ART_TOP_PADDING + ART_BOTTOM_PADDING, x + width, y + height, 0x40000000);
+            graphics.fill(x, y + ART_SIZE + ART_TOP_PADDING + ART_BOTTOM_PADDING, x + width, y + height, 0x40000000);
         }
 
         songTitleText.setX(x + ART_LEFT_PADDING + albumArtWidth + ART_INFO_SPACE_WIDTH);
         songTitleText.setY(y + INFO_TOP_PADDING);
         songTitleText.render(graphics, mouseX, mouseY);
-
-        RenderUtil.setZLevelPost(poseStack);
     }
 
     @Override

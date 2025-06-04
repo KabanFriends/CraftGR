@@ -2,9 +2,6 @@ accessWidener v2 named
 
 extendable      class   net/minecraft/client/gui/navigation/ScreenRectangle
 
-accessible      class   net/minecraft/client/gui/GuiGraphics$ScissorStack
 accessible      class   net/minecraft/client/gui/components/OptionsList$Entry
 accessible      class   net/minecraft/client/gui/components/OptionsList$OptionEntry
 accessible      class   net/minecraft/client/gui/components/AbstractSelectionList$Entry
-accessible      field   net/minecraft/client/gui/GuiGraphics scissorStack Lnet/minecraft/client/gui/GuiGraphics$ScissorStack;
-accessible      method  net/minecraft/client/gui/GuiGraphics applyScissor (Lnet/minecraft/client/gui/navigation/ScreenRectangle;)V
