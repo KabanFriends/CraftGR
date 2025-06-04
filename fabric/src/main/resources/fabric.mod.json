@@ -30,7 +30,7 @@
   ],
   "accessWidener": "craftgr.accesswidener",
   "depends": {
-    "minecraft": ">=1.21.5-",
+    "minecraft": ">=1.21.6-",
     "fabricloader": "*",
     "fabric-key-binding-api-v1": "*",
     "fabric-lifecycle-events-v1": "*",
