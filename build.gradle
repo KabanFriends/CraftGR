@@ -16,15 +16,6 @@ subprojects {
 
     repositories {
         mavenCentral()
-        // TODO: Update
-        maven {
-            name 'Maven for PR #2297' // https://github.com/neoforged/NeoForge/pull/2297
-            url 'https://prmaven.neoforged.net/NeoForge/pr2297'
-            content {
-                includeModule('net.neoforged', 'neoforge')
-                includeModule('net.neoforged', 'testframework')
-            }
-        }
         maven { url "https://jitpack.io" }
         maven { url "https://maven.parchmentmc.org" }
         maven { url "https://maven.shedaniel.me/" }
