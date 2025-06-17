@@ -36,7 +36,7 @@ jobs:
           text: ${{ steps.latest_release.outputs.name }}
           regex: "^(.+?)-mc(.+?)$"
       - name: Upload Fabric artifact
-        uses: shogo82148/actions-upload-release-asset@v1.7.8
+        uses: shogo82148/actions-upload-release-asset@v1.8.1
         with:
           upload_url: ${{ steps.latest_release.outputs.upload_url }}
           asset_path: fabric/build/libs/craftgr-*-mc*-fabric.jar

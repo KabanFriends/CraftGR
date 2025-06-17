@@ -17,7 +17,7 @@ jobs:
           path: gradle.properties
           properties: mod_version minecraft_version
       - name: Create a release
-        uses: softprops/action-gh-release@v2.0.4
+        uses: softprops/action-gh-release@v2.3.2
         with:
           tag_name: "${{ steps.mod_properties.outputs.mod_version }}-mc${{ steps.mod_properties.outputs.minecraft_version }}"
           name: "${{ steps.mod_properties.outputs.mod_version }}-mc${{ steps.mod_properties.outputs.minecraft_version }}"
