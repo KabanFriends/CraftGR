@@ -127,6 +127,7 @@ public class SongInfoOverlay extends Overlay {
         // Rendering
         Matrix3x2fStack matrixStack = graphics.pose();
 
+        matrixStack.pushMatrix();
         matrixStack.scale(RenderUtil.getUIScale(scale), RenderUtil.getUIScale(scale));
         graphics.fill(x, y, x + width, y + height, ModConfig.<Color>get("overlayBgColor").getRGB() + 0x99000000);
 
@@ -220,6 +221,8 @@ public class SongInfoOverlay extends Overlay {
         songTitleText.setX(x + ART_LEFT_PADDING + albumArtWidth + ART_INFO_SPACE_WIDTH);
         songTitleText.setY(y + INFO_TOP_PADDING);
         songTitleText.render(graphics, mouseX, mouseY);
+
+        matrixStack.popMatrix();
     }
 
     @Override
