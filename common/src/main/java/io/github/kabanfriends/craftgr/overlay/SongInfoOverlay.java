@@ -364,7 +364,7 @@ public class SongInfoOverlay extends Overlay {
         }
 
         TextureManager textureManager = Minecraft.getInstance().getTextureManager();
-        textureManager.release(ALBUM_ART_LOCATION);
+        Minecraft.getInstance().executeBlocking(() -> textureManager.release(ALBUM_ART_LOCATION));
         albumArtLoaded = false;
 
         try {
@@ -375,14 +375,14 @@ public class SongInfoOverlay extends Overlay {
             ) {
                 ThreadLocals.PNG_INFO_BYPASS_VALIDATION.set(true);
                 NativeImage image = NativeImage.read(stream);
-                Minecraft.getInstance().execute(() -> {
+                Minecraft.getInstance().executeBlocking(() -> {
                     textureManager.register(ALBUM_ART_LOCATION, new DynamicTexture(null, image));
                     albumArtLoaded = true;
                 });
             }
         } catch (Exception e) {
             craftGR.log(Level.ERROR, "Error while creating album art texture (" + song.metadata().albumArt() + ")" + ( attempt < ALBUM_ART_FETCH_TRIES ? ", retrying" : "") + ": " + ExceptionUtil.getStackTrace(e));
-            textureManager.release(ALBUM_ART_LOCATION);
+            Minecraft.getInstance().executeBlocking(() -> textureManager.release(ALBUM_ART_LOCATION));
 
             if (attempt < ALBUM_ART_FETCH_TRIES) {
                 scheduler.schedule(() -> downloadAlbumArtTexture(attempt + 1), ALBUM_ART_FETCH_DELAY_SECONDS, TimeUnit.SECONDS);
