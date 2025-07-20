@@ -74,28 +74,18 @@ public class ScrollingText extends UIWidget {
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY) {
-        float scale = ModConfig.<Float>get("overlayScale") * 2;
-
-        int fontX = (int) getMovingX(x / 2f);
+        int fontX = (int) getMovingX(x / 2);
         int fontY = (int) y / 2;
 
-        int scissorX = (int) (scale * (int)(x / 2f)) - 1;
-        int scissorY = (int) (scale * fontY) - 1;
-
-        int scissorW = (int) (width * scale) + 2;
-        int scissorH = (int) (Minecraft.getInstance().font.lineHeight * scale) + 2;
-
         Matrix3x2fStack matrixStack = graphics.pose();
-
-        graphics.enableScissor(scissorX, scissorY, scissorX + scissorW, scissorY + scissorH);
         matrixStack.pushMatrix();
         matrixStack.scale(2, 2);
-        //graphics.fill(0, 0, Minecraft.getInstance().getWindow().getWidth(), Minecraft.getInstance().getWindow().getHeight(), 0x8F00FF00);
+        graphics.enableScissor(fontX - 1, fontY - 1, fontX + width + 2, fontY + Minecraft.getInstance().font.lineHeight + 2);
+        graphics.fill(0, 0, Minecraft.getInstance().getWindow().getWidth(), Minecraft.getInstance().getWindow().getHeight(), 0x8F00FF00);
 
         graphics.drawString(Minecraft.getInstance().font, component, fontX, fontY, Color.WHITE.getRGB());
-        matrixStack.popMatrix();
         graphics.disableScissor();
-    }
+        matrixStack.popMatrix();}
 
     private float getMovingX(float x) {
         final float textWidth = Minecraft.getInstance().font.width(component);
