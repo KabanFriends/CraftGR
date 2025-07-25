@@ -77,11 +77,13 @@ public class ScrollingText extends UIWidget {
         int fontX = (int) getMovingX(x / 2);
         int fontY = (int) y / 2;
 
+        int scissorX = (int) x / 2;
+
         Matrix3x2fStack matrixStack = graphics.pose();
         matrixStack.pushMatrix();
         matrixStack.scale(2, 2);
-        graphics.enableScissor(fontX - 1, fontY - 1, fontX + width + 2, fontY + Minecraft.getInstance().font.lineHeight + 2);
-        //graphics.fill(0, 0, Minecraft.getInstance().getWindow().getWidth(), Minecraft.getInstance().getWindow().getHeight(), 0x8F00FF00);
+        graphics.enableScissor(scissorX - 1, fontY - 1, scissorX + width + 2, fontY + Minecraft.getInstance().font.lineHeight + 2);
+        graphics.fill(0, 0, Minecraft.getInstance().getWindow().getWidth(), Minecraft.getInstance().getWindow().getHeight(), 0x8F00FF00);
 
         graphics.drawString(Minecraft.getInstance().font, component, fontX, fontY, Color.WHITE.getRGB());
         graphics.disableScissor();
