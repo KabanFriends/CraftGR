@@ -14,7 +14,9 @@ import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.*;
+import net.minecraft.client.gui.screens.ChatScreen;
+import net.minecraft.client.gui.screens.ConfirmLinkScreen;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
@@ -401,6 +403,7 @@ public class SongInfoOverlay extends Overlay {
     }
 
     private boolean isHovered(int mouseX, int mouseY) {
+        if (Minecraft.getInstance().screen == null) return false;
         float scale = ModConfig.get("overlayScale");
 
         float scaledX = mouseX / RenderUtil.getUIScale(scale);
@@ -425,16 +428,11 @@ public class SongInfoOverlay extends Overlay {
 
         Screen screen = Minecraft.getInstance().screen;
         if (screen instanceof ConfirmLinkScreen) return false;
-        if (screen instanceof LevelLoadingScreen) return false;
-        if (screen instanceof ReceivingLevelScreen) return false;
-        if (screen instanceof ProgressScreen) return false;
-        if (screen instanceof ConnectScreen) return false;
-        if (screen instanceof GenericMessageScreen) return false;
 
         if (craftGR.getPlatformAdapter().isInModMenu()) return false;
         if (ModUtil.isConfigModAvailable() && screen instanceof YACLScreen) return false;
 
-        if (Screen.hasShiftDown()) return false;
+        if (Minecraft.getInstance().hasShiftDown()) return false;
 
         Song song = craftGR.getSongProvider().getCurrentSong();
         if (song == null) return false;

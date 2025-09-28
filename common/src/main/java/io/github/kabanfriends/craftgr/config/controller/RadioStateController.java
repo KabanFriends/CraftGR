@@ -12,6 +12,8 @@ import dev.isxander.yacl3.impl.controller.AbstractControllerBuilderImpl;
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.audio.Radio;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 
 public class RadioStateController implements Controller<Boolean> {
@@ -80,12 +82,12 @@ public class RadioStateController implements Controller<Boolean> {
         }
 
         @Override
-        public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        public boolean keyPressed(KeyEvent event) {
             if (!isFocused()) {
                 return false;
             }
 
-            return _keyPressed(keyCode);
+            return _keyPressed(event.key());
         }
 
         public boolean _keyPressed(int keyCode) {
@@ -98,8 +100,8 @@ public class RadioStateController implements Controller<Boolean> {
         }
 
         @Override
-        public boolean mouseClicked(double mouseX, double mouseY, int button) {
-            if (!isMouseOver(mouseX, mouseY)) {
+        public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+            if (!isMouseOver(event.x(), event.y())) {
                 return false;
             }
 

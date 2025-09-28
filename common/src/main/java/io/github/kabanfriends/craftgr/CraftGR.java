@@ -9,6 +9,7 @@ import io.github.kabanfriends.craftgr.overlay.SongInfoOverlay;
 import io.github.kabanfriends.craftgr.song.FallbackSongProvider;
 import io.github.kabanfriends.craftgr.song.SongProvider;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FontDescription;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -25,8 +26,8 @@ public class CraftGR {
     public static final String MOD_ID = "craftgr";
     public static final String MOD_NAME = "CraftGR";
 
-    public static final Component AUDIO_MUTED_ICON = Component.literal("M").withStyle(Style.EMPTY.withFont(ResourceLocation.fromNamespaceAndPath(CraftGR.MOD_ID, "icons")));
-    public static final Component RECONNECT_ICON = Component.literal("R").withStyle(Style.EMPTY.withFont(ResourceLocation.fromNamespaceAndPath(CraftGR.MOD_ID, "icons")));
+    public static final Component AUDIO_MUTED_ICON = Component.literal("M").withStyle(Style.EMPTY.withFont(new FontDescription.Resource(ResourceLocation.fromNamespaceAndPath(CraftGR.MOD_ID, "icons"))));
+    public static final Component RECONNECT_ICON = Component.literal("R").withStyle(Style.EMPTY.withFont(new FontDescription.Resource(ResourceLocation.fromNamespaceAndPath(CraftGR.MOD_ID, "icons"))));
 
     private static CraftGR instance;
 

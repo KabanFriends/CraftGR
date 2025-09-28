@@ -4,11 +4,12 @@ import com.mojang.blaze3d.platform.Window;
 import io.github.kabanfriends.craftgr.CraftGR;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenMouseEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHandler;
+import net.minecraft.resources.ResourceLocation;
 
 public class FabricEvents {
 
@@ -19,7 +20,7 @@ public class FabricEvents {
 
         ClientTickEvents.START_CLIENT_TICK.register(client -> CraftGR.getInstance().clientEvents().onClientTick());
 
-        HudRenderCallback.EVENT.register((graphics, delta) -> {
+        HudElementRegistry.addFirst(ResourceLocation.fromNamespaceAndPath("craftgr", "overlay"), (graphics, delta) -> {
             MouseHandler mouseHandler = Minecraft.getInstance().mouseHandler;
             Window window = Minecraft.getInstance().getWindow();
 
@@ -31,11 +32,11 @@ public class FabricEvents {
         });
 
         ScreenEvents.BEFORE_INIT.register((client, initScreen, scaledWidth, scaledHeight) -> {
-            ScreenMouseEvents.allowMouseClick(initScreen).register((screen, mouseX, mouseY, button) -> {
-                if (button != 0) {
+            ScreenMouseEvents.allowMouseClick(initScreen).register((screen, event) -> {
+                if (event.button() != 0) {
                     return true;
                 }
-                return CraftGR.getInstance().clientEvents().onMouseClick((int)mouseX, (int)mouseY);
+                return CraftGR.getInstance().clientEvents().onMouseClick((int) event.x(), (int) event.y());
             });
             ScreenEvents.afterRender(initScreen).register((screen, graphics, mouseX, mouseY, tickDelta) -> CraftGR.getInstance().clientEvents().onGameRender(graphics, mouseX, mouseY));
         });
