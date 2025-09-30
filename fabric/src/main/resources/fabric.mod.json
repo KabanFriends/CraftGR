@@ -30,7 +30,7 @@
   ],
   "accessWidener": "craftgr.accesswidener",
   "depends": {
-    "minecraft": ">=1.21.6-",
+    "minecraft": ">=1.21.9-",
     "fabricloader": "*",
     "fabric-key-binding-api-v1": "*",
     "fabric-lifecycle-events-v1": "*",
@@ -38,7 +38,7 @@
     "fabric-screen-api-v1": "*"
   },
   "recommends": {
-    "yet_another_config_lib_v3": ">=3.7.0"
+    "yet_another_config_lib_v3": ">=3.8.0"
   },
   "suggests": {
     "modmenu": ">=15.0.0-"
