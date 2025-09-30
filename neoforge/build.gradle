@@ -27,9 +27,12 @@ dependencies {
         exclude module: "slf4j-api"
     }
 
+    // TODO: reenable
+    /*
     modRuntimeOnly("dev.isxander:yet-another-config-lib:${rootProject.yacl_version}-neoforge") {
         exclude module: "kotlinforforge-neoforge"
     }
+    */
 
     runtimeOnly "org.apache.commons:commons-math3:${rootProject.math3_version}"
     runtimeOnly "com.github.umjammer:jlayer:${rootProject.jlayer_version}"
