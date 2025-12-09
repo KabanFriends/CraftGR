@@ -4,7 +4,7 @@ import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.util.ExceptionUtil;
 import io.github.kabanfriends.craftgr.util.RingBuffer;
 import javazoom.jl.decoder.*;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import org.apache.logging.log4j.Level;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.openal.AL10;

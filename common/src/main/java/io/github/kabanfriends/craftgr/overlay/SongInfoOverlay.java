@@ -10,7 +10,7 @@ import io.github.kabanfriends.craftgr.overlay.widget.impl.ScrollingText;
 import io.github.kabanfriends.craftgr.song.Song;
 import io.github.kabanfriends.craftgr.util.*;
 import io.github.kabanfriends.craftgr.util.RenderUtil;
-import net.minecraft.Util;
+import io.github.kabanfriends.craftgr.util.Http;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -22,11 +22,10 @@ import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.Util;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.logging.log4j.Level;
 import org.joml.Matrix3x2fStack;
 import org.joml.Vector2i;
@@ -38,6 +37,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.http.HttpResponse;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -72,10 +73,10 @@ public class SongInfoOverlay extends Overlay {
     private static final int ALBUM_ART_FETCH_TRIES = 3;
     private static final int ALBUM_ART_FETCH_DELAY_SECONDS = 4;
 
-    private static final ResourceLocation HIGHLIGHTED_BORDER_SPRITE = ResourceLocation.fromNamespaceAndPath(CraftGR.MOD_ID, "highlighted_border");
+    private static final Identifier HIGHLIGHTED_BORDER_SPRITE = Identifier.fromNamespaceAndPath(CraftGR.MOD_ID, "highlighted_border");
 
-    private static final ResourceLocation ALBUM_ART_PLACEHOLDER_LOCATION = ResourceLocation.fromNamespaceAndPath(CraftGR.MOD_ID, "textures/album_placeholder.png");
-    private static final ResourceLocation ALBUM_ART_LOCATION = ResourceLocation.fromNamespaceAndPath(CraftGR.MOD_ID, "album");
+    private static final Identifier ALBUM_ART_PLACEHOLDER_LOCATION = Identifier.fromNamespaceAndPath(CraftGR.MOD_ID, "textures/album_placeholder.png");
+    private static final Identifier ALBUM_ART_LOCATION = Identifier.fromNamespaceAndPath(CraftGR.MOD_ID, "album");
 
     private final CraftGR craftGR;
     private final ScrollingText songTitleText;
@@ -370,18 +371,24 @@ public class SongInfoOverlay extends Overlay {
         albumArtLoaded = false;
 
         try {
-            HttpGet get = HttpUtil.get(song.metadata().albumArt());
-            try (
-                    CloseableHttpResponse response = craftGR.getHttpClient().execute(get);
-                    InputStream stream = resizeImage(response.getEntity().getContent())
-            ) {
-                ThreadLocals.PNG_INFO_BYPASS_VALIDATION.set(true);
-                NativeImage image = NativeImage.read(stream);
-                Minecraft.getInstance().executeBlocking(() -> {
-                    textureManager.register(ALBUM_ART_LOCATION, new DynamicTexture(null, image));
-                    albumArtLoaded = true;
-                });
-            }
+            Http.fetch(Http.standardRequest()
+                    .uri(URI.create(song.metadata().albumArt()))
+                    .build(), HttpResponse.BodyHandlers.ofInputStream())
+                    .thenAccept(response -> {
+                        try {
+                            ThreadLocals.PNG_INFO_BYPASS_VALIDATION.set(true);
+                            NativeImage image = NativeImage.read(response.body());
+                            Minecraft.getInstance().executeBlocking(() -> {
+                                textureManager.register(ALBUM_ART_LOCATION, new DynamicTexture(null, image));
+                                albumArtLoaded = true;
+                            });
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        } finally {
+                            ThreadLocals.PNG_INFO_BYPASS_VALIDATION.remove();
+                        }
+                    })
+                    .join();
         } catch (Exception e) {
             craftGR.log(Level.ERROR, "Error while creating album art texture (" + song.metadata().albumArt() + ")" + ( attempt < ALBUM_ART_FETCH_TRIES ? ", retrying" : "") + ": " + ExceptionUtil.getStackTrace(e));
             Minecraft.getInstance().executeBlocking(() -> textureManager.release(ALBUM_ART_LOCATION));
@@ -389,8 +396,6 @@ public class SongInfoOverlay extends Overlay {
             if (attempt < ALBUM_ART_FETCH_TRIES) {
                 scheduler.schedule(() -> downloadAlbumArtTexture(attempt + 1), ALBUM_ART_FETCH_DELAY_SECONDS, TimeUnit.SECONDS);
             }
-        } finally {
-            ThreadLocals.PNG_INFO_BYPASS_VALIDATION.remove();
         }
     }
 

@@ -4,7 +4,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import io.github.kabanfriends.craftgr.CraftGR;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.lwjgl.glfw.GLFW;
 
 public class Keybinds {
@@ -15,7 +15,7 @@ public class Keybinds {
                             "key.craftgr.toggle",
                             InputConstants.Type.KEYSYM,
                             GLFW.GLFW_KEY_M,
-                            KeyMapping.Category.register(ResourceLocation.fromNamespaceAndPath("craftgr", "craftgr"))
+                            KeyMapping.Category.register(Identifier.fromNamespaceAndPath("craftgr", "craftgr"))
                     ),
                     () -> CraftGR.getInstance().getRadio().toggle()
             )

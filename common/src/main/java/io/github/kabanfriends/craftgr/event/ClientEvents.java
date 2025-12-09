@@ -23,12 +23,7 @@ public class ClientEvents {
 
     public void onClientStop() {
         craftGR.getRadio().stop(false);
-
-        try {
-            craftGR.getSongProvider().stop();
-            craftGR.getHttpClient().close();
-        } catch (IOException ignored)  {
-        }
+        craftGR.getSongProvider().stop();
     }
 
     public void onClientTick() {

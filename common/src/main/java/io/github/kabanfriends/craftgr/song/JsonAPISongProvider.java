@@ -1,16 +1,16 @@
 package io.github.kabanfriends.craftgr.song;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.config.ModConfig;
 import io.github.kabanfriends.craftgr.util.*;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
+import io.github.kabanfriends.craftgr.util.Http;
 import org.apache.logging.log4j.Level;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
+import java.net.URI;
+import java.net.http.HttpResponse;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -85,45 +85,36 @@ public class JsonAPISongProvider implements SongProvider {
     }
 
     private Song getSongFromAPI() throws IOException {
-        HttpGet get = HttpUtil.get(ModConfig.get("urlInfoJson"));
+        JsonElement response = Http.fetchJson(Http.standardRequest()
+                .uri(URI.create(ModConfig.get("urlInfoJson")))
+                .build())
+                .thenApply(HttpResponse::body)
+                .join();
+        JsonObject json = response.getAsJsonObject();
+        JsonObject songInfo = json.getAsJsonObject("SONGINFO");
+        JsonObject songTimes = json.getAsJsonObject("SONGTIMES");
+        JsonObject songData = json.getAsJsonObject("SONGDATA");
+        JsonObject misc = json.getAsJsonObject("MISC");
 
-        try (
-                CloseableHttpResponse response = CraftGR.getInstance().getHttpClient().execute(get);
-                InputStream stream = response.getEntity().getContent();
-                BufferedReader r = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8))
-        ) {
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = r.readLine()) != null) {
-                sb.append(line);
-            }
+        long apiDuration = JsonUtil.getValueWithDefault(songTimes, "DURATION", 3L, long.class);
+        long apiPlayed = JsonUtil.getValueWithDefault(songTimes, "PLAYED", 0L, long.class);
 
-            JsonObject json = JsonParser.parseString(sb.toString()).getAsJsonObject();
-            JsonObject songInfo = json.getAsJsonObject("SONGINFO");
-            JsonObject songTimes = json.getAsJsonObject("SONGTIMES");
-            JsonObject songData = json.getAsJsonObject("SONGDATA");
-            JsonObject misc = json.getAsJsonObject("MISC");
+        String albumArt = JsonUtil.getValueWithDefault(misc, "ALBUMART", null, String.class);
 
-            long apiDuration = JsonUtil.getValueWithDefault(songTimes, "DURATION", 3L, long.class);
-            long apiPlayed = JsonUtil.getValueWithDefault(songTimes, "PLAYED", 0L, long.class);
-
-            String albumArt = JsonUtil.getValueWithDefault(misc, "ALBUMART", null, String.class);
-
-            return new Song(
-                    new Song.Metadata(
-                            TitleFixer.fixJapaneseString(JsonUtil.getValueWithDefault(songInfo, "TITLE", "", String.class)),
-                            TitleFixer.fixJapaneseString(JsonUtil.getValueWithDefault(songInfo, "ARTIST", null, String.class)),
-                            TitleFixer.fixJapaneseString(JsonUtil.getValueWithDefault(songInfo, "ALBUM", null, String.class)),
-                            JsonUtil.getValueWithDefault(songInfo, "YEAR", null, String.class),
-                            TitleFixer.fixJapaneseString(JsonUtil.getValueWithDefault(songInfo, "CIRCLE", null, String.class)),
-                            apiDuration,
-                            JsonUtil.getValueWithDefault(songData, "ALBUMID", 0, int.class),
-                            albumArt == null || albumArt.isEmpty() ? null : ModConfig.get("urlAlbumArt") + albumArt,
-                            apiPlayed > apiDuration
-                    ),
-                    apiPlayed
-            );
-        }
+        return new Song(
+                new Song.Metadata(
+                        TitleFixer.fixJapaneseString(JsonUtil.getValueWithDefault(songInfo, "TITLE", "", String.class)),
+                        TitleFixer.fixJapaneseString(JsonUtil.getValueWithDefault(songInfo, "ARTIST", null, String.class)),
+                        TitleFixer.fixJapaneseString(JsonUtil.getValueWithDefault(songInfo, "ALBUM", null, String.class)),
+                        JsonUtil.getValueWithDefault(songInfo, "YEAR", null, String.class),
+                        TitleFixer.fixJapaneseString(JsonUtil.getValueWithDefault(songInfo, "CIRCLE", null, String.class)),
+                        apiDuration,
+                        JsonUtil.getValueWithDefault(songData, "ALBUMID", 0, int.class),
+                        albumArt == null || albumArt.isEmpty() ? null : ModConfig.get("urlAlbumArt") + albumArt,
+                        apiPlayed > apiDuration
+                ),
+                apiPlayed
+        );
     }
 
     private static void cancelIfNotNull(ScheduledFuture<?> task) {

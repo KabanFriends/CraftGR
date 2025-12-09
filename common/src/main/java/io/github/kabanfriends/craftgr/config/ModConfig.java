@@ -13,6 +13,7 @@ import io.github.kabanfriends.craftgr.config.entry.impl.EnumConfigField;
 import io.github.kabanfriends.craftgr.overlay.SongInfoOverlay;
 import io.github.kabanfriends.craftgr.song.SongProviderType;
 import io.github.kabanfriends.craftgr.util.ExceptionUtil;
+import io.github.kabanfriends.craftgr.util.Http;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import org.apache.logging.log4j.Level;
@@ -37,9 +38,9 @@ public class ModConfig {
             new ConfigGroup(Component.translatable("text.craftgr.config.category.playback"), true,
                     new RadioStateConfigField("playback"),
                     new IntegerConfigField("volume", 50)
-                            .setFormatter((value) -> Component.literal(value + "%"))
+                            .setFormatter(value -> Component.literal(value + "%"))
                             .setRange(0, 100)
-                            .onApply((value) -> {
+                            .onApply(value -> {
                                 CraftGR.getInstance().getRadio().setVolume(value);
                             })
             ),
@@ -50,9 +51,9 @@ public class ModConfig {
                     new BooleanConfigField("hideAlbumArt", false),
                     new BooleanConfigField("openAlbum", true),
                     new IntegerConfigField("overlayWidth", 115)
-                            .setFormatter((value) -> Component.literal(value + "px"))
+                            .setFormatter(value -> Component.literal(value + "px"))
                             .setRange(35, 435)
-                            .onApply((value) -> {
+                            .onApply(value -> {
                                 SongInfoOverlay overlay = CraftGR.getInstance().getSongInfoOverlay();
                                 if (overlay != null) {
                                     overlay.updateScrollWidth();
@@ -64,7 +65,7 @@ public class ModConfig {
             ),
             new ConfigGroup(Component.translatable("text.craftgr.config.category.advanced"), true,
                     new EnumConfigField("songProvider", SongProviderType.JSON_API)
-                            .onApply((value) -> {
+                            .onApply(value -> {
                                 CraftGR.getInstance().setSongProvider(((SongProviderType) value).createProvider());
                             }),
                     new StringConfigField("urlStream", "https://stream.gensokyoradio.net/1/"),
@@ -72,9 +73,10 @@ public class ModConfig {
                     new StringConfigField("urlAlbumArt", "https://gensokyoradio.net/images/albums/500/"),
                     new StringConfigField("urlWebSocket", "wss://gensokyoradio.net/wss"),
                     new IntegerConfigField("connectTimeout", 20_000)
-                            .setFormatter((value) -> Component.literal(value + "ms")),
+                            .setFormatter(value -> Component.literal(value + "ms"))
+                            .onApply(value -> Http.createClient()),
                     new IntegerConfigField("socketTimeout", 10_000)
-                            .setFormatter((value) -> Component.literal(value + "ms"))
+                            .setFormatter(value -> Component.literal(value + "ms"))
             )
     };
 

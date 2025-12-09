@@ -3,5 +3,4 @@ accessWidener v2 named
 extendable      class   net/minecraft/client/gui/navigation/ScreenRectangle
 
 accessible      class   net/minecraft/client/gui/components/OptionsList$Entry
-accessible      class   net/minecraft/client/gui/components/OptionsList$OptionEntry
 accessible      class   net/minecraft/client/gui/components/AbstractSelectionList$Entry

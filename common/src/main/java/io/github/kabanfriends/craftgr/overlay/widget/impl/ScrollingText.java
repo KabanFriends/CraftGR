@@ -1,26 +1,24 @@
 package io.github.kabanfriends.craftgr.overlay.widget.impl;
 
-import io.github.kabanfriends.craftgr.config.ModConfig;
 import io.github.kabanfriends.craftgr.overlay.widget.UIWidget;
-import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.Util;
 import org.joml.Matrix3x2fStack;
 
 import java.awt.*;
 
-//Code based on: https://github.com/MC-U-Team/U-Team-Core/blob/1.19.2/src/main/java/info/u_team/u_team_core/gui/elements/ScrollingText.java
 public class ScrollingText extends UIWidget {
 
-    protected int width;
-    protected float stepSize;
-    protected int waitTime;
+    private int width;
+    private float stepSize;
+    private int waitTime;
 
-    protected float startPos = 0;
-    protected float moveDifference = 0;
-    protected long lastTime = 0;
-    protected State state = State.WAITING;
+    private float startPos = 0;
+    private float moveDifference = 0;
+    private long lastTime = 0;
+    private State state = State.WAITING;
 
     private Component component;
 
