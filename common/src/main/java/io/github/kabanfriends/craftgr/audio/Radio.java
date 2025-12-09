@@ -3,12 +3,13 @@ package io.github.kabanfriends.craftgr.audio;
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.config.ModConfig;
 import io.github.kabanfriends.craftgr.util.*;
+import io.github.kabanfriends.craftgr.util.Http;
 import javazoom.jl.decoder.JavaLayerException;
-import org.apache.http.client.methods.*;
 import org.apache.logging.log4j.Level;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.net.URI;
+import java.net.http.HttpResponse;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
@@ -23,7 +24,6 @@ public class Radio {
 
     private State state;
     private AudioPlayer audioPlayer;
-    private CloseableHttpResponse response;
     private Future<?> playback;
     private boolean hasError;
 
@@ -44,7 +44,6 @@ public class Radio {
             audioPlayer.stop();
         }
         if (state == State.CONNECTING || state == State.PLAYING) {
-            disconnect();
             playback.cancel(true);
         }
 
@@ -114,23 +113,13 @@ public class Radio {
     }
 
     private void connect() throws IOException {
-        if (response != null) response.close();
-
-        HttpGet get = HttpUtil.get(ModConfig.get("urlStream"));
-        CloseableHttpResponse response = craftGR.getHttpClient().execute(get);
-        this.response = response;
-
-        InputStream stream = response.getEntity().getContent();
-
-        audioPlayer = new AudioPlayer(craftGR, stream);
-    }
-
-    private void disconnect() {
-        try {
-            response.close();
-        } catch (IOException e) {
-            craftGR.log(Level.ERROR, "Error while closing the stream response: " + ExceptionUtil.getStackTrace(e));
-        }
+        Http.fetch(Http.standardRequest()
+                .uri(URI.create(ModConfig.get("urlStream")))
+                .build(), HttpResponse.BodyHandlers.ofInputStream())
+                .thenAccept(response -> {
+                    this.audioPlayer = new AudioPlayer(craftGR, response.body());
+                })
+                .join();
     }
 
     public State getState() {

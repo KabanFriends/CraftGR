@@ -7,9 +7,6 @@ dependencies {
 
     compileOnly("org.apache.commons:commons-math3:${rootProject.math3_version}")
     compileOnly "com.github.umjammer:jlayer:${rootProject.jlayer_version}"
-    compileOnly("org.java-websocket:Java-WebSocket:${rootProject.java_websocket_version}") {
-        exclude module: "slf4j-api"
-    }
 }
 
 loom {

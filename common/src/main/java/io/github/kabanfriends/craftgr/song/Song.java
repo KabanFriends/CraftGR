@@ -1,6 +1,6 @@
 package io.github.kabanfriends.craftgr.song;
 
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 
 public class Song {
 

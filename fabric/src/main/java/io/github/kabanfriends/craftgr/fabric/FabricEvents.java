@@ -9,7 +9,7 @@ import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenMouseEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHandler;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class FabricEvents {
 
@@ -20,7 +20,7 @@ public class FabricEvents {
 
         ClientTickEvents.START_CLIENT_TICK.register(client -> CraftGR.getInstance().clientEvents().onClientTick());
 
-        HudElementRegistry.addFirst(ResourceLocation.fromNamespaceAndPath("craftgr", "overlay"), (graphics, delta) -> {
+        HudElementRegistry.addFirst(Identifier.fromNamespaceAndPath("craftgr", "overlay"), (graphics, delta) -> {
             MouseHandler mouseHandler = Minecraft.getInstance().mouseHandler;
             Window window = Minecraft.getInstance().getWindow();
 
