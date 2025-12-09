@@ -21,20 +21,20 @@ file = "META-INF/accesstransformer.cfg"
 [[dependencies.craftgr]]
 modId = "minecraft"
 type = "required"
-versionRange = "[1.21.9-,)"
+versionRange = "[1.21.11-,)"
 ordering = "NONE"
 side = "CLIENT"
 
 [[dependencies.craftgr]]
 modId = "neoforge"
 type = "required"
-versionRange = "[21.9.0-beta,)"
+versionRange = "[21.11.0-beta,)"
 ordering = "NONE"
 side = "CLIENT"
 
 [[dependencies.craftgr]]
 modId = "yet_another_config_lib_v3"
 type = "optional"
-versionRange="[3.8.0,)"
+versionRange="[3.8.1,)"
 ordering = "NONE"
 side = "CLIENT"
