@@ -1,6 +1,6 @@
 package io.github.kabanfriends.craftgr.overlay.widget;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 public abstract class UIWidget {
 
@@ -28,5 +28,5 @@ public abstract class UIWidget {
         this.y = y;
     }
 
-    public abstract void render(GuiGraphics graphics, int mouseX, int mouseY);
+    public abstract void render(GuiGraphicsExtractor graphics, int mouseX, int mouseY);
 }

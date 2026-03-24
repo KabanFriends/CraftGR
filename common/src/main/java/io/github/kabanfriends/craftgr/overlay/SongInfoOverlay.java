@@ -1,6 +1,7 @@
 package io.github.kabanfriends.craftgr.overlay;
 
 import com.mojang.blaze3d.platform.NativeImage;
+import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import dev.isxander.yacl3.gui.YACLScreen;
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.audio.FreqRenderer;
@@ -13,7 +14,7 @@ import io.github.kabanfriends.craftgr.util.RenderUtil;
 import io.github.kabanfriends.craftgr.util.Http;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.client.gui.screens.ConfirmLinkScreen;
 import net.minecraft.client.gui.screens.Screen;
@@ -99,7 +100,7 @@ public class SongInfoOverlay extends Overlay {
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY) {
+    public void render(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
         Font font = Minecraft.getInstance().font;
 
         float scale = ModConfig.get("overlayScale");
@@ -158,6 +159,7 @@ public class SongInfoOverlay extends Overlay {
 
         if (isClickable() && isHovered(mouseX, mouseY)) {
             graphics.blitSprite(RenderPipelines.GUI_TEXTURED, HIGHLIGHTED_BORDER_SPRITE, x - 2, y - 2, width + 4, height + 4);
+            graphics.requestCursor(CursorTypes.POINTING_HAND);
         }
 
         matrixStack.pushMatrix();
@@ -186,7 +188,7 @@ public class SongInfoOverlay extends Overlay {
                             }
                         }
 
-                        graphics.drawString(Minecraft.getInstance().font, str, (x + ART_LEFT_PADDING + ART_INFO_SPACE_WIDTH + albumArtWidth) / 2, (y + INFO_TOP_PADDING + (i > 0 ? YEAR_ARTIST_SPACE_HEIGHT : 0) + INFO_LINE_HEIGHT * (i + 1)) / 2, Color.LIGHT_GRAY.getRGB());
+                        graphics.text(Minecraft.getInstance().font, str, (x + ART_LEFT_PADDING + ART_INFO_SPACE_WIDTH + albumArtWidth) / 2, (y + INFO_TOP_PADDING + (i > 0 ? YEAR_ARTIST_SPACE_HEIGHT : 0) + INFO_LINE_HEIGHT * (i + 1)) / 2, Color.LIGHT_GRAY.getRGB());
                     }
                 }
             }
@@ -197,7 +199,7 @@ public class SongInfoOverlay extends Overlay {
                     muted = true;
                     updateScrollWidth();
                 }
-                graphics.drawString(Minecraft.getInstance().font, CraftGR.AUDIO_MUTED_ICON, (x + (int) width - MUTED_ICON_RIGHT_PADDING - MUTED_ICON_SIZE) / 2, (y + MUTED_ICON_TOP_PADDING) / 2, 0xFFFFFFFF);
+                graphics.text(Minecraft.getInstance().font, CraftGR.AUDIO_MUTED_ICON, (x + (int) width - MUTED_ICON_RIGHT_PADDING - MUTED_ICON_SIZE) / 2, (y + MUTED_ICON_TOP_PADDING) / 2, 0xFFFFFFFF);
             } else if (muted) {
                 muted = false;
                 updateScrollWidth();
@@ -213,10 +215,10 @@ public class SongInfoOverlay extends Overlay {
                 graphics.fill((int) (x + (float) song.getLocalPlayedTime() / durationMillis * width), y + ART_TOP_PADDING + ART_SIZE + ART_BOTTOM_PADDING, x + width, y + height, 0x40000000);
             }
 
-            graphics.drawString(Minecraft.getInstance().font, formatTime(song.getLocalPlayedTime() / 1000L), x + ART_LEFT_PADDING, y + ART_TOP_PADDING + ART_SIZE + ART_TIMER_SPACE_HEIGHT, 0xFFFFFFFF);
+            graphics.text(Minecraft.getInstance().font, formatTime(song.getLocalPlayedTime() / 1000L), x + ART_LEFT_PADDING, y + ART_TOP_PADDING + ART_SIZE + ART_TIMER_SPACE_HEIGHT, 0xFFFFFFFF);
 
             int timerWidth = font.width(formatTime(song.metadata().duration()));
-            graphics.drawString(Minecraft.getInstance().font, formatTime(song.metadata().duration()), x + (int) width - timerWidth - TIMER_RIGHT_PADDING, y + ART_TOP_PADDING + ART_SIZE + ART_TIMER_SPACE_HEIGHT, 0xFFFFFFFF);
+            graphics.text(Minecraft.getInstance().font, formatTime(song.metadata().duration()), x + (int) width - timerWidth - TIMER_RIGHT_PADDING, y + ART_TOP_PADDING + ART_SIZE + ART_TIMER_SPACE_HEIGHT, 0xFFFFFFFF);
         } else if (showVisualizer) {
             graphics.fill(x, y + ART_SIZE + ART_TOP_PADDING + ART_BOTTOM_PADDING, x + width, y + height, 0x40000000);
         }
@@ -280,10 +282,10 @@ public class SongInfoOverlay extends Overlay {
         OverlayVisibility visibility = ModConfig.get("overlayVisibility");
 
         if (Minecraft.getInstance().screen == null) {
-            if (visibility != SongInfoOverlay.OverlayVisibility.ALWAYS) return false;
+            if (visibility != OverlayVisibility.ALWAYS) return false;
         } else {
-            if (visibility == SongInfoOverlay.OverlayVisibility.NONE) return false;
-            if (visibility == SongInfoOverlay.OverlayVisibility.CHAT && !(Minecraft.getInstance().screen instanceof ChatScreen)) return false;
+            if (visibility == OverlayVisibility.NONE) return false;
+            if (visibility == OverlayVisibility.CHAT && !(Minecraft.getInstance().screen instanceof ChatScreen)) return false;
         }
 
         return true;

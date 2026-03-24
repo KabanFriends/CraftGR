@@ -68,6 +68,6 @@
   "text.craftgr.song.unknown": "Unknown Song",
   "text.craftgr.song.intermission": "Intermission",
 
-  "key.category.craftgr": "CraftGR",
+  "key.category.craftgr.craftgr": "CraftGR",
   "key.craftgr.toggle": "Pause/Resume"
 }

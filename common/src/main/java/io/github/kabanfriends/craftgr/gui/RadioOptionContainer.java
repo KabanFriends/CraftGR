@@ -4,7 +4,7 @@ import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.config.ModConfig;
 import io.github.kabanfriends.craftgr.util.ModUtil;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -35,7 +35,7 @@ public class RadioOptionContainer extends AbstractContainerWidget {
     private final List<AbstractWidget> children;
 
     public RadioOptionContainer(int x, int y, int width) {
-        super(x, y, width, 20, CommonComponents.EMPTY);
+        super(x, y, width, 20, CommonComponents.EMPTY, AbstractScrollArea.defaultSettings(0));
 
         volumeSlider = new RadioVolumeSliderButton(x, y, width - CONFIG_BUTTON_SIZE - CONFIG_BUTTON_PADDING);
         configButton = new ImageButton(
@@ -74,12 +74,11 @@ public class RadioOptionContainer extends AbstractContainerWidget {
         }
     }
 
-
     @Override
-    protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
+    protected void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
         repositionChildren();
         for (AbstractWidget widget : children) {
-            widget.render(guiGraphics, mouseX, mouseY, delta);
+            widget.extractRenderState(graphics, mouseX, mouseY, delta);
         }
     }
 

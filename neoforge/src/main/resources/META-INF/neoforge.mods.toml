@@ -4,9 +4,9 @@ issueTrackerURL = "https://github.com/KabanFriends/CraftGR/issues"
 license = "LGPL-3.0"
 
 [[mods]]
-modId = "craftgr"
+modId = "${id}"
 version = "${version}"
-displayName = "CraftGR"
+displayName = "${name}"
 authors = "KabanFriends"
 description = "Touhou Project music player for Minecraft"
 modUrl = "https://modrinth.com/mod/craftgr"
@@ -21,20 +21,20 @@ file = "META-INF/accesstransformer.cfg"
 [[dependencies.craftgr]]
 modId = "minecraft"
 type = "required"
-versionRange = "[1.21.11-,)"
+versionRange = "[${minecraft_version},)"
 ordering = "NONE"
 side = "CLIENT"
 
 [[dependencies.craftgr]]
 modId = "neoforge"
 type = "required"
-versionRange = "[21.11.0-beta,)"
+versionRange = "[${neoforge_version},)"
 ordering = "NONE"
 side = "CLIENT"
 
 [[dependencies.craftgr]]
 modId = "yet_another_config_lib_v3"
 type = "optional"
-versionRange="[3.8.1,)"
+versionRange="[${yacl_version_neoforge},)"
 ordering = "NONE"
 side = "CLIENT"

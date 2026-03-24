@@ -12,6 +12,7 @@ import dev.isxander.yacl3.impl.controller.AbstractControllerBuilderImpl;
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.audio.Radio;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
@@ -46,6 +47,11 @@ public class RadioStateController implements Controller<Boolean> {
         public Element(RadioStateController control, Option<Boolean> option, YACLScreen screen, Dimension<Integer> dim) {
             super(control, screen, dim);
             this.option = option;
+        }
+
+        @Override
+        public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
+            throw new UnsupportedOperationException("Not implemented yet"); // TODO: fix!
         }
 
         @Override

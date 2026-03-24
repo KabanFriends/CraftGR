@@ -2,7 +2,7 @@ package io.github.kabanfriends.craftgr.overlay.widget.impl;
 
 import io.github.kabanfriends.craftgr.overlay.widget.UIWidget;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Util;
 import org.joml.Matrix3x2fStack;
@@ -71,7 +71,7 @@ public class ScrollingText extends UIWidget {
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY) {
+    public void render(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
         int fontX = (int) getMovingX(x / 2);
         int fontY = (int) y / 2;
 
@@ -83,7 +83,7 @@ public class ScrollingText extends UIWidget {
         graphics.enableScissor(scissorX - 1, fontY - 1, scissorX + width + 2, fontY + Minecraft.getInstance().font.lineHeight + 2);
         //graphics.fill(0, 0, Minecraft.getInstance().getWindow().getWidth(), Minecraft.getInstance().getWindow().getHeight(), 0x8F00FF00);
 
-        graphics.drawString(Minecraft.getInstance().font, component, fontX, fontY, Color.WHITE.getRGB());
+        graphics.text(Minecraft.getInstance().font, component, fontX, fontY, Color.WHITE.getRGB());
         graphics.disableScissor();
         matrixStack.popMatrix();}
 
