@@ -15,11 +15,11 @@ jobs:
         uses: christian-draeger/read-properties@1.1.1
         with:
           path: gradle.properties
-          properties: mod_version minecraft_version
+          properties: mod_version
       - name: Create a release
         uses: softprops/action-gh-release@v2.3.2
         with:
-          tag_name: "${{ steps.mod_properties.outputs.mod_version }}-mc${{ steps.mod_properties.outputs.minecraft_version }}"
-          name: "${{ steps.mod_properties.outputs.mod_version }}-mc${{ steps.mod_properties.outputs.minecraft_version }}"
+          tag_name: "${{ steps.mod_properties.outputs.mod_version }}-mc0.0"
+          name: "${{ steps.mod_properties.outputs.mod_version }}-mc0.0"
           body: No changelog available.
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}

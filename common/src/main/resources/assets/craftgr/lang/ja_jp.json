@@ -69,6 +69,6 @@
   "text.craftgr.song.unknown": "不明な楽曲",
   "text.craftgr.song.intermission": "インターミッション",
 
-  "key.category.craftgr": "CraftGR",
+  "key.category.craftgr.craftgr": "CraftGR",
   "key.craftgr.toggle": "再生/停止"
 }

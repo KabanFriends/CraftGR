@@ -1,6 +1,6 @@
 package io.github.kabanfriends.craftgr.overlay;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 public abstract class Overlay {
 
@@ -18,7 +18,7 @@ public abstract class Overlay {
         this.active = active;
     }
 
-    public abstract void render(GuiGraphics graphics, int mouseX, int mouseY);
+    public abstract void render(GuiGraphicsExtractor graphics, int mouseX, int mouseY);
 
     public abstract boolean mouseClick(int mouseX, int mouseY);
 }

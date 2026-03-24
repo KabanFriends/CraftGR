@@ -34,6 +34,6 @@ public enum ActionBarMessage {
             return;
         }
 
-        Minecraft.getInstance().player.displayClientMessage(Component.empty().append(icon).append(SPACE).append(body), true);
+        Minecraft.getInstance().player.sendOverlayMessage(Component.empty().append(icon).append(SPACE).append(body));
     }
 }

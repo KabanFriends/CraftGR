@@ -38,7 +38,7 @@ public class FabricEvents {
                 }
                 return CraftGR.getInstance().clientEvents().onMouseClick((int) event.x(), (int) event.y());
             });
-            ScreenEvents.afterRender(initScreen).register((screen, graphics, mouseX, mouseY, tickDelta) -> CraftGR.getInstance().clientEvents().onGameRender(graphics, mouseX, mouseY));
+            ScreenEvents.afterExtract(initScreen).register((screen, graphics, mouseX, mouseY, tickDelta) -> CraftGR.getInstance().clientEvents().onGameRender(graphics, mouseX, mouseY));
         });
     }
 }

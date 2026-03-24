@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "id": "craftgr",
+  "id": "${id}",
   "version": "${version}",
-  "name": "CraftGR",
+  "name": "${name}",
   "description": "Touhou Project music player for Minecraft",
   "authors": [
     "KabanFriends"
@@ -30,18 +30,18 @@
   ],
   "accessWidener": "craftgr.accesswidener",
   "depends": {
-    "minecraft": ">=1.21.11-",
-    "fabricloader": "*",
-    "fabric-key-binding-api-v1": "*",
+    "minecraft": ">=${minecraft_version}",
+    "fabricloader": ">=${fabric_loader_version}",
+    "fabric-key-mapping-api-v1": "*",
     "fabric-lifecycle-events-v1": "*",
     "fabric-rendering-v1": "*",
     "fabric-screen-api-v1": "*"
   },
   "recommends": {
-    "yet_another_config_lib_v3": ">=3.8.1"
+    "yet_another_config_lib_v3": ">=${yacl_version_fabric}"
   },
   "suggests": {
-    "modmenu": ">=17.0.0-"
+    "modmenu": ">=${mod_menu_version}-"
   },
   "custom": {
     "modmenu:clientsideOnly": true

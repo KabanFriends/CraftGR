@@ -2,11 +2,8 @@ package io.github.kabanfriends.craftgr.event;
 
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.config.ModConfig;
-import io.github.kabanfriends.craftgr.overlay.SongInfoOverlay;
 import io.github.kabanfriends.craftgr.song.SongProviderType;
-import net.minecraft.client.gui.GuiGraphics;
-
-import java.io.IOException;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 public class ClientEvents {
 
@@ -30,7 +27,7 @@ public class ClientEvents {
         craftGR.getKeybinds().tick();
     }
 
-    public void onGameRender(GuiGraphics graphics, int mouseX, int mouseY) {
+    public void onGameRender(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
         if (!craftGR.getSongInfoOverlay().shouldRender()) {
             return;
         }

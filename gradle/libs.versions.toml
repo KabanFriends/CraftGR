@@ -1,0 +1,45 @@
+[versions]
+# Fabric: https://fabricmc.net/develop/
+# NeoForge: https://neoforged.net/
+
+# Toolchains
+fabric-loom = "1.15-SNAPSHOT"
+neoforge-moddev = "2.0.141"
+
+# Minecraft
+minecraft = "26.1"
+neoform = "26.1-1"
+
+# Mod loader platforms
+neoforge-loader = "26.1.0.0-alpha.15+pre-3"
+fabric-loader = "0.18.4"
+fabric-api = "0.144.0+26.1"
+
+mixin = "0.17.0+mixin.0.8.7"
+mixinextras = "0.5.3"
+
+# Library dependencies
+jlayer = "1.0.3"
+math3 = "3.6.1"
+
+# Mod dependencies
+mod-menu = "18.0.0-alpha.6"
+yacl-fabric = "3.8.1+1.21.11-fabric"
+yacl-neoforge = "3.8.1+1.21.11-neoforge"
+
+[libraries]
+minecraft = { group = "com.mojang", name = "minecraft", version.ref = "minecraft" }
+neoforge-loader = { group = "net.neoforged", name = "neoforge", version.ref = "neoforge-loader" }
+fabric-loader = { group = "net.fabricmc", name = "fabric-loader", version.ref = "fabric-loader" }
+fabric-api = { group = "net.fabricmc.fabric-api", name = "fabric-api", version.ref = "fabric-api" }
+mixin = { group = "net.fabricmc", name = "sponge-mixin", version.ref = "mixin" }
+mixinextras = { group = "io.github.llamalad7", name = "mixinextras-fabric", version.ref = "mixinextras" }
+jlayer = { group = "com.github.umjammer", name = "jlayer", version.ref = "jlayer" }
+math3 = { group = "org.apache.commons", name = "commons-math3", version.ref = "math3" }
+mod-menu = { group = "com.terraformersmc", name = "modmenu", version.ref = "mod-menu" }
+yacl-fabric = { group = "dev.isxander", name = "yet-another-config-lib", version.ref = "yacl-fabric" }
+yacl-neoforge = { group = "dev.isxander", name = "yet-another-config-lib", version.ref = "yacl-neoforge" }
+
+[plugins]
+fabric-loom = { id = "net.fabricmc.fabric-loom", version.ref = "fabric-loom" }
+neoforge-moddev = { id = "net.neoforged.moddev", version.ref = "neoforge-moddev" }
