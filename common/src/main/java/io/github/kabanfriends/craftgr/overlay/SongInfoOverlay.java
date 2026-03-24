@@ -1,6 +1,7 @@
 package io.github.kabanfriends.craftgr.overlay;
 
 import com.mojang.blaze3d.platform.NativeImage;
+import com.mojang.blaze3d.platform.cursor.CursorTypes;
 import dev.isxander.yacl3.gui.YACLScreen;
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.audio.FreqRenderer;
@@ -158,6 +159,7 @@ public class SongInfoOverlay extends Overlay {
 
         if (isClickable() && isHovered(mouseX, mouseY)) {
             graphics.blitSprite(RenderPipelines.GUI_TEXTURED, HIGHLIGHTED_BORDER_SPRITE, x - 2, y - 2, width + 4, height + 4);
+            graphics.requestCursor(CursorTypes.POINTING_HAND);
         }
 
         matrixStack.pushMatrix();
