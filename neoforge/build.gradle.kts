@@ -9,7 +9,7 @@ val modId               = project.property("mod_id")                as String
 dependencies {
     implementation(libs.neoforge.loader)
 
-    compileOnly(libs.yacl.neoforge) // TODO: use implementation for test runs
+    compileOnly(libs.yacl.fabric) // TODO: use neoforge / use implementation for test runs
 
     implementation(libs.jlayer)
     jarJar(libs.jlayer)

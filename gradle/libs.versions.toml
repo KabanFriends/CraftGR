@@ -24,8 +24,8 @@ math3 = "3.6.1"
 
 # Mod dependencies
 mod-menu = "18.0.0-alpha.6"
-yacl-fabric = "3.8.1+1.21.11-fabric"
-yacl-neoforge = "3.8.1+1.21.11-neoforge"
+yacl-fabric = "3.9.0+26.1-fabric"
+yacl-neoforge = "3.8.2+1.21.11-neoforge"
 
 [libraries]
 minecraft = { group = "com.mojang", name = "minecraft", version.ref = "minecraft" }

@@ -13,7 +13,7 @@ dependencies {
     implementation(libs.fabric.api)
 
     implementation(libs.mod.menu)
-    compileOnly(libs.yacl.neoforge) // TODO: use fabric / use implementation for test runs
+    implementation(libs.yacl.fabric)
 
     implementation(libs.jlayer)
     include(libs.jlayer)

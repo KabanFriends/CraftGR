@@ -50,11 +50,6 @@ public class RadioStateController implements Controller<Boolean> {
         }
 
         @Override
-        public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
-            throw new UnsupportedOperationException("Not implemented yet"); // TODO: fix!
-        }
-
-        @Override
         protected int getHoveredControlWidth() {
             return getUnhoveredControlWidth();
         }

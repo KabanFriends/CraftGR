@@ -20,7 +20,7 @@ dependencies {
     compileOnly(libs.jlayer)
     compileOnly(libs.math3)
 
-    compileOnly(libs.yacl.neoforge)
+    compileOnly(libs.yacl.fabric)
 }
 
 configurations {
