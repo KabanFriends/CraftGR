@@ -16,10 +16,16 @@ jobs:
         with:
           path: gradle.properties
           properties: mod_version
+      - name: Read Minecraft version
+        id: minecraft_version
+        uses: SebRollen/toml-action@v1.2.0
+        with:
+          file: "gradle/libs.versions.toml"
+          field: "versions.minecraft"
       - name: Create a release
         uses: softprops/action-gh-release@v2.3.2
         with:
-          tag_name: "${{ steps.mod_properties.outputs.mod_version }}-mc0.0"
-          name: "${{ steps.mod_properties.outputs.mod_version }}-mc0.0"
+          tag_name: "${{ steps.mod_properties.outputs.mod_version }}-mc${{ steps.minecraft_version.outputs.value }}"
+          name: "${{ steps.mod_properties.outputs.mod_version }}-mc${{ steps.minecraft_version.outputs.value }}"
           body: No changelog available.
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
