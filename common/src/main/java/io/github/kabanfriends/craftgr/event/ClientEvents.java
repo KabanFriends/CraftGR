@@ -19,8 +19,7 @@ public class ClientEvents {
     }
 
     public void onClientStop() {
-        craftGR.getRadio().stop(false);
-        craftGR.getSongProvider().stop();
+        craftGR.shutdown();
     }
 
     public void onClientTick() {

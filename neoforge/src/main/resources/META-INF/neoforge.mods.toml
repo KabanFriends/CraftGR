@@ -21,7 +21,7 @@ file = "META-INF/accesstransformer.cfg"
 [[dependencies.craftgr]]
 modId = "minecraft"
 type = "required"
-versionRange = "[${minecraft_version},)"
+versionRange = "[${minecraft_version_neoforge},)"
 ordering = "NONE"
 side = "CLIENT"
 

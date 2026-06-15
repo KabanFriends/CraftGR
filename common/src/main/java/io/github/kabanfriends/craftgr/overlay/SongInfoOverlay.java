@@ -240,11 +240,11 @@ public class SongInfoOverlay extends Overlay {
                 Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
 
                 String link = "https://gensokyoradio.net/music/album/" + song.metadata().albumId();
-                Screen oldScreen = Minecraft.getInstance().screen;
+                Screen oldScreen = Minecraft.getInstance().gui.screen();
 
-                Minecraft.getInstance().setScreen(new ConfirmLinkScreen((result) -> {
+                Minecraft.getInstance().gui.setScreen(new ConfirmLinkScreen((result) -> {
                     if (result) Util.getPlatform().openUri(link);
-                    Minecraft.getInstance().setScreen(oldScreen);
+                    Minecraft.getInstance().gui.setScreen(oldScreen);
                 }, link, true));
 
                 return false;
@@ -276,16 +276,16 @@ public class SongInfoOverlay extends Overlay {
 
     public boolean shouldRender() {
         if (!isActive()) return false;
-        if (Minecraft.getInstance().options.hideGui) return false;
+        if (Minecraft.getInstance().gui.hud.isHidden()) return false;
         if (Minecraft.getInstance().getDebugOverlay().showDebugScreen()) return false;
 
         OverlayVisibility visibility = ModConfig.get("overlayVisibility");
 
-        if (Minecraft.getInstance().screen == null) {
+        if (Minecraft.getInstance().gui.screen() == null) {
             if (visibility != OverlayVisibility.ALWAYS) return false;
         } else {
             if (visibility == OverlayVisibility.NONE) return false;
-            if (visibility == OverlayVisibility.CHAT && !(Minecraft.getInstance().screen instanceof ChatScreen)) return false;
+            if (visibility == OverlayVisibility.CHAT && !(Minecraft.getInstance().gui.screen() instanceof ChatScreen)) return false;
         }
 
         return true;
@@ -410,7 +410,7 @@ public class SongInfoOverlay extends Overlay {
     }
 
     private boolean isHovered(int mouseX, int mouseY) {
-        if (Minecraft.getInstance().screen == null) return false;
+        if (Minecraft.getInstance().gui.screen() == null) return false;
         float scale = ModConfig.get("overlayScale");
 
         float scaledX = mouseX / RenderUtil.getUIScale(scale);
@@ -433,7 +433,7 @@ public class SongInfoOverlay extends Overlay {
 
         if (!ModConfig.<Boolean>get("openAlbum")) return false;
 
-        Screen screen = Minecraft.getInstance().screen;
+        Screen screen = Minecraft.getInstance().gui.screen();
         if (screen instanceof ConfirmLinkScreen) return false;
 
         if (craftGR.getPlatformAdapter().isInModMenu()) return false;

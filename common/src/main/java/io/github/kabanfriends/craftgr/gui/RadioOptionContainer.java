@@ -47,7 +47,7 @@ public class RadioOptionContainer extends AbstractContainerWidget {
                 (button) -> {
                     Minecraft minecraft = Minecraft.getInstance();
                     ModConfig config = CraftGR.getInstance().getConfig();
-                    minecraft.setScreen(config.createScreen(minecraft.screen));
+                    minecraft.gui.setScreen(config.createScreen(minecraft.gui.screen()));
                 },
                 BUTTON_NARRATION_NAME
         );

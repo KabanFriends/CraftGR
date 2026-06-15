@@ -41,7 +41,7 @@ public class ModConfig {
                             .setFormatter(value -> Component.literal(value + "%"))
                             .setRange(0, 100)
                             .onApply(value -> {
-                                CraftGR.getInstance().getRadio().setVolume(value);
+                                CraftGR.getInstance().getRadio().setVolume(value / 100.0);
                             })
             ),
             new ConfigGroup(Component.translatable("text.craftgr.config.category.overlay"), true,

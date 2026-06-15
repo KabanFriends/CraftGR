@@ -28,6 +28,9 @@ public class Http {
     }
 
     public static void createClient() {
+        if (httpClient != null) {
+            httpClient.close();
+        }
         httpClient = HttpClient.newBuilder()
                 .connectTimeout(Duration.of((long) ModConfig.<Integer>get("connectTimeout"), ChronoUnit.MILLIS))
                 .build();

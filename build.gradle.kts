@@ -19,6 +19,5 @@ subprojects {
         maven("https://modmaven.dev/")
         maven("https://maven.quiltmc.org/repository/release")
         maven("https://maven.terraformersmc.com/")
-        maven("https://jitpack.io/")
     }
 }

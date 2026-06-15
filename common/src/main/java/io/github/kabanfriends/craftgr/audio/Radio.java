@@ -5,15 +5,15 @@ import io.github.kabanfriends.craftgr.config.ModConfig;
 import io.github.kabanfriends.craftgr.util.*;
 import io.github.kabanfriends.craftgr.util.Http;
 import javazoom.jl.decoder.JavaLayerException;
+import net.minecraft.client.Minecraft;
+import net.minecraft.sounds.SoundSource;
 import org.apache.logging.log4j.Level;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.http.HttpResponse;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 public class Radio {
 
@@ -21,105 +21,221 @@ public class Radio {
 
     private final CraftGR craftGR;
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    private final Object sessionLock = new Object();
 
-    private State state;
-    private AudioPlayer audioPlayer;
-    private Future<?> playback;
-    private boolean hasError;
+    private volatile State state;
+    private volatile CompletableFuture<HttpResponse<InputStream>> connection;
+    private volatile AudioPlayer audioPlayer;
+    private volatile Future<?> playback;
+    private volatile boolean hasError;
+    private volatile double volume = 1.0;
+
+    private int retries = 0;
+    private long sessionId;
 
     public Radio(CraftGR craftGR) {
         this.craftGR = craftGR;
 
         this.hasError = false;
         this.state = State.AWAIT_LOADING;
+        this.sessionId = 0L;
     }
 
     public void start(boolean fadeIn) {
-        state = State.STARTING;
-        playback = craftGR.getThreadExecutor().submit(() -> handlePlayback(fadeIn));
+        long sessionId;
+
+        synchronized (sessionLock) {
+            if (state == State.STARTING || state == State.CONNECTING || state == State.PLAYING) {
+                return;
+            }
+
+            sessionId = ++this.sessionId;
+            hasError = false;
+            state = State.STARTING;
+        }
+
+        playback = craftGR.getThreadExecutor().submit(() -> handlePlayback(fadeIn, sessionId));
     }
 
     public void stop(boolean awaitReload) {
-        if (state == State.PLAYING) {
-            audioPlayer.stop();
-        }
-        if (state == State.CONNECTING || state == State.PLAYING) {
-            playback.cancel(true);
+        boolean notifyStopped = state == State.STARTING || state == State.CONNECTING || state == State.PLAYING;
+        stop(awaitReload, true, notifyStopped);
+    }
+
+    private void stop(boolean awaitReload, boolean invalidateSession, boolean notifyStopped) {
+        Future<?> playbackToCancel;
+        CompletableFuture<HttpResponse<InputStream>> connectionToCancel;
+        AudioPlayer audioPlayerToStop;
+
+        synchronized (sessionLock) {
+            if (invalidateSession) {
+                sessionId++;
+            }
+
+            playbackToCancel = playback;
+            connectionToCancel = connection;
+            audioPlayerToStop = audioPlayer;
+
+            playback = null;
+            connection = null;
+            audioPlayer = null;
+            hasError = false;
+            state = awaitReload ? State.AWAIT_LOADING : State.STOPPED;
         }
 
-        hasError = false;
-        state = awaitReload ? State.AWAIT_LOADING : State.STOPPED;
+        if (audioPlayerToStop != null) {
+            audioPlayerToStop.stop();
+        }
+        if (playbackToCancel != null) {
+            playbackToCancel.cancel(true);
+        }
+        if (connectionToCancel != null) {
+            connectionToCancel.cancel(true);
+        }
+        if (notifyStopped) {
+            ActionBarMessage.PLAYBACK_STOPPED.show();
+        }
     }
 
     public void toggle() {
-        if (state == State.PLAYING) {
+        if (state == State.STARTING || state == State.CONNECTING || state == State.PLAYING) {
             stop(false);
-        } else if (state != State.CONNECTING && state != State.AWAIT_LOADING) {
+        } else if (state != State.AWAIT_LOADING) {
             start(false);
         }
     }
 
-    public void setVolume(int volume) {
+    public void setVolume(double volume) {
+        this.volume = volume;
+        updateVolume();
+    }
+
+    public void updateVolume() {
         if (state == State.PLAYING) {
-            audioPlayer.setGain(volume / 100f);
+            audioPlayer.setVolume(volume * Minecraft.getInstance().options.getSoundSourceVolume(SoundSource.MASTER));
         }
     }
 
-    private void handlePlayback(boolean fadeIn) {
+    private void handlePlayback(boolean fadeIn, long sessionId) {
+        if (!isSessionCurrent(sessionId)) {
+            return;
+        }
+
         craftGR.getThreadExecutor().submit(() -> craftGR.getSongProvider().verifyCurrentSong());
 
+        if (!isSessionCurrent(sessionId)) {
+            return;
+        }
+
         craftGR.log(Level.INFO, "Connecting to stream server");
-        ActionBarMessage.CONNECTING.show();
+        if (retries == 0) {
+            ActionBarMessage.CONNECTING.show();
+        } else {
+            ActionBarMessage.RECONNECTING.show();
+        }
         state = State.CONNECTING;
 
         try {
-            connect();
-        } catch (IOException e) {
-            if (e.getCause() instanceof InterruptedException) {
+            CompletableFuture<HttpResponse<InputStream>> localConnection = Http.fetch(Http.standardRequest()
+                    .uri(URI.create(ModConfig.get("urlStream")))
+                    .build(), HttpResponse.BodyHandlers.ofInputStream());
+
+            if (!isSessionCurrent(sessionId)) {
+                localConnection.cancel(true);
                 return;
             }
+
+            this.connection = localConnection;
+
+            HttpResponse<InputStream> response = localConnection.get();
+            if (!isSessionCurrent(sessionId)) {
+                try {
+                    response.body().close();
+                } catch (IOException ignored) {
+                }
+                localConnection.cancel(true);
+                return;
+            }
+
+            if (response.statusCode() != 200) {
+                craftGR.log(Level.ERROR, "Stream server responded with status code " + response.statusCode());
+                hasError = true;
+                ActionBarMessage.CONNECTION_ERROR.show();
+
+                // If this is an auto reconnect attempt, schedule another retry
+                if (retries > 0) {
+                    scheduleRetry(sessionId);
+                }
+                return;
+            }
+
+            this.audioPlayer = new AudioPlayer(craftGR, response.body());
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            craftGR.log(Level.INFO, "Stream connection was interrupted");
+            return;
+        } catch (ExecutionException e) {
+            if (!isSessionCurrent(sessionId)) {
+                return;
+            }
+
+            stop(false, false, false);
             craftGR.log(Level.ERROR, "Could not connect to stream server: " + ExceptionUtil.getStackTrace(e));
-            state = State.STOPPED;
             hasError = true;
             ActionBarMessage.CONNECTION_ERROR.show();
+            return;
         }
 
-        if (Thread.currentThread().isInterrupted()) {
+        if (!isSessionCurrent(sessionId)) {
+            if (audioPlayer != null) {
+                audioPlayer.close();
+            }
             return;
         }
 
         craftGR.log(Level.INFO, "Audio player starting");
         ActionBarMessage.PLAYBACK_STARTED.show();
         state = State.PLAYING;
+        retries = 0;
 
         try {
-            setVolume(ModConfig.get("volume"));
+            setVolume(ModConfig.<Integer>get("volume") / 100.0);
             audioPlayer.play(fadeIn);
-
-            ActionBarMessage.PLAYBACK_STOPPED.show();
             craftGR.log(Level.INFO, "Audio player stopped");
         } catch (JavaLayerException e) {
-            stop(false);
+            if (!isSessionCurrent(sessionId)) {
+                return;
+            }
+
+            stop(false, false, false);
+
+            if (!Minecraft.getInstance().isRunning()) {
+                return;
+            }
 
             craftGR.log(Level.ERROR, "Audio player error, restarting in " + RETRY_INTERVAL + " seconds: " + ExceptionUtil.getStackTrace(e));
-            state = State.STARTING;
+
             hasError = true;
-            scheduler.schedule(() -> {
-                hasError = false;
-                ActionBarMessage.RECONNECTING.show();
-                start(false);
-            }, RETRY_INTERVAL, TimeUnit.SECONDS);
+            scheduleRetry(sessionId);
         }
     }
 
-    private void connect() throws IOException {
-        Http.fetch(Http.standardRequest()
-                .uri(URI.create(ModConfig.get("urlStream")))
-                .build(), HttpResponse.BodyHandlers.ofInputStream())
-                .thenAccept(response -> {
-                    this.audioPlayer = new AudioPlayer(craftGR, response.body());
-                })
-                .join();
+    private void scheduleRetry(long sessionId) {
+        scheduler.schedule(() -> {
+            if (!isSessionCurrent(sessionId)) {
+                return;
+            }
+
+            hasError = false;
+            retries++;
+            start(false);
+        }, RETRY_INTERVAL, TimeUnit.SECONDS);
+    }
+
+    private boolean isSessionCurrent(long sessionId) {
+        synchronized (sessionLock) {
+            return this.sessionId == sessionId;
+        }
     }
 
     public State getState() {

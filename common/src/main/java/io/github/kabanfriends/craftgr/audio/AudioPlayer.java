@@ -4,7 +4,6 @@ import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.util.ExceptionUtil;
 import io.github.kabanfriends.craftgr.util.RingBuffer;
 import javazoom.jl.decoder.*;
-import net.minecraft.util.Util;
 import org.apache.logging.log4j.Level;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.openal.AL10;
@@ -29,7 +28,7 @@ public class AudioPlayer {
     private IntBuffer buffer;
     private IntBuffer source;
 
-    private float gain = 1.0f;
+    private double volume = 1.0;
     private boolean playing = false;
 
     public AudioPlayer(CraftGR craftGR, InputStream stream) {
@@ -49,10 +48,10 @@ public class AudioPlayer {
         AL10.alSourcef(this.source.get(0), AL10.AL_PITCH, 1.0f);
 
         if (fadeIn) {
-            applyGain(0.0f);
+            updateVolume(0.0f);
             fadeIn(2000f);
         } else {
-            applyGain(1.0f);
+            updateVolume(1.0f);
         }
         alError();
 
@@ -96,12 +95,20 @@ public class AudioPlayer {
         }
     }
 
-    public void setGain(float gain) {
-        this.gain = gain;
+    public void setVolume(double volume) {
+        this.volume = volume;
 
         if (this.playing) {
-            applyGain(1.0f);
+            updateVolume(1.0);
         }
+    }
+
+    private void updateVolume(double multiplier) {
+        setGain((float) (this.volume * multiplier));
+    }
+
+    private void setGain(float gain) {
+        AL10.alSourcef(this.source.get(0), AL10.AL_GAIN, (float) ((Math.exp(gain) - 1) / (Math.E - 1)));
     }
 
     public FreqRenderer getFreqRenderer() {
@@ -185,16 +192,12 @@ public class AudioPlayer {
         return true;
     }
 
-    private void applyGain(float multiplier) {
-        AL10.alSourcef(this.source.get(0), AL10.AL_GAIN, (float) ((Math.exp(multiplier * this.gain) - 1) / (Math.E - 1)));
-    }
-
     private void fadeIn(float fadingDurationMillis) {
-        long fadingStart = Util.getMillis();
+        long fadingStart = System.currentTimeMillis();
         craftGR.getThreadExecutor().submit(() -> {
             while (true) {
-                float multiplier = Math.min((Util.getMillis() - fadingStart) / fadingDurationMillis, 1.0f);
-                applyGain(multiplier);
+                float multiplier = Math.min((System.currentTimeMillis() - fadingStart) / fadingDurationMillis, 1.0f);
+                updateVolume(multiplier);
 
                 if (multiplier >= 1.0f) {
                     break;

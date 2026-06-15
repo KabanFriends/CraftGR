@@ -103,6 +103,12 @@ public class CraftGR {
         return events;
     }
 
+    public void shutdown() {
+        radio.stop(false);
+        songProvider.stop();
+        executor.shutdownNow();
+    }
+
     public void log(Level level, String message) {
         logger.log(level, String.format("[%s] %s", MOD_NAME, message));
     }
