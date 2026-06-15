@@ -21,7 +21,7 @@ repositories {
 dependencies {
     implementation(libs.neoforge.loader)
 
-    compileOnly(libs.yacl.fabric) // TODO: use neoforge / use implementation for test runs
+    implementation(libs.yacl.neoforge)
 
     implementation(libs.jlayer)
     jarJar(libs.jlayer)

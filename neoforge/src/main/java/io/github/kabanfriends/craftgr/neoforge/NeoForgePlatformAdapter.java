@@ -21,6 +21,6 @@ public class NeoForgePlatformAdapter implements PlatformAdapter {
 
     @Override
     public boolean isInModMenu() {
-        return Minecraft.getInstance().screen instanceof ModListScreen;
+        return Minecraft.getInstance().gui.screen() instanceof ModListScreen;
     }
 }

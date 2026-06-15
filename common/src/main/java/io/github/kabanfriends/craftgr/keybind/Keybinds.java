@@ -36,7 +36,7 @@ public class Keybinds {
     }
 
     public void tick() {
-        if (Minecraft.getInstance().screen == null) {
+        if (Minecraft.getInstance().gui.screen() == null) {
             for (Keybind keybind : KEYBINDS) {
                 while (keybind.keyMapping().consumeClick()) {
                     keybind.runnable().run();

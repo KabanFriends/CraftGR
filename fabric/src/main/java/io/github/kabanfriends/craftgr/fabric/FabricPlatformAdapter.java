@@ -28,7 +28,7 @@ public class FabricPlatformAdapter implements PlatformAdapter {
     @Override
     public boolean isInModMenu() {
         if (isModLoaded("modmenu")) {
-            return minecraft.screen instanceof ModsScreen;
+            return minecraft.gui.screen() instanceof ModsScreen;
         }
         return false;
     }

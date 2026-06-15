@@ -24,7 +24,7 @@ public class FabricEvents {
             MouseHandler mouseHandler = Minecraft.getInstance().mouseHandler;
             Window window = Minecraft.getInstance().getWindow();
 
-            if (Minecraft.getInstance().screen == null) {
+            if (Minecraft.getInstance().gui.screen() == null) {
                 int mouseX = (int) (mouseHandler.xpos() * (double) window.getGuiScaledWidth() / (double) window.getScreenWidth());
                 int mouseY = (int) (mouseHandler.ypos() * (double) window.getGuiScaledHeight() / (double) window.getScreenHeight());
                 CraftGR.getInstance().clientEvents().onGameRender(graphics, mouseX, mouseY);
