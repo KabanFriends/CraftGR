@@ -52,9 +52,9 @@ public class Radio {
     }
 
     public void toggle() {
-        if (state == State.PLAYING) {
+        if (state == State.PLAYING || state == State.CONNECTING) {
             stop(false);
-        } else if (state != State.CONNECTING && state != State.AWAIT_LOADING) {
+        } else if (state != State.AWAIT_LOADING) {
             start(false);
         }
     }
