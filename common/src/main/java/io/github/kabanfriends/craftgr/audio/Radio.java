@@ -5,6 +5,8 @@ import io.github.kabanfriends.craftgr.config.ModConfig;
 import io.github.kabanfriends.craftgr.util.*;
 import io.github.kabanfriends.craftgr.util.Http;
 import javazoom.jl.decoder.JavaLayerException;
+import net.minecraft.client.Minecraft;
+import net.minecraft.sounds.SoundSource;
 import org.apache.logging.log4j.Level;
 
 import java.io.IOException;
@@ -26,6 +28,7 @@ public class Radio {
     private AudioPlayer audioPlayer;
     private Future<?> playback;
     private boolean hasError;
+    private double volume = 1.0;
 
     public Radio(CraftGR craftGR) {
         this.craftGR = craftGR;
@@ -59,9 +62,14 @@ public class Radio {
         }
     }
 
-    public void setVolume(int volume) {
+    public void setVolume(double volume) {
+        this.volume = volume;
+        updateVolume();
+    }
+
+    public void updateVolume() {
         if (state == State.PLAYING) {
-            audioPlayer.setGain(volume / 100f);
+            audioPlayer.setVolume(volume * Minecraft.getInstance().options.getSoundSourceVolume(SoundSource.MASTER));
         }
     }
 
@@ -93,7 +101,7 @@ public class Radio {
         state = State.PLAYING;
 
         try {
-            setVolume(ModConfig.get("volume"));
+            setVolume(ModConfig.<Integer>get("volume") / 100.0);
             audioPlayer.play(fadeIn);
 
             ActionBarMessage.PLAYBACK_STOPPED.show();
