@@ -56,16 +56,17 @@ tasks {
 
     processResources {
         val props = mapOf(
-            "version"               to project.version,
-            "name"                  to modName,
-            "id"                    to modId,
-            "minecraft_version"     to minecraftVersion,
-            "fabric_loader_version" to versionCatalogs.named("libs").findVersion("fabric-loader").get().toString(),
-            "fabric_api_version"    to versionCatalogs.named("libs").findVersion("fabric-api").get().toString(),
-            "neoforge_version"      to versionCatalogs.named("libs").findVersion("neoforge-loader").get().toString(),
-            "mod_menu_version"      to versionCatalogs.named("libs").findVersion("mod-menu").get().toString(),
-            "yacl_version_fabric"   to versionCatalogs.named("libs").findVersion("yacl-fabric").get().toString(),
-            "yacl_version_neoforge" to versionCatalogs.named("libs").findVersion("yacl-neoforge").get().toString(),
+            "version"                       to project.version,
+            "name"                          to modName,
+            "id"                            to modId,
+            "minecraft_version_fabric"      to minecraftVersion.replace("rc-", "rc."),
+            "minecraft_version_neoforge"    to minecraftVersion,
+            "fabric_loader_version"         to versionCatalogs.named("libs").findVersion("fabric-loader").get().toString(),
+            "fabric_api_version"            to versionCatalogs.named("libs").findVersion("fabric-api").get().toString(),
+            "neoforge_version"              to versionCatalogs.named("libs").findVersion("neoforge-loader").get().toString(),
+            "mod_menu_version"              to versionCatalogs.named("libs").findVersion("mod-menu").get().toString(),
+            "yacl_version_fabric"           to versionCatalogs.named("libs").findVersion("yacl-fabric").get().toString(),
+            "yacl_version_neoforge"         to versionCatalogs.named("libs").findVersion("yacl-neoforge").get().toString(),
         )
 
         filesMatching(listOf("META-INF/mods.toml", "META-INF/neoforge.mods.toml")) {
