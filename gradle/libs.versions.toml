@@ -7,16 +7,16 @@ fabric-loom = "1.15-SNAPSHOT"
 neoforge-moddev = "2.0.141"
 
 # Minecraft
-minecraft = "26.1"
-neoform = "26.1-1"
+minecraft = "26.2-rc-2"
+neoform = "26.2-rc-2-1"
 
 # Mod loader platforms
-neoforge-loader = "26.1.0.1-beta"
-fabric-loader = "0.18.4"
-fabric-api = "0.144.0+26.1"
+neoforge-loader = "26.2.0-alpha.0+rc-2.20260614.052634"
+fabric-loader = "0.19.0"
+fabric-api = "0.152.0+26.2"
 
-mixin = "0.17.0+mixin.0.8.7"
-mixinextras = "0.5.3"
+mixin = "0.17.3+mixin.0.8.7"
+mixinextras = "0.5.4"
 
 # Library dependencies
 jlayer = "1.0.3"

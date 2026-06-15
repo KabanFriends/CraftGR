@@ -6,6 +6,18 @@ plugins {
 /* Project Properties */
 val modId               = project.property("mod_id")                as String
 
+// TEMP: Remove me
+repositories {
+    maven {
+        url = uri("https://prmaven.neoforged.net/NeoForge/pr3198")
+
+        content {
+            includeModule("net.neoforged", "neoforge")
+            includeModule("net.neoforged", "testframework")
+        }
+    }
+}
+
 dependencies {
     implementation(libs.neoforge.loader)
 
