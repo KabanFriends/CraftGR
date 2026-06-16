@@ -45,26 +45,35 @@ jobs:
           chmod +x ./gradlew
           ./gradlew neoforge:build
 
-      - name: Read GitHub release
-        id: read_release
+      - name: Read GitHub release by tag
+        if: ${{ inputs.release_tag != '' }}
+        id: release_by_tag
         uses: cardinalby/git-get-release-action@1.2.4
         env:
           GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         with:
-          latest: ${{ inputs.release_tag == '' && true || '${undefined}' }}
-          tag: ${{ inputs.release_tag != '' && inputs.release_tag || '${undefined}' }}
+          tag: ${{ inputs.release_tag }}
+
+      - name: Read latest GitHub release
+        if: ${{ inputs.release_tag == '' }}
+        id: latest_release
+        uses: cardinalby/git-get-release-action@1.2.4
+        env:
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        with:
+          latest: 1
 
       - name: Get release versions
         id: release_versions
         uses: actions-ecosystem/action-regex-match@v2.0.2
         with:
-          text: ${{ steps.read_release.outputs.name }}
+          text: ${{ steps.release_by_tag.outputs.name || steps.latest_release.outputs.name }}
           regex: "^(.+?)-mc(.+?)$"
 
       - name: Upload NeoForge artifact
         uses: shogo82148/actions-upload-release-asset@v1.8.1
         with:
-          upload_url: ${{ steps.read_release.outputs.upload_url }}
+          upload_url: ${{ steps.release_by_tag.outputs.upload_url || steps.latest_release.outputs.upload_url }}
           asset_path: neoforge/build/libs/craftgr-neoforge-*-mc*.jar
 
       - name: Publish NeoForge artifact
@@ -80,7 +89,7 @@ jobs:
 
           name: "[NeoForge] CraftGR ${{ steps.release_versions.outputs.group1 }} for Minecraft ${{ steps.release_versions.outputs.group2 }}"
           version: "${{ steps.release_versions.outputs.group1 }}-mc${{ steps.release_versions.outputs.group2 }}-neoforge"
-          changelog: ${{ steps.read_release.outputs.body }}
+          changelog: ${{ steps.release_by_tag.outputs.body || steps.latest_release.outputs.body }}
 
           loaders: |
             neoforge
