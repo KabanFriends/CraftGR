@@ -1,58 +1,99 @@
 name: Publish Fabric Build
 
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+    inputs:
+      publish_modrinth:
+        description: "Publish to Modrinth"
+        type: boolean
+        default: true
+      publish_curseforge:
+        description: "Publish to CurseForge"
+        type: boolean
+        default: true
+      release_tag:
+        description: "GitHub release tag to read the version name and changelog from"
+        required: false
+        default: ""
+      minecraft_version:
+        description: "Override the Minecraft version to publish for"
+        required: false
+        default: ""
 
 jobs:
   publish-fabric:
     runs-on: ubuntu-22.04
     permissions:
       contents: write
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
       - name: Validate Gradle wrapper
         uses: gradle/actions/wrapper-validation@v4
+
       - name: Set up JDK 25
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
+          distribution: temurin
           java-version: 25
           check-latest: true
+
       - name: Build with Gradle
         run: |
           chmod +x ./gradlew
           ./gradlew fabric:build
-      - name: Get latest release
+
+      - name: Read GitHub release by tag
+        if: ${{ inputs.release_tag != '' }}
+        id: release_by_tag
+        uses: cardinalby/git-get-release-action@1.2.4
+        env:
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+        with:
+          tag: ${{ inputs.release_tag }}
+
+      - name: Read latest GitHub release
+        if: ${{ inputs.release_tag == '' }}
         id: latest_release
         uses: cardinalby/git-get-release-action@1.2.4
         env:
           GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         with:
           latest: 1
+
       - name: Get release versions
         id: release_versions
         uses: actions-ecosystem/action-regex-match@v2.0.2
         with:
-          text: ${{ steps.latest_release.outputs.name }}
+          text: ${{ steps.release_by_tag.outputs.name || steps.latest_release.outputs.name }}
           regex: "^(.+?)-mc(.+?)$"
+
       - name: Upload Fabric artifact
         uses: shogo82148/actions-upload-release-asset@v1.8.1
         with:
-          upload_url: ${{ steps.latest_release.outputs.upload_url }}
+          upload_url: ${{ steps.release_by_tag.outputs.upload_url || steps.latest_release.outputs.upload_url }}
           asset_path: fabric/build/libs/craftgr-fabric-*-mc*.jar
+
       - name: Publish Fabric artifact
         uses: Kir-Antipov/mc-publish@v3.3.0
         with:
           files: fabric/build/libs/craftgr-fabric-*-mc*.jar
+
           modrinth-id: lKYr4L6w
-          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+          modrinth-token: ${{ inputs.publish_modrinth && secrets.MODRINTH_TOKEN || '' }}
+
           curseforge-id: 1009348
-          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
+          curseforge-token: ${{ inputs.publish_curseforge && secrets.CURSEFORGE_TOKEN || '' }}
+
           name: "[Fabric] CraftGR ${{ steps.release_versions.outputs.group1 }} for Minecraft ${{ steps.release_versions.outputs.group2 }}"
           version: "${{ steps.release_versions.outputs.group1 }}-mc${{ steps.release_versions.outputs.group2 }}-fabric"
-          changelog: ${{ steps.latest_release.outputs.body }}
+          changelog: ${{ steps.release_by_tag.outputs.body || steps.latest_release.outputs.body }}
+
           loaders: |
             fabric
             quilt
-          game-versions: ${{ steps.release_versions.outputs.group2 }}
+
+          game-versions: ${{ inputs.minecraft_version != '' && inputs.minecraft_version || steps.release_versions.outputs.group2 }}
           dependencies: yacl
