@@ -95,5 +95,6 @@ jobs:
             fabric
             quilt
 
+          game-version-filter: any
           game-versions: ${{ inputs.minecraft_version != '' && inputs.minecraft_version || steps.release_versions.outputs.group2 }}
           dependencies: yacl
