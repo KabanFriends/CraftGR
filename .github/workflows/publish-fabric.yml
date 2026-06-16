@@ -88,7 +88,7 @@ jobs:
           curseforge-token: ${{ inputs.publish_curseforge && secrets.CURSEFORGE_TOKEN || '${undefined}' }}
 
           name: "[Fabric] CraftGR ${{ steps.release_versions.outputs.group1 }} for Minecraft ${{ steps.release_versions.outputs.group2 }}"
-          version: "${{ steps.release_versions.outputs.group1 }}-mc${{ steps.release_versions.outputs.group2 }}-fabric"
+          version: "fabric-${{ steps.release_versions.outputs.group1 }}-mc${{ steps.release_versions.outputs.group2 }}"
           changelog: ${{ steps.release_by_tag.outputs.body || steps.latest_release.outputs.body }}
 
           loaders: |
