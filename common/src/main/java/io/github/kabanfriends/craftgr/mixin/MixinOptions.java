@@ -15,7 +15,6 @@ public class MixinOptions {
     @Inject(method = "lambda$createSoundSliderOptionInstance$0", at = @At("RETURN"))
     private static void craftgr$applyMasterSoundVolume(SoundSource category, Double value, CallbackInfo ci) {
         if (category == SoundSource.MASTER) {
-            System.out.println("Vol: " + Minecraft.getInstance().options.getSoundSourceVolume(SoundSource.MASTER));
             CraftGR.getInstance().getRadio().updateVolume();
         }
     }
