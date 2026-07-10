@@ -77,7 +77,7 @@ jobs:
           asset_path: fabric/build/libs/craftgr-fabric-*-mc*.jar
 
       - name: Publish Fabric artifact
-        uses: Kir-Antipov/mc-publish@v3.3.0
+        uses: ThexXTURBOXx/mc-publish@dev
         with:
           files: fabric/build/libs/craftgr-fabric-*-mc*.jar
 
@@ -94,6 +94,9 @@ jobs:
           loaders: |
             fabric
             quilt
+
+          environments: |
+            client
 
           game-version-filter: any
           game-versions: ${{ inputs.minecraft_version != '' && inputs.minecraft_version || steps.release_versions.outputs.group2 }}
