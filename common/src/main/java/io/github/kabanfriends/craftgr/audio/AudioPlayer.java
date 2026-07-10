@@ -1,12 +1,12 @@
 package io.github.kabanfriends.craftgr.audio;
 
 import io.github.kabanfriends.craftgr.CraftGR;
-import io.github.kabanfriends.craftgr.util.ExceptionUtil;
+import io.github.kabanfriends.craftgr.util.Logs;
 import io.github.kabanfriends.craftgr.util.RingBuffer;
 import javazoom.jl.decoder.*;
-import org.apache.logging.log4j.Level;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.openal.AL10;
+import org.slf4j.Logger;
 
 import java.io.InputStream;
 import java.nio.Buffer;
@@ -15,6 +15,8 @@ import java.nio.ShortBuffer;
 
 // Code based on: https://github.com/PC-Logix/OpenFM/blob/1.12.2/src/main/java/pcl/OpenFM/player/MP3Player.java
 public class AudioPlayer {
+
+    private static final Logger LOGGER = Logs.logger();
 
     private static final int MAGNITUDE_BUFFER_CAPACITY = 512;
 
@@ -91,7 +93,7 @@ public class AudioPlayer {
         try {
             this.bitstream.close();
         } catch (BitstreamException e) {
-            craftGR.log(Level.ERROR, "Could not close bitstream: " + ExceptionUtil.getStackTrace(e));
+            LOGGER.error("Could not close bitstream", e);
         }
     }
 
@@ -209,7 +211,7 @@ public class AudioPlayer {
     private void alError() {
         int error = AL10.alGetError();
         if (error != AL10.AL_NO_ERROR) {
-            craftGR.log(Level.WARN, String.format("AL10 Error: %d: %s", error, AL10.alGetString(error)));
+            LOGGER.warn("AL10 Error {}: {}", error, AL10.alGetString(error));
             Thread.dumpStack();
         }
     }

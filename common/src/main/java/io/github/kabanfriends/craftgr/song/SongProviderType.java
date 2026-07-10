@@ -1,8 +1,7 @@
 package io.github.kabanfriends.craftgr.song;
 
-import io.github.kabanfriends.craftgr.CraftGR;
-import io.github.kabanfriends.craftgr.util.ExceptionUtil;
-import org.apache.logging.log4j.Level;
+import io.github.kabanfriends.craftgr.util.Logs;
+import org.slf4j.Logger;
 
 import java.util.function.Supplier;
 
@@ -11,6 +10,8 @@ public enum SongProviderType {
     JSON_API(JsonAPISongProvider::new),
     WEBSOCKET(WebSocketSongProvider::new),
     ;
+
+    private static final Logger LOGGER = Logs.logger();
 
     private final Supplier<SongProvider> supplier;
 
@@ -22,7 +23,7 @@ public enum SongProviderType {
         try {
             return supplier.get();
         } catch (Exception e) {
-            CraftGR.getInstance().log(Level.ERROR, "Failed to create song provider: " + ExceptionUtil.getStackTrace(e));
+            LOGGER.error("Failed to create song provider", e);
             return null;
         }
     }

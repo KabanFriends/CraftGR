@@ -2,6 +2,7 @@ package io.github.kabanfriends.craftgr.gui;
 
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.config.ModConfig;
+import io.github.kabanfriends.craftgr.util.IdentifierUtil;
 import io.github.kabanfriends.craftgr.util.ModUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -10,7 +11,6 @@ import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -24,9 +24,9 @@ public class RadioOptionContainer extends AbstractContainerWidget {
     private static final Component DISABLED_TOOLTIP = Component.translatable("text.craftgr.button.config.disabled");
 
     private static final WidgetSprites CONFIG_BUTTON_SPRITES = new WidgetSprites(
-            Identifier.fromNamespaceAndPath(CraftGR.MOD_ID, "config"),
-            Identifier.fromNamespaceAndPath(CraftGR.MOD_ID, "config_disabled"),
-            Identifier.fromNamespaceAndPath(CraftGR.MOD_ID, "config_highlighted")
+            IdentifierUtil.thisMod("config"),
+            IdentifierUtil.thisMod("config_disabled"),
+            IdentifierUtil.thisMod("config_highlighted")
     );
 
     private final RadioVolumeSliderButton volumeSlider;

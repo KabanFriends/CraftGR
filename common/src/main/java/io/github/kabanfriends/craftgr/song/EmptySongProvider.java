@@ -1,6 +1,6 @@
 package io.github.kabanfriends.craftgr.song;
 
-public class FallbackSongProvider implements SongProvider {
+public class EmptySongProvider implements SongProvider {
 
     @Override
     public void start() {

@@ -1,6 +1,5 @@
 package io.github.kabanfriends.craftgr.util;
 
-import io.github.kabanfriends.craftgr.CraftGR;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
@@ -9,7 +8,7 @@ import net.minecraft.network.chat.MutableComponent;
 public enum ActionBarMessage {
 
     CONNECTING("→", ChatFormatting.GOLD, "text.craftgr.message.connecting"),
-    RECONNECTING(CraftGR.RECONNECT_ICON.copy().withStyle(ChatFormatting.GOLD), "text.craftgr.message.reconnecting"),
+    RECONNECTING(ComponentUtil.RECONNECT_ICON.copy().withStyle(ChatFormatting.GOLD), "text.craftgr.message.reconnecting"),
     CONNECTION_ERROR("❌", ChatFormatting.DARK_RED, "text.craftgr.message.connectionError"),
     PLAYBACK_STARTED("▶", ChatFormatting.GREEN, "text.craftgr.message.started"),
     PLAYBACK_STOPPED("■", ChatFormatting.RED, "text.craftgr.message.stopped")

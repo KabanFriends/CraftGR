@@ -12,11 +12,11 @@ import io.github.kabanfriends.craftgr.config.entry.impl.*;
 import io.github.kabanfriends.craftgr.config.entry.impl.EnumConfigField;
 import io.github.kabanfriends.craftgr.overlay.SongInfoOverlay;
 import io.github.kabanfriends.craftgr.song.SongProviderType;
-import io.github.kabanfriends.craftgr.util.ExceptionUtil;
 import io.github.kabanfriends.craftgr.util.Http;
+import io.github.kabanfriends.craftgr.util.Logs;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import org.apache.logging.log4j.Level;
+import org.slf4j.Logger;
 
 import java.awt.*;
 import java.io.OutputStreamWriter;
@@ -27,6 +27,8 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 public class ModConfig {
+
+    private static final Logger LOGGER = Logs.logger();
 
     private static final Path CONFIG_DIR_PATH = Path.of("config");
     private static final Path CONFIG_FILE_PATH = Path.of("config", "craftgr.json");
@@ -80,14 +82,12 @@ public class ModConfig {
             )
     };
 
-    private final CraftGR craftGR;
-    private final Map<String, ConfigField<?>> configMap = Maps.newHashMap();
+    private final Map<String, ConfigField<?>> configMap;
 
     private JsonObject configJson;
 
-    public ModConfig(CraftGR craftGR) {
-        this.craftGR = craftGR;
-        load();
+    public ModConfig() {
+        this.configMap = Maps.newHashMap();
     }
 
     public void load() {
@@ -99,7 +99,7 @@ public class ModConfig {
                 configJson = JsonParser.parseString(jstr).getAsJsonObject();
             } catch (Exception e) {
                 configJson = new JsonObject();
-                craftGR.log(Level.ERROR, "Failed to read mod config (craftgr.json): " + ExceptionUtil.getStackTrace(e));
+                LOGGER.error("Failed to read mod config file 'craftgr.json'", e);
             }
         } else {
             configJson = new JsonObject();
@@ -117,7 +117,7 @@ public class ModConfig {
                         }
                     }
                 } catch (Exception e) {
-                    craftGR.log(Level.ERROR, "Failed to read config value for " + value.getKey() + ": " + ExceptionUtil.getStackTrace(e));
+                    LOGGER.error("Failed to read config value for {}", value.getKey(), e);
                 }
             }
         }
@@ -137,11 +137,10 @@ public class ModConfig {
             jWriter.flush();
             jWriter.close();
         } catch (Exception e) {
-            craftGR.log(Level.ERROR, "Failed to save mod config (craftgr.json): " + ExceptionUtil.getStackTrace(e));
+            LOGGER.error("Failed to save mod config file 'craftgr.json'", e);
         }
     }
 
-    @SuppressWarnings("unchecked")
     public Screen createScreen(Screen parent) {
         YetAnotherConfigLib.Builder config = YetAnotherConfigLib.createBuilder();
         config.title(CONFIG_TITLE);
@@ -192,7 +191,6 @@ public class ModConfig {
         }
     }
 
-    //<editor-fold desc="Utility">
     public static <T> T get(String key) {
         return CraftGR.getInstance().getConfig().getValue(key);
     }
@@ -200,5 +198,4 @@ public class ModConfig {
     public static void set(String key, Object value) {
         CraftGR.getInstance().getConfig().setValue(key, value);
     }
-    //</editor-fold>
 }

@@ -7,7 +7,7 @@ import io.github.kabanfriends.craftgr.util.Http;
 import javazoom.jl.decoder.JavaLayerException;
 import net.minecraft.client.Minecraft;
 import net.minecraft.sounds.SoundSource;
-import org.apache.logging.log4j.Level;
+import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,6 +16,8 @@ import java.net.http.HttpResponse;
 import java.util.concurrent.*;
 
 public class Radio {
+
+    private static final Logger LOGGER = Logs.logger();
 
     private static final int RETRY_INTERVAL = 5;
 
@@ -127,7 +129,7 @@ public class Radio {
             return;
         }
 
-        craftGR.log(Level.INFO, "Connecting to stream server");
+        LOGGER.info("Connecting to the stream server");
         if (retries == 0) {
             ActionBarMessage.CONNECTING.show();
         } else {
@@ -158,7 +160,7 @@ public class Radio {
             }
 
             if (response.statusCode() != 200) {
-                craftGR.log(Level.ERROR, "Stream server responded with status code " + response.statusCode());
+                LOGGER.error("Stream server responded with status code {}", response.statusCode());
                 hasError = true;
                 ActionBarMessage.CONNECTION_ERROR.show();
 
@@ -172,7 +174,7 @@ public class Radio {
             this.audioPlayer = new AudioPlayer(craftGR, response.body());
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            craftGR.log(Level.INFO, "Stream connection was interrupted");
+            LOGGER.info("Stream connection was interrupted");
             return;
         } catch (ExecutionException e) {
             if (!isSessionCurrent(sessionId)) {
@@ -180,7 +182,7 @@ public class Radio {
             }
 
             stop(false, false, false);
-            craftGR.log(Level.ERROR, "Could not connect to stream server: " + ExceptionUtil.getStackTrace(e));
+            LOGGER.error("Could not connect to stream server", e);
             hasError = true;
             ActionBarMessage.CONNECTION_ERROR.show();
             return;
@@ -193,7 +195,7 @@ public class Radio {
             return;
         }
 
-        craftGR.log(Level.INFO, "Audio player starting");
+        LOGGER.info("Audio player starting");
         ActionBarMessage.PLAYBACK_STARTED.show();
         state = State.PLAYING;
         retries = 0;
@@ -201,7 +203,7 @@ public class Radio {
         try {
             setVolume(ModConfig.<Integer>get("volume") / 100.0);
             audioPlayer.play(fadeIn);
-            craftGR.log(Level.INFO, "Audio player stopped");
+            LOGGER.info("Audio player stopped");
         } catch (JavaLayerException e) {
             if (!isSessionCurrent(sessionId)) {
                 return;
@@ -213,7 +215,7 @@ public class Radio {
                 return;
             }
 
-            craftGR.log(Level.ERROR, "Audio player error, restarting in " + RETRY_INTERVAL + " seconds: " + ExceptionUtil.getStackTrace(e));
+            LOGGER.error("Audio player error, restarting in " + RETRY_INTERVAL + " seconds: ", e);
 
             hasError = true;
             scheduleRetry(sessionId);

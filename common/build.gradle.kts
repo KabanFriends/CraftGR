@@ -1,7 +1,13 @@
 plugins {
     id("io.github.kabanfriends.craftgr.build.common")
     alias(libs.plugins.neoforge.moddev)
+    alias(libs.plugins.idea.ext)
+    alias(libs.plugins.blossom)
 }
+
+/* Project Properties */
+val modName             = rootProject.property("mod_name")          as String
+val modId               = rootProject.property("mod_id")            as String
 
 neoForge {
     neoFormVersion = libs.versions.neoform.get() as String?
@@ -53,6 +59,13 @@ sourceSets.configureEach {
         configurations.named(variant) {
             attributes {
                 attribute(attribute, "common")
+            }
+
+            blossom {
+                javaSources {
+                    property("mod_name", modName)
+                    property("mod_id", modId)
+                }
             }
         }
     }

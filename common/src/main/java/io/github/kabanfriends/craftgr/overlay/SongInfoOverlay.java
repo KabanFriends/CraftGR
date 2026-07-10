@@ -27,9 +27,9 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Util;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.logging.log4j.Level;
 import org.joml.Matrix3x2fStack;
 import org.joml.Vector2i;
+import org.slf4j.Logger;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -45,6 +45,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class SongInfoOverlay extends Overlay {
+
+    private static final Logger LOGGER = Logs.logger();
 
     //<editor-fold desc="UI size constants">
     public static final int ART_TOP_PADDING = 6;
@@ -74,10 +76,10 @@ public class SongInfoOverlay extends Overlay {
     private static final int ALBUM_ART_FETCH_TRIES = 3;
     private static final int ALBUM_ART_FETCH_DELAY_SECONDS = 4;
 
-    private static final Identifier HIGHLIGHTED_BORDER_SPRITE = Identifier.fromNamespaceAndPath(CraftGR.MOD_ID, "highlighted_border");
+    private static final Identifier HIGHLIGHTED_BORDER_SPRITE = IdentifierUtil.thisMod("highlighted_border");
 
-    private static final Identifier ALBUM_ART_PLACEHOLDER_LOCATION = Identifier.fromNamespaceAndPath(CraftGR.MOD_ID, "textures/album_placeholder.png");
-    private static final Identifier ALBUM_ART_LOCATION = Identifier.fromNamespaceAndPath(CraftGR.MOD_ID, "album");
+    private static final Identifier ALBUM_ART_PLACEHOLDER_LOCATION = IdentifierUtil.thisMod("textures/album_placeholder.png");
+    private static final Identifier ALBUM_ART_LOCATION = IdentifierUtil.thisMod("album");
 
     private final CraftGR craftGR;
     private final ScrollingText songTitleText;
@@ -199,7 +201,7 @@ public class SongInfoOverlay extends Overlay {
                     muted = true;
                     updateScrollWidth();
                 }
-                graphics.text(Minecraft.getInstance().font, CraftGR.AUDIO_MUTED_ICON, (x + (int) width - MUTED_ICON_RIGHT_PADDING - MUTED_ICON_SIZE) / 2, (y + MUTED_ICON_TOP_PADDING) / 2, 0xFFFFFFFF);
+                graphics.text(Minecraft.getInstance().font, ComponentUtil.AUDIO_MUTED_ICON, (x + (int) width - MUTED_ICON_RIGHT_PADDING - MUTED_ICON_SIZE) / 2, (y + MUTED_ICON_TOP_PADDING) / 2, 0xFFFFFFFF);
             } else if (muted) {
                 muted = false;
                 updateScrollWidth();
@@ -392,7 +394,7 @@ public class SongInfoOverlay extends Overlay {
                     })
                     .join();
         } catch (Exception e) {
-            craftGR.log(Level.ERROR, "Error while creating album art texture (" + song.metadata().albumArt() + ")" + ( attempt < ALBUM_ART_FETCH_TRIES ? ", retrying" : "") + ": " + ExceptionUtil.getStackTrace(e));
+            LOGGER.error("Error while creating album art texture from {}{}", song.metadata().albumArt(), attempt < ALBUM_ART_FETCH_TRIES ? ", retrying" : "", e);
             Minecraft.getInstance().executeBlocking(() -> textureManager.release(ALBUM_ART_LOCATION));
 
             if (attempt < ALBUM_ART_FETCH_TRIES) {

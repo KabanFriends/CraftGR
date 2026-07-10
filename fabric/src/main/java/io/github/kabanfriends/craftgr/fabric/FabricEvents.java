@@ -2,6 +2,7 @@ package io.github.kabanfriends.craftgr.fabric;
 
 import com.mojang.blaze3d.platform.Window;
 import io.github.kabanfriends.craftgr.CraftGR;
+import io.github.kabanfriends.craftgr.util.IdentifierUtil;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
@@ -9,7 +10,6 @@ import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenMouseEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHandler;
-import net.minecraft.resources.Identifier;
 
 public class FabricEvents {
 
@@ -20,7 +20,7 @@ public class FabricEvents {
 
         ClientTickEvents.START_CLIENT_TICK.register(client -> CraftGR.getInstance().clientEvents().onClientTick());
 
-        HudElementRegistry.addFirst(Identifier.fromNamespaceAndPath("craftgr", "overlay"), (graphics, delta) -> {
+        HudElementRegistry.addFirst(IdentifierUtil.thisMod("overlay"), (graphics, delta) -> {
             MouseHandler mouseHandler = Minecraft.getInstance().mouseHandler;
             Window window = Minecraft.getInstance().getWindow();
 

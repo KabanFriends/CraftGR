@@ -6,7 +6,7 @@ import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.config.ModConfig;
 import io.github.kabanfriends.craftgr.util.*;
 import io.github.kabanfriends.craftgr.util.Http;
-import org.apache.logging.log4j.Level;
+import org.slf4j.Logger;
 
 import java.io.*;
 import java.net.URI;
@@ -17,6 +17,8 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 public class JsonAPISongProvider implements SongProvider {
+
+    private static final Logger LOGGER = Logs.logger();
 
     private static final int VERIFY_INTERVAL = 30;
     private static final int RETRY_INTERVAL = 10;
@@ -64,7 +66,7 @@ public class JsonAPISongProvider implements SongProvider {
                 scheduler.schedule(() -> verifyCurrentSong(true), RETRY_INTERVAL, TimeUnit.SECONDS);
             }
 
-            CraftGR.getInstance().log(Level.ERROR, "Error while fetching the song information" + (shouldRetry ? ", retrying" : "") + ": " + ExceptionUtil.getStackTrace(e));
+            LOGGER.error("Error while fetching the song information{}", shouldRetry ? ", retrying" : "", e);
         }
     }
 

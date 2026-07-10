@@ -5,11 +5,8 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.config.ModConfig;
-import io.github.kabanfriends.craftgr.util.ExceptionUtil;
-import io.github.kabanfriends.craftgr.util.JsonUtil;
-import io.github.kabanfriends.craftgr.util.TitleFixer;
-import io.github.kabanfriends.craftgr.util.Http;
-import org.apache.logging.log4j.Level;
+import io.github.kabanfriends.craftgr.util.*;
+import org.slf4j.Logger;
 
 import java.net.URI;
 import java.net.http.WebSocket;
@@ -19,6 +16,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class WebSocketSongProvider implements SongProvider {
+
+    private static final Logger LOGGER = Logs.logger();
 
     private static final int RETRY_INTERVAL = 10;
 
@@ -38,7 +37,7 @@ public class WebSocketSongProvider implements SongProvider {
 
             @Override
             public void onOpen(WebSocket client) {
-                CraftGR.getInstance().log(Level.INFO, "WebSocket client has connected");
+                LOGGER.info("WebSocket client has connected");
                 JsonObject json = new JsonObject();
                 json.addProperty("message", "grInitialConnection");
 
@@ -61,7 +60,6 @@ public class WebSocketSongProvider implements SongProvider {
 
                         if (type.equals("welcome")) { // Get client ID
                             clientId = json.get("id").getAsInt();
-                            CraftGR.getInstance().log(Level.INFO, "Client ID received: " + clientId);
 
                         } else if (type.equals("ping")) { // Response to ping requests
                             JsonObject response = new JsonObject();
@@ -93,12 +91,12 @@ public class WebSocketSongProvider implements SongProvider {
 
                         CraftGR.getInstance().getSongInfoOverlay().onSongChanged();
                     } else {
-                        CraftGR.getInstance().log(Level.WARN, "Received unknown WebSocket message (" + message + "): " + json.toString());
+                        LOGGER.warn("Received unknown WebSocket message '{}': {}", message, json);
                     }
                 } catch (JsonParseException e) {
-                    CraftGR.getInstance().log(Level.WARN, "Received invalid WebSocket message (" + message + "): " + ExceptionUtil.getStackTrace(e));
+                    LOGGER.warn("Received invalid WebSocket message '{}'", message, e);
                 } catch (Exception e) {
-                    CraftGR.getInstance().log(Level.ERROR, "Failed to process WebSocket message: " + ExceptionUtil.getStackTrace(e));
+                    LOGGER.error("Failed to process WebSocket message", e);
                 }
                 return null;
             }
@@ -106,9 +104,9 @@ public class WebSocketSongProvider implements SongProvider {
             @Override
             public CompletionStage<?> onClose(WebSocket webSocket, int statusCode, String reason) {
                 if (statusCode == WebSocket.NORMAL_CLOSURE) {
-                    CraftGR.getInstance().log(Level.INFO, "WebSocket client has disconnected");
+                    LOGGER.info("WebSocket client has disconnected by remote");
                 } else {
-                    CraftGR.getInstance().log(Level.INFO, "Connection closed unexpectedly, retrying connection (code: " + statusCode + ", reason: " + reason + ")");
+                    LOGGER.info("Connection closed unexpectedly, retrying connection (code: {}, reason: {})", statusCode, reason);
                     scheduler.schedule(WebSocketSongProvider.this::start, RETRY_INTERVAL, TimeUnit.SECONDS);
                 }
                 return null;
@@ -116,17 +114,35 @@ public class WebSocketSongProvider implements SongProvider {
 
             @Override
             public void onError(WebSocket client, Throwable error) {
-                CraftGR.getInstance().log(Level.ERROR, "WebSocket error: " + ExceptionUtil.getStackTrace(error));
+                LOGGER.error("WebSocket error", error);
             }
         };
 
-        this.client = builder.buildAsync(URI.create(ModConfig.get("urlWebSocket")), listener).join();
+        builder.buildAsync(URI.create(ModConfig.get("urlWebSocket")), listener)
+                .whenComplete((webSocket, error) -> {
+                    if (error != null) {
+                        // The handshake failed (e.g. the server returned a non-101 status such as 502).
+                        // onError is never called in this case since no connection was established, so
+                        // handle the exceptional completion here to avoid crashing and retry the connection.
+                        LOGGER.error("Failed to connect WebSocket, retrying in " + RETRY_INTERVAL + " seconds", error);
+                        scheduler.schedule(WebSocketSongProvider.this::start, RETRY_INTERVAL, TimeUnit.SECONDS);
+                    } else {
+                        this.client = webSocket;
+                    }
+                });
     }
 
     @Override
     public void stop() {
+        if (client == null) {
+            return;
+        }
         client.sendClose(WebSocket.NORMAL_CLOSURE, "Client closing")
-                .thenRun(() -> CraftGR.getInstance().log(Level.INFO, "WebSocket client has disconnected"));
+                .thenRun(() -> LOGGER.info("WebSocket client has disconnected by client"))
+                .exceptionally(error -> {
+                    LOGGER.error("Failed to close WebSocket connection", error);
+                    return null;
+                });
     }
 
     @Override
@@ -139,6 +155,10 @@ public class WebSocketSongProvider implements SongProvider {
     }
 
     private void send(WebSocket client, JsonObject json) {
-        client.sendText(json.toString(), true);
+        client.sendText(json.toString(), true)
+                .exceptionally(error -> {
+                    LOGGER.error("Failed to send WebSocket message", error);
+                    return null;
+                });
     }
 }
