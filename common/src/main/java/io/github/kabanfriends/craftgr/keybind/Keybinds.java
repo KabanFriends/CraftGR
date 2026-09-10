@@ -5,7 +5,6 @@ import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.util.IdentifierUtil;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import org.lwjgl.glfw.GLFW;
 
 public class Keybinds {
 
@@ -13,8 +12,8 @@ public class Keybinds {
             new Keybind(
                     new KeyMapping(
                             "key.craftgr.toggle",
-                            InputConstants.Type.KEYSYM,
-                            GLFW.GLFW_KEY_M,
+                            InputConstants.Type.KEYBOARD,
+                            InputConstants.KEY_M,
                             KeyMapping.Category.register(IdentifierUtil.thisMod("craftgr"))
                     ),
                     () -> CraftGR.getInstance().getRadio().toggle()

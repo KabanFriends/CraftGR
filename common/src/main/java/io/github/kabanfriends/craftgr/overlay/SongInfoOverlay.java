@@ -242,12 +242,11 @@ public class SongInfoOverlay extends Overlay {
                 Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
 
                 String link = "https://gensokyoradio.net/music/album/" + song.metadata().albumId();
-                Screen oldScreen = Minecraft.getInstance().gui.screen();
 
-                Minecraft.getInstance().gui.setScreen(new ConfirmLinkScreen((result) -> {
-                    if (result) Util.getPlatform().openUri(link);
-                    Minecraft.getInstance().gui.setScreen(oldScreen);
-                }, link, true));
+                ConfirmLinkScreen.confirmLinkNow(
+                        Minecraft.getInstance().gui.screen(),
+                        URI.create(link)
+                );
 
                 return false;
             }
