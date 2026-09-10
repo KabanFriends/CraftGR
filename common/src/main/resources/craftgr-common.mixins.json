@@ -7,7 +7,6 @@
         "MixinOptions",
         "MixinOptionsListOptionEntry",
         "MixinOptionsSubScreen",
-        "MixinPngInfo",
         "MixinSoundEngine",
         "MixinSoundOptionsScreen"
     ],

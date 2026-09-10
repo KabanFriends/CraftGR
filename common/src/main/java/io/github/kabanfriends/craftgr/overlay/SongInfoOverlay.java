@@ -378,16 +378,13 @@ public class SongInfoOverlay extends Overlay {
                     .build(), HttpResponse.BodyHandlers.ofInputStream())
                     .thenAccept(response -> {
                         try {
-                            ThreadLocals.PNG_INFO_BYPASS_VALIDATION.set(true);
-                            NativeImage image = NativeImage.read(response.body());
+                            NativeImage image = NativeImage.read(resizeImage(response.body()));
                             Minecraft.getInstance().executeBlocking(() -> {
                                 textureManager.register(ALBUM_ART_LOCATION, new DynamicTexture(null, image));
                                 albumArtLoaded = true;
                             });
                         } catch (IOException e) {
                             throw new RuntimeException(e);
-                        } finally {
-                            ThreadLocals.PNG_INFO_BYPASS_VALIDATION.remove();
                         }
                     })
                     .join();
@@ -457,14 +454,26 @@ public class SongInfoOverlay extends Overlay {
 
     private static InputStream resizeImage(InputStream input) throws IOException {
         try (input) {
-            Image image = ImageIO.read(input);
+            BufferedImage image = ImageIO.read(input);
+            if (image == null) {
+                throw new IOException("Unrecognized image format");
+            }
 
-            BufferedImage resizedImage = new BufferedImage(ALBUM_ART_TEXTURE_SIZE, ALBUM_ART_TEXTURE_SIZE, BufferedImage.TYPE_INT_RGB);
-            Graphics graphics = resizedImage.createGraphics();
-            graphics.drawImage(image, 0,0, ALBUM_ART_TEXTURE_SIZE, ALBUM_ART_TEXTURE_SIZE, null);
+            float scale = Math.min(
+                    (float) ALBUM_ART_TEXTURE_SIZE / image.getWidth(),
+                    (float) ALBUM_ART_TEXTURE_SIZE / image.getHeight()
+            );
+            int width = Math.max(1, Math.round(image.getWidth() * scale));
+            int height = Math.max(1, Math.round(image.getHeight() * scale));
+
+            BufferedImage texture = new BufferedImage(ALBUM_ART_TEXTURE_SIZE, ALBUM_ART_TEXTURE_SIZE, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D graphics = texture.createGraphics();
+            graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+            graphics.drawImage(image, (ALBUM_ART_TEXTURE_SIZE - width) / 2, (ALBUM_ART_TEXTURE_SIZE - height) / 2, width, height, null);
+            graphics.dispose();
 
             ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-            ImageIO.write(resizedImage, "jpg", outStream);
+            ImageIO.write(texture, "png", outStream);
             return new ByteArrayInputStream(outStream.toByteArray());
         }
     }
