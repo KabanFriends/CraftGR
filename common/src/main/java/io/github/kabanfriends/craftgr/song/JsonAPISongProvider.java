@@ -11,7 +11,6 @@ import org.slf4j.Logger;
 import java.io.*;
 import java.net.URI;
 import java.net.http.HttpResponse;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -23,7 +22,7 @@ public class JsonAPISongProvider implements SongProvider {
     private static final int VERIFY_INTERVAL = 30;
     private static final int RETRY_INTERVAL = 10;
 
-    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    private final ScheduledExecutorService scheduler = Schedulers.newDaemonScheduler("json-song-provider");
 
     private Song currentSong;
 

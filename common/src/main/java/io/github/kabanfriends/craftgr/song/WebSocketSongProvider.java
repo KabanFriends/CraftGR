@@ -11,7 +11,6 @@ import org.slf4j.Logger;
 import java.net.URI;
 import java.net.http.WebSocket;
 import java.util.concurrent.CompletionStage;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -21,7 +20,7 @@ public class WebSocketSongProvider implements SongProvider {
 
     private static final int RETRY_INTERVAL = 10;
 
-    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    private final ScheduledExecutorService scheduler = Schedulers.newDaemonScheduler("websocket-song-provider");
 
     private WebSocket client;
     private Song currentSong;

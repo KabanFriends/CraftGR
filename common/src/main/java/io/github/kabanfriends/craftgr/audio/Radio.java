@@ -22,7 +22,7 @@ public class Radio {
     private static final int RETRY_INTERVAL = 5;
 
     private final CraftGR craftGR;
-    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    private final ScheduledExecutorService scheduler = Schedulers.newDaemonScheduler("radio");
     private final Object sessionLock = new Object();
 
     private volatile State state;

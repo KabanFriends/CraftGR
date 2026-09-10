@@ -40,7 +40,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.http.HttpResponse;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -84,7 +83,7 @@ public class SongInfoOverlay extends Overlay {
     private final CraftGR craftGR;
     private final ScrollingText songTitleText;
 
-    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    private final ScheduledExecutorService scheduler = Schedulers.newDaemonScheduler("album-art");
 
     private boolean albumArtLoaded;
     private boolean expanded;
