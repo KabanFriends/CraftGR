@@ -33,6 +33,7 @@ public class Http {
         }
         httpClient = HttpClient.newBuilder()
                 .connectTimeout(Duration.of((long) ModConfig.<Integer>get("connectTimeout"), ChronoUnit.MILLIS))
+                .followRedirects(HttpClient.Redirect.ALWAYS) // Album arts use redirects
                 .build();
     }
 
