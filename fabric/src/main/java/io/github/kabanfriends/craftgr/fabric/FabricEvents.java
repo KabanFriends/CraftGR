@@ -1,5 +1,6 @@
 package io.github.kabanfriends.craftgr.fabric;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.Window;
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.util.IdentifierUtil;
@@ -33,7 +34,7 @@ public class FabricEvents {
 
         ScreenEvents.BEFORE_INIT.register((client, initScreen, scaledWidth, scaledHeight) -> {
             ScreenMouseEvents.allowMouseClick(initScreen).register((screen, event) -> {
-                if (event.button() != 0) {
+                if (event.button() != InputConstants.MOUSE_BUTTON_LEFT) {
                     return true;
                 }
                 return CraftGR.getInstance().clientEvents().onMouseClick((int) event.x(), (int) event.y());

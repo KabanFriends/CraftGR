@@ -1,5 +1,6 @@
 package io.github.kabanfriends.craftgr.neoforge;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.Window;
 import io.github.kabanfriends.craftgr.CraftGR;
 import net.minecraft.client.Minecraft;
@@ -36,7 +37,7 @@ public class NeoForgeGameEvents {
 
     @SubscribeEvent
     public static void clickScreen(ScreenEvent.MouseButtonPressed.Pre event) {
-        if (event.getButton() != 0) {
+        if (event.getButton() != InputConstants.MOUSE_BUTTON_LEFT) {
             return;
         }
         event.setCanceled(!CraftGR.getInstance().clientEvents().onMouseClick((int) event.getMouseX(), (int) event.getMouseY()));
