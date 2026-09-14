@@ -1,11 +1,10 @@
 package io.github.kabanfriends.craftgr.neoforge;
 
-import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.generated.ModConstants;
 import io.github.kabanfriends.craftgr.platform.PlatformAdapter;
 import net.minecraft.client.Minecraft;
 import net.neoforged.fml.ModList;
-import net.neoforged.neoforge.client.gui.ModListScreen;
+import net.neoforged.neoforge.client.gui.modlist.ModListScreen;
 
 public class NeoForgePlatformAdapter implements PlatformAdapter {
 
