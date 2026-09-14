@@ -23,7 +23,7 @@ jobs:
           file: "gradle/libs.versions.toml"
           field: "versions.minecraft"
       - name: Create a release
-        uses: softprops/action-gh-release@v2.3.2
+        uses: softprops/action-gh-release@v3
         with:
           tag_name: "${{ steps.mod_properties.outputs.mod_version }}-mc${{ steps.minecraft_version.outputs.value }}"
           name: "${{ steps.mod_properties.outputs.mod_version }}-mc${{ steps.minecraft_version.outputs.value }}"
