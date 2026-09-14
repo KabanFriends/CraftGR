@@ -77,7 +77,7 @@ jobs:
           asset_path: neoforge/build/libs/craftgr-neoforge-*-mc*.jar
 
       - name: Publish NeoForge artifact
-        uses: ThexXTURBOXx/mc-publish@dev
+        uses: Kira-NT/mc-publish@v3
         with:
           files: neoforge/build/libs/craftgr-neoforge-*-mc*.jar
 

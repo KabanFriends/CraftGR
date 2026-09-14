@@ -77,7 +77,7 @@ jobs:
           asset_path: fabric/build/libs/craftgr-fabric-*-mc*.jar
 
       - name: Publish Fabric artifact
-        uses: ThexXTURBOXx/mc-publish@dev
+        uses: Kira-NT/mc-publish@v3
         with:
           files: fabric/build/libs/craftgr-fabric-*-mc*.jar
 
