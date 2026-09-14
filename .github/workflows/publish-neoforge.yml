@@ -88,7 +88,7 @@ jobs:
           loaders: |
             neoforge
 
-          environments: |
+          environment: |
             client
 
           game-version-filter: any

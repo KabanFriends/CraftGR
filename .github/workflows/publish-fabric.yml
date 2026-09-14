@@ -89,7 +89,7 @@ jobs:
             fabric
             quilt
 
-          environments: |
+          environment: |
             client
 
           game-version-filter: any
