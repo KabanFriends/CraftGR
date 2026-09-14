@@ -70,12 +70,6 @@ jobs:
           text: ${{ steps.release_by_tag.outputs.name || steps.latest_release.outputs.name }}
           regex: "^(.+?)-mc(.+?)$"
 
-      - name: Upload NeoForge artifact
-        uses: shogo82148/actions-upload-release-asset@v1.8.1
-        with:
-          upload_url: ${{ steps.release_by_tag.outputs.upload_url || steps.latest_release.outputs.upload_url }}
-          asset_path: neoforge/build/libs/craftgr-neoforge-*-mc*.jar
-
       - name: Publish NeoForge artifact
         uses: Kira-NT/mc-publish@v3
         with:
@@ -100,3 +94,9 @@ jobs:
           game-version-filter: any
           game-versions: ${{ inputs.minecraft_version != '' && inputs.minecraft_version || steps.release_versions.outputs.group2 }}
           dependencies: yacl
+
+      - name: Upload NeoForge artifact
+        uses: shogo82148/actions-upload-release-asset@v1.8.1
+        with:
+          upload_url: ${{ steps.release_by_tag.outputs.upload_url || steps.latest_release.outputs.upload_url }}
+          asset_path: neoforge/build/libs/craftgr-neoforge-*-mc*.jar
