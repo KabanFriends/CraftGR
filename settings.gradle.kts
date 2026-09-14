@@ -13,4 +13,4 @@ plugins {
 rootProject.name = "CraftGR"
 include("common")
 include("fabric")
-//include("neoforge")
+include("neoforge")

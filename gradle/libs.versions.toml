@@ -4,16 +4,16 @@
 
 # Toolchains
 fabric-loom = "1.17-SNAPSHOT"
-neoforge-moddev = "2.0.146"
+neoforge-moddev = "2.0.147"
 idea-ext = "1.4.1"
 blossom = "2.2.0"
 
 # Minecraft
-minecraft = "26.3-rc-1"
-neoform = "26.3-rc-1-2"
+minecraft = "26.3-rc-2"
+neoform = "26.3-rc-2-1"
 
 # Mod loader platforms
-neoforge-loader = "26.2.0.10-beta"
+neoforge-loader = "26.3.0-alpha.0+rc-2.20260914.180849"
 fabric-loader = "0.19.5"
 fabric-api = "0.160.2+26.3"
 

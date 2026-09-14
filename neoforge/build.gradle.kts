@@ -6,6 +6,16 @@ plugins {
 /* Project Properties */
 val modId               = project.property("mod_id")                as String
 
+// TODO: remove on release
+repositories {
+    maven("https://prmaven.neoforged.net/NeoForge/pr3403") {
+        content {
+            includeModule("net.neoforged", "neoforge")
+            includeModule("net.neoforged", "testframework")
+        }
+    }
+}
+
 dependencies {
     implementation(libs.neoforge.loader)
 
