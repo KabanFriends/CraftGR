@@ -3,6 +3,7 @@ package io.github.kabanfriends.craftgr.mixin;
 import io.github.kabanfriends.craftgr.CraftGR;
 import io.github.kabanfriends.craftgr.audio.Radio;
 import net.minecraft.client.sounds.SoundEngine;
+import net.minecraft.sounds.SoundSource;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -28,5 +29,12 @@ public class MixinSoundEngine {
             CraftGR.getInstance().getRadio().start(craftgr$firstLoad);
         }
         craftgr$firstLoad = false;
+    }
+
+    @Inject(method = "refreshCategoryVolume", at = @At("HEAD"))
+    private void craftgr$updateRadioVolume(SoundSource source, CallbackInfo ci) {
+        if (source == SoundSource.MASTER) {
+            CraftGR.getInstance().getRadio().updateVolume();
+        }
     }
 }
