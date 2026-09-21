@@ -39,6 +39,7 @@ bin/
 ### Mac OS ###
 .DS_Store
 
-### Test output ###
-fabric/run/
-neoforge/run/
+### Stonecutter ###
+/common/versions/
+/fabric/versions/
+/neoforge/versions/

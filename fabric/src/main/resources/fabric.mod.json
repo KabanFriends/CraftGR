@@ -1,49 +1,45 @@
 {
-  "schemaVersion": 1,
-  "id": "${id}",
-  "version": "${version}",
-  "name": "${name}",
-  "description": "Touhou Project music player for Minecraft",
-  "authors": [
-    "KabanFriends"
-  ],
-  "contributors": [],
-  "contact": {
-    "homepage": "https://modrinth.com/mod/craftgr",
-    "sources": "https://github.com/KabanFriends/CraftGR",
-    "issues": "https://github.com/KabanFriends/CraftGR/issues"
-  },
-  "environment": "client",
-  "license": "LGPL-3.0",
-  "icon": "icon.png",
-  "entrypoints": {
-    "modmenu": [
-      "io.github.kabanfriends.craftgr.fabric.ModMenuIntegration"
+    "schemaVersion": 1,
+    "id": "${modId}",
+    "version": "${modVersion}+mc${stonecutterVersion}",
+    "name": "${modName}",
+    "description": "${modDescription}",
+    "license": "${modLicense}",
+    "authors": [
+        "${modAuthors}"
     ],
-    "client": [
-      "io.github.kabanfriends.craftgr.fabric.CraftGRFabric"
+    "contributors": [],
+    "contact": {
+        "homepage": "${modWebsite}",
+        "sources": "${modSource}",
+        "issues": "${modIssues}"
+    },
+    "environment": "client",
+    "icon": "icon.png",
+    "entrypoints": {
+        "modmenu": [
+            "sh.kaban.craftgr.fabric.ModMenuIntegration"
+        ],
+        "client": [
+            "sh.kaban.craftgr.fabric.CraftGRFabric"
+        ],
+        "server": []
+    },
+    "mixins": [
+        "craftgr-common.mixins.json"
     ],
-    "server": []
-  },
-  "mixins": [
-    "craftgr-common.mixins.json"
-  ],
-  "accessWidener": "craftgr.accesswidener",
-  "depends": {
-    "minecraft": ">=${minecraft_version_fabric}",
-    "fabricloader": ">=${fabric_loader_version}",
-    "fabric-key-mapping-api-v1": "*",
-    "fabric-lifecycle-events-v1": "*",
-    "fabric-rendering-v1": "*",
-    "fabric-screen-api-v1": "*"
-  },
-  "recommends": {
-    "yet_another_config_lib_v3": ">=${yacl_version_fabric}"
-  },
-  "suggests": {
-    "modmenu": ">=${mod_menu_version}-"
-  },
-  "custom": {
-    "modmenu:clientsideOnly": true
-  }
+    "depends": {
+        "minecraft": ">=${minecraftVersion}",
+        "fabricloader": ">=${fabricLoaderVersion}",
+        "fabric-api": ">=${fabricApiVersion}"
+    },
+    "recommends": {
+        "yet_another_config_lib_v3": ">=${yaclVersion}-"
+    },
+    "suggests": {
+        "modmenu": ">=${modMenuVersion}-"
+    },
+    "custom": {
+        "modmenu:clientsideOnly": true
+    }
 }

@@ -1,0 +1,68 @@
+name: Publish CraftGR artifact
+description: Publish one CraftGR loader and Minecraft version artifact
+
+inputs:
+  platform:
+    description: Artifact platform name used in the jar file name and version ID
+    required: true
+  platform_name:
+    description: Platform display name
+    required: true
+  minecraft_version:
+    description: Minecraft version supported by the artifact
+    required: true
+  loaders:
+    description: Newline-delimited loaders accepted by mc-publish
+    required: true
+  mod_version:
+    description: CraftGR version read from the GitHub release name
+    required: true
+  changelog:
+    description: Changelog read from the GitHub release body
+    required: true
+  upload_url:
+    description: GitHub release asset upload URL
+    required: true
+  publish_modrinth:
+    description: Whether to publish to Modrinth
+    required: true
+  publish_curseforge:
+    description: Whether to publish to CurseForge
+    required: true
+  modrinth_token:
+    description: Modrinth API token
+    required: false
+  curseforge_token:
+    description: CurseForge API token
+    required: false
+
+runs:
+  using: composite
+  steps:
+    - name: Publish mod artifact
+      if: ${{ inputs.publish_modrinth == 'true' || inputs.publish_curseforge == 'true' }}
+      uses: Kira-NT/mc-publish@v3
+      with:
+        files: ${{ inputs.platform }}/versions/${{ inputs.minecraft_version }}/build/libs/craftgr-${{ inputs.platform }}-*+mc${{ inputs.minecraft_version }}.jar
+
+        modrinth-id: lKYr4L6w
+        modrinth-token: ${{ inputs.publish_modrinth == 'true' && inputs.modrinth_token || '${undefined}' }}
+
+        curseforge-id: 1009348
+        curseforge-token: ${{ inputs.publish_curseforge == 'true' && inputs.curseforge_token || '${undefined}' }}
+
+        name: "[${{ inputs.platform_name }}] CraftGR ${{ inputs.mod_version }} for Minecraft ${{ inputs.minecraft_version }}"
+        version: "${{ inputs.platform }}-${{ inputs.mod_version }}-mc${{ inputs.minecraft_version }}"
+        changelog: ${{ inputs.changelog }}
+
+        loaders: ${{ inputs.loaders }}
+        environment: client
+        game-version-filter: any
+        game-versions: ${{ inputs.minecraft_version }}
+        dependencies: yacl
+
+    - name: Upload artifact to GitHub release
+      uses: shogo82148/actions-upload-release-asset@v1.8.1
+      with:
+        upload_url: ${{ inputs.upload_url }}
+        asset_path: ${{ inputs.platform }}/versions/${{ inputs.minecraft_version }}/build/libs/craftgr-${{ inputs.platform }}-*+mc${{ inputs.minecraft_version }}.jar

@@ -1,6 +1,0 @@
-accessWidener v2 official
-
-extendable      class   net/minecraft/client/gui/navigation/ScreenRectangle
-
-accessible      class   net/minecraft/client/gui/components/OptionsList$Entry
-accessible      class   net/minecraft/client/gui/components/AbstractSelectionList$Entry

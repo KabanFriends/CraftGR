@@ -1,58 +1,41 @@
-package io.github.kabanfriends.craftgr.build
-
 plugins {
-    id("io.github.kabanfriends.craftgr.build.common")
+    id("java")
+    id("idea")
+    id("common")
 }
 
-/* Project Properties */
-val modId               = project.property("mod_id")                as String
-
-configurations {
-    val commonJava by creating {
-        isCanBeResolved = true
-    }
-    val commonResources by creating {
-        isCanBeResolved = true
-    }
+val commonClasses: Configuration by configurations.creating {
+    isCanBeResolved = true
 }
+val commonResources: Configuration by configurations.creating {
+    isCanBeResolved = true
+}
+
+val commonPath = common.hierarchy.toString()
+val commonProject = rootProject.project(commonPath)
 
 dependencies {
-    compileOnly(project(":common")) {
-        capabilities {
-            requireCapability("${group}:${modId}")
-        }
-        attributes {
-            attribute(
-                Attribute.of("io.github.mcgradleconventions.loader", String::class.java),
-                "common"
-            )
-        }
-    }
+    compileOnly(project(path = commonPath))
+    commonClasses(project(path = commonPath, configuration = "commonClasses"))
+    commonResources(project(path = commonPath, configuration = "commonResources"))
+}
 
-    "commonJava"(project(path = ":common", configuration = "commonJava"))
-    "commonResources"(project(path = ":common", configuration = "commonResources"))
+sourceSets {
+    main {
+        output.dir(
+            mapOf("builtBy" to commonClasses),
+            commonProject.layout.buildDirectory.dir("classes/java/main"),
+        )
+    }
 }
 
 tasks {
+    classes {
+        dependsOn(commonClasses)
+    }
+
     processResources {
-        dependsOn(configurations["commonResources"])
-        from(configurations["commonResources"])
-    }
-
-    named("compileJava", JavaCompile::class) {
-        dependsOn(configurations["commonJava"])
-        source(configurations["commonJava"])
-    }
-
-    named("javadoc", Javadoc::class) {
-        dependsOn(configurations["commonJava"])
-        source(configurations["commonJava"])
-    }
-
-    named("sourcesJar", Jar::class) {
-        dependsOn(configurations["commonJava"])
-        from(configurations["commonJava"])
-        dependsOn(configurations["commonResources"])
-        from(configurations["commonResources"])
+        dependsOn(commonResources)
+        from(commonResources)
     }
 }

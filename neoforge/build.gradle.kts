@@ -1,25 +1,56 @@
 plugins {
-    id("io.github.kabanfriends.craftgr.build.loader")
-    alias(libs.plugins.neoforge.moddev)
+    loader
+    alias(libs.plugins.moddev)
 }
 
-/* Project Properties */
-val modId               = project.property("mod_id")                as String
+val projectPath = project.path
 
-// TODO: remove on release
-repositories {
-    maven("https://prmaven.neoforged.net/NeoForge/pr3403") {
-        content {
-            includeModule("net.neoforged", "neoforge")
-            includeModule("net.neoforged", "testframework")
+val stonecutterGenerate = tasks.named("stonecutterGenerate")
+
+tasks.configureEach {
+    if (name == "createMinecraftArtifacts") {
+        dependsOn(stonecutterGenerate)
+    }
+}
+
+neoForge {
+    val accessTransformer = sourceSets.main.get().resources.srcDirs
+        .map { it.resolve("META-INF/accesstransformer.${sc.current.version}.cfg") }
+        .firstOrNull { it.isFile && it.exists() }
+
+    accessTransformer?.let {
+        accessTransformers.from(accessTransformer)
+    }
+
+    enable {
+        version = commonMod.dep("neoforge")
+    }
+
+    runs {
+        register("client") {
+            client()
+            ideName = "NeoForge Client ($projectPath)"
+        }
+    }
+
+    commonMod.depOrNull("parchment")?.let {
+        parchment {
+            mappingsVersion = it
+            minecraftVersion = commonMod.dep("minecraft")
+        }
+    }
+
+    mods {
+        register(commonMod.id) {
+            sourceSet(sourceSets.main.get())
         }
     }
 }
 
 dependencies {
-    implementation(libs.neoforge.loader)
+    implementation("net.neoforged:neoforge:${commonMod.dep("neoforge")}")
 
-    implementation(libs.yacl.neoforge)
+    compileOnly("dev.isxander:yet-another-config-lib:${commonMod.dep("yacl")}-neoforge")
 
     implementation(libs.jlayer)
     jarJar(libs.jlayer)
@@ -27,55 +58,10 @@ dependencies {
     jarJar(libs.math3)
 }
 
-neoForge {
-    version = libs.versions.neoforge.loader.get() as String?
-
-    val at = file("${rootDir}/common/src/main/resources/META-INF/accesstransformer.cfg")
-    if (at.exists()) {
-        accessTransformers.from(at.absolutePath)
-    }
-
-    runs {
-        configureEach {
-            systemProperty("neoforge.enabledGameTestNamespaces", modId)
-            ideName = "NeoForge ${name.capitalize()} (${project.path})"
-        }
-        create("client") {
-            client()
-        }
-        create("data") {
-            clientData()
-        }
-        create("server") {
-            server()
-        }
-    }
-
-    mods {
-        create(modId) {
-            sourceSet(sourceSets.main.get())
-        }
-    }
-}
-
-sourceSets.main.get().resources {
-    srcDir("src/generated/resources")
-}
-
-val attribute = Attribute.of("io.github.mcgradleconventions.loader", String::class.java)
-listOf("apiElements", "runtimeElements", "sourcesElements", "javadocElements").forEach { it ->
-    configurations.findByName(it)?.let { cfg ->
-        cfg.attributes {
-            attribute(attribute, "neoforge")
-        }
-    }
-}
-sourceSets.configureEach {
-    listOf(compileClasspathConfigurationName, runtimeClasspathConfigurationName).forEach { variant ->
-        configurations.named(variant) {
-            attributes {
-                attribute(attribute, "neoforge")
-            }
+sourceSets {
+    main {
+        resources {
+            srcDir("src/generated/resources")
         }
     }
 }

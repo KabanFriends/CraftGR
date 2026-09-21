@@ -1,0 +1,21 @@
+name: Build CraftGR
+description: Set up Gradle and build every CraftGR artifact
+
+runs:
+  using: composite
+  steps:
+    - name: Validate Gradle wrapper
+      uses: gradle/actions/wrapper-validation@v4
+
+    - name: Set up JDK 25
+      uses: actions/setup-java@v4
+      with:
+        distribution: temurin
+        java-version: 25
+        check-latest: true
+
+    - name: Build with Gradle
+      shell: bash
+      run: |
+        chmod +x ./gradlew
+        ./gradlew build

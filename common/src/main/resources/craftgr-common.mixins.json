@@ -1,9 +1,8 @@
 {
     "required": true,
-    "package": "io.github.kabanfriends.craftgr.mixin",
+    "package": "sh.kaban.craftgr.mixin",
     "compatibilityLevel": "JAVA_21",
-    "mixins": [
-        "MixinAccessorAbstractSelectionList",
+    "client": [
         "MixinOptionsSubScreen",
         "MixinSoundEngine",
         "MixinSoundOptionsScreen"

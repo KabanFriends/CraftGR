@@ -1,0 +1,192 @@
+name: Publish
+
+on:
+  workflow_dispatch:
+    inputs:
+      publish_fabric:
+        description: "Publish Fabric artifacts"
+        type: boolean
+        default: true
+      publish_neoforge:
+        description: "Publish NeoForge artifacts"
+        type: boolean
+        default: true
+      publish_modrinth:
+        description: "Publish to Modrinth"
+        type: boolean
+        default: true
+      publish_curseforge:
+        description: "Publish to CurseForge"
+        type: boolean
+        default: true
+      release_tag:
+        description: "GitHub release tag to publish (defaults to the latest release)"
+        required: false
+        default: ""
+
+jobs:
+  publish:
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build all artifacts
+        uses: ./.github/actions/gradle-build
+
+      - name: Read GitHub release by tag
+        if: ${{ inputs.release_tag != '' }}
+        id: release_by_tag
+        uses: cardinalby/git-get-release-action@1.2.4
+        env:
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN || github.token }}
+        with:
+          tag: ${{ inputs.release_tag }}
+
+      - name: Read latest GitHub release
+        if: ${{ inputs.release_tag == '' }}
+        id: latest_release
+        uses: cardinalby/git-get-release-action@1.2.4
+        env:
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN || github.token }}
+        with:
+          latest: 1
+
+      - name: Publish Fabric 1.21.1
+        if: ${{ inputs.publish_fabric }}
+        uses: ./.github/actions/publish-artifact
+        with:
+          platform: fabric
+          platform_name: Fabric
+          minecraft_version: "1.21.1"
+          loaders: |
+            fabric
+            quilt
+          mod_version: ${{ steps.release_by_tag.outputs.name || steps.latest_release.outputs.name }}
+          changelog: ${{ steps.release_by_tag.outputs.body || steps.latest_release.outputs.body }}
+          upload_url: ${{ steps.release_by_tag.outputs.upload_url || steps.latest_release.outputs.upload_url }}
+          publish_modrinth: ${{ inputs.publish_modrinth }}
+          publish_curseforge: ${{ inputs.publish_curseforge }}
+          modrinth_token: ${{ secrets.MODRINTH_TOKEN }}
+          curseforge_token: ${{ secrets.CURSEFORGE_TOKEN }}
+
+      - name: Publish Fabric 1.21.11
+        if: ${{ inputs.publish_fabric }}
+        uses: ./.github/actions/publish-artifact
+        with:
+          platform: fabric
+          platform_name: Fabric
+          minecraft_version: "1.21.11"
+          loaders: |
+            fabric
+            quilt
+          mod_version: ${{ steps.release_by_tag.outputs.name || steps.latest_release.outputs.name }}
+          changelog: ${{ steps.release_by_tag.outputs.body || steps.latest_release.outputs.body }}
+          upload_url: ${{ steps.release_by_tag.outputs.upload_url || steps.latest_release.outputs.upload_url }}
+          publish_modrinth: ${{ inputs.publish_modrinth }}
+          publish_curseforge: ${{ inputs.publish_curseforge }}
+          modrinth_token: ${{ secrets.MODRINTH_TOKEN }}
+          curseforge_token: ${{ secrets.CURSEFORGE_TOKEN }}
+
+      - name: Publish Fabric 26.2
+        if: ${{ inputs.publish_fabric }}
+        uses: ./.github/actions/publish-artifact
+        with:
+          platform: fabric
+          platform_name: Fabric
+          minecraft_version: "26.2"
+          loaders: |
+            fabric
+            quilt
+          mod_version: ${{ steps.release_by_tag.outputs.name || steps.latest_release.outputs.name }}
+          changelog: ${{ steps.release_by_tag.outputs.body || steps.latest_release.outputs.body }}
+          upload_url: ${{ steps.release_by_tag.outputs.upload_url || steps.latest_release.outputs.upload_url }}
+          publish_modrinth: ${{ inputs.publish_modrinth }}
+          publish_curseforge: ${{ inputs.publish_curseforge }}
+          modrinth_token: ${{ secrets.MODRINTH_TOKEN }}
+          curseforge_token: ${{ secrets.CURSEFORGE_TOKEN }}
+
+      - name: Publish Fabric 26.3
+        if: ${{ inputs.publish_fabric }}
+        uses: ./.github/actions/publish-artifact
+        with:
+          platform: fabric
+          platform_name: Fabric
+          minecraft_version: "26.3"
+          loaders: |
+            fabric
+            quilt
+          mod_version: ${{ steps.release_by_tag.outputs.name || steps.latest_release.outputs.name }}
+          changelog: ${{ steps.release_by_tag.outputs.body || steps.latest_release.outputs.body }}
+          upload_url: ${{ steps.release_by_tag.outputs.upload_url || steps.latest_release.outputs.upload_url }}
+          publish_modrinth: ${{ inputs.publish_modrinth }}
+          publish_curseforge: ${{ inputs.publish_curseforge }}
+          modrinth_token: ${{ secrets.MODRINTH_TOKEN }}
+          curseforge_token: ${{ secrets.CURSEFORGE_TOKEN }}
+
+      - name: Publish NeoForge 1.21.1
+        if: ${{ inputs.publish_neoforge }}
+        uses: ./.github/actions/publish-artifact
+        with:
+          platform: neoforge
+          platform_name: NeoForge
+          minecraft_version: "1.21.1"
+          loaders: neoforge
+          mod_version: ${{ steps.release_by_tag.outputs.name || steps.latest_release.outputs.name }}
+          changelog: ${{ steps.release_by_tag.outputs.body || steps.latest_release.outputs.body }}
+          upload_url: ${{ steps.release_by_tag.outputs.upload_url || steps.latest_release.outputs.upload_url }}
+          publish_modrinth: ${{ inputs.publish_modrinth }}
+          publish_curseforge: ${{ inputs.publish_curseforge }}
+          modrinth_token: ${{ secrets.MODRINTH_TOKEN }}
+          curseforge_token: ${{ secrets.CURSEFORGE_TOKEN }}
+
+      - name: Publish NeoForge 1.21.11
+        if: ${{ inputs.publish_neoforge }}
+        uses: ./.github/actions/publish-artifact
+        with:
+          platform: neoforge
+          platform_name: NeoForge
+          minecraft_version: "1.21.11"
+          loaders: neoforge
+          mod_version: ${{ steps.release_by_tag.outputs.name || steps.latest_release.outputs.name }}
+          changelog: ${{ steps.release_by_tag.outputs.body || steps.latest_release.outputs.body }}
+          upload_url: ${{ steps.release_by_tag.outputs.upload_url || steps.latest_release.outputs.upload_url }}
+          publish_modrinth: ${{ inputs.publish_modrinth }}
+          publish_curseforge: ${{ inputs.publish_curseforge }}
+          modrinth_token: ${{ secrets.MODRINTH_TOKEN }}
+          curseforge_token: ${{ secrets.CURSEFORGE_TOKEN }}
+
+      - name: Publish NeoForge 26.2
+        if: ${{ inputs.publish_neoforge }}
+        uses: ./.github/actions/publish-artifact
+        with:
+          platform: neoforge
+          platform_name: NeoForge
+          minecraft_version: "26.2"
+          loaders: neoforge
+          mod_version: ${{ steps.release_by_tag.outputs.name || steps.latest_release.outputs.name }}
+          changelog: ${{ steps.release_by_tag.outputs.body || steps.latest_release.outputs.body }}
+          upload_url: ${{ steps.release_by_tag.outputs.upload_url || steps.latest_release.outputs.upload_url }}
+          publish_modrinth: ${{ inputs.publish_modrinth }}
+          publish_curseforge: ${{ inputs.publish_curseforge }}
+          modrinth_token: ${{ secrets.MODRINTH_TOKEN }}
+          curseforge_token: ${{ secrets.CURSEFORGE_TOKEN }}
+
+      - name: Publish NeoForge 26.3
+        if: ${{ inputs.publish_neoforge }}
+        uses: ./.github/actions/publish-artifact
+        with:
+          platform: neoforge
+          platform_name: NeoForge
+          minecraft_version: "26.3"
+          loaders: neoforge
+          mod_version: ${{ steps.release_by_tag.outputs.name || steps.latest_release.outputs.name }}
+          changelog: ${{ steps.release_by_tag.outputs.body || steps.latest_release.outputs.body }}
+          upload_url: ${{ steps.release_by_tag.outputs.upload_url || steps.latest_release.outputs.upload_url }}
+          publish_modrinth: ${{ inputs.publish_modrinth }}
+          publish_curseforge: ${{ inputs.publish_curseforge }}
+          modrinth_token: ${{ secrets.MODRINTH_TOKEN }}
+          curseforge_token: ${{ secrets.CURSEFORGE_TOKEN }}

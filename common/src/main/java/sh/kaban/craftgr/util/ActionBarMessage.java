@@ -1,0 +1,43 @@
+package sh.kaban.craftgr.util;
+
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+
+public enum ActionBarMessage {
+
+    CONNECTING("→", ChatFormatting.GOLD, "text.craftgr.message.connecting"),
+    RECONNECTING(ComponentUtil.RECONNECT_ICON.copy().withStyle(ChatFormatting.GOLD), "text.craftgr.message.reconnecting"),
+    CONNECTION_ERROR("❌", ChatFormatting.DARK_RED, "text.craftgr.message.connectionError"),
+    PLAYBACK_STARTED("▶", ChatFormatting.GREEN, "text.craftgr.message.started"),
+    PLAYBACK_STOPPED("■", ChatFormatting.RED, "text.craftgr.message.stopped")
+    ;
+
+    private static final Component SPACE = Component.literal(" ");
+
+    private final MutableComponent icon;
+    private final MutableComponent body;
+
+    ActionBarMessage(MutableComponent icon, String key) {
+        this.icon = icon;
+        this.body = Component.translatable(key);
+    }
+
+    ActionBarMessage(String icon, ChatFormatting color, String key) {
+        this(Component.literal(icon).withStyle(color), key);
+    }
+
+    public void show() {
+        if (Minecraft.getInstance().player == null) {
+            return;
+        }
+
+        Component message = Component.empty().append(icon).append(SPACE).append(body);
+
+        //? if > 1.21.11 {
+        Minecraft.getInstance().player.sendOverlayMessage(message);
+        //? } else
+        //Minecraft.getInstance().player.displayClientMessage(message, true);
+    }
+}

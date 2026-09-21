@@ -4,6 +4,12 @@ plugins {
 
 repositories {
     mavenCentral()
+    gradlePluginPortal()
+    maven("https://maven.kikugie.dev/snapshots")
+}
+
+dependencies {
+    implementation(libs.stonecutter)
 }
 
 kotlin {

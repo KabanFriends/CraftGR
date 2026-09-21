@@ -1,19 +1,34 @@
 plugins {
-    id("io.github.kabanfriends.craftgr.build.loader")
-    alias(libs.plugins.fabric.loom)
+    loader
+    alias(libs.plugins.loom.back.compat)
 }
 
-/* Project Properties */
-val modId               = project.property("mod_id")                as String
+loom {
+    runs {
+        named("client") {
+            client()
+            ideConfigGenerated(true)
+            configName = "Fabric Client"
+        }
+    }
+}
 
 dependencies {
-    minecraft(libs.minecraft)
+    minecraft("com.mojang:minecraft:${commonMod.minecraft}")
+    if (sc.current.parsed < "26") {
+        mappings(loom.layered {
+            officialMojangMappings()
+            commonMod.depOrNull("parchment")?.let {
+                parchment("org.parchmentmc.data:parchment-${commonMod.dep("minecraft")}:${it}@zip")
+            }
+        })
+    }
 
-    implementation(libs.fabric.loader)
-    implementation(libs.fabric.api)
+    modImplementation("net.fabricmc:fabric-loader:${commonMod.dep("fabric-loader")}")
+    modImplementation("net.fabricmc.fabric-api:fabric-api:${commonMod.dep("fabric-api")}")
 
-    implementation(libs.mod.menu)
-    implementation(libs.yacl.fabric)
+    modImplementation("com.terraformersmc:modmenu:${commonMod.dep("modmenu")}")
+    modImplementation("dev.isxander:yet-another-config-lib:${commonMod.dep("yacl")}-fabric")
 
     implementation(libs.jlayer)
     include(libs.jlayer)
@@ -21,42 +36,10 @@ dependencies {
     include(libs.math3)
 }
 
-loom {
-    val aw = file("src/main/resources/${modId}.accesswidener")
-    if (aw.exists()) {
-        accessWidenerPath.set(aw)
-    }
-
-    runs {
-        named("client") {
-            client()
-            ideConfigGenerated(true)
-            runDir("run/client")
-            configName = "Fabric Client"
-        }
-        named("server") {
-            server()
-            ideConfigGenerated(true)
-            runDir("run/server")
-            configName = "Fabric Server"
-        }
-    }
-}
-
-val attribute = Attribute.of("io.github.mcgradleconventions.loader", String::class.java)
-listOf("apiElements", "runtimeElements", "sourcesElements", "javadocElements").forEach { it ->
-    configurations.findByName(it)?.let { cfg ->
-        cfg.attributes {
-            attribute(attribute, "fabric")
-        }
-    }
-}
-sourceSets.configureEach {
-    listOf(compileClasspathConfigurationName, runtimeClasspathConfigurationName).forEach { variant ->
-        configurations.named(variant) {
-            attributes {
-                attribute(attribute, "fabric")
-            }
+sourceSets {
+    main {
+        resources {
+            srcDir("src/generated/resources")
         }
     }
 }

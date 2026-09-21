@@ -1,40 +1,37 @@
 modLoader = "javafml"
 loaderVersion = "[1,)"
-issueTrackerURL = "https://github.com/KabanFriends/CraftGR/issues"
+issueTrackerURL = "${modIssues}"
 license = "LGPL-3.0"
 
 [[mods]]
-modId = "${id}"
-version = "${version}"
-displayName = "${name}"
-authors = "KabanFriends"
-description = "Touhou Project music player for Minecraft"
-modUrl = "https://modrinth.com/mod/craftgr"
+modId = "${modId}"
+version = "${modVersion}+mc${stonecutterVersion}"
+displayName = "${modName}"
+authors = "${modAuthors}"
+description = "${modDescription}"
+modUrl = "${modWebsite}"
 logoFile = "icon.png"
 
 [[mixins]]
 config = "craftgr-common.mixins.json"
 
-[[accessTransformers]]
-file = "META-INF/accesstransformer.cfg"
-
 [[dependencies.craftgr]]
 modId = "minecraft"
 type = "required"
-versionRange = "[${minecraft_version_neoforge},)"
+versionRange = "[${minecraftVersion},)"
 ordering = "NONE"
 side = "CLIENT"
 
 [[dependencies.craftgr]]
 modId = "neoforge"
 type = "required"
-versionRange = "[${neoforge_version},)"
+versionRange = "[${neoforgeVersion},)"
 ordering = "NONE"
 side = "CLIENT"
 
 [[dependencies.craftgr]]
 modId = "yet_another_config_lib_v3"
 type = "optional"
-versionRange="[${yacl_version_neoforge},)"
+versionRange="[${yaclVersion},)"
 ordering = "NONE"
 side = "CLIENT"

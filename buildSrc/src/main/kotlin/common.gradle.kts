@@ -1,82 +1,71 @@
-package io.github.kabanfriends.craftgr.build
-
 plugins {
-    `java-library`
+    id("java")
+    id("java-library")
+    id("idea")
 }
 
-/* Project Properties */
-val modName             = project.property("mod_name")              as String
-val modId               = project.property("mod_id")                as String
-
-val minecraftVersion = versionCatalogs.named("libs").findVersion("minecraft").get().toString()
+version = "${loader}-${commonMod.version}+mc${stonecutterBuild.current.version}"
 
 base {
-    archivesName.set("${modId}-${project.name}")
+    archivesName = commonMod.id
 }
 
 java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(25))
-    }
-    withSourcesJar()
+    toolchain.languageVersion = JavaLanguageVersion.of(commonProject.prop("java.version")!!)
 }
 
 repositories {
     mavenCentral()
-}
-
-listOf("apiElements", "runtimeElements", "sourcesElements", "javadocElements").forEach { it ->
-    configurations.findByName(it)?.let { cfg ->
-        cfg.outgoing {
-            capability("${group}:${project.name}:${version}")
-            capability("${group}:${base.archivesName.get()}:${version}")
-            capability("${group}:${modId}-${project.name}-${minecraftVersion}:${version}")
-            capability("${group}:${modId}:${version}")
-        }
-    }
+    maven("https://maven.fabricmc.net/")
+    maven("https://maven.neoforged.net/releases")
+    maven("https://maven.minecraftforge.net/")
+    maven("https://maven.quiltmc.org/repository/release")
+    maven("https://maven.parchmentmc.org")
+    maven("https://repo.spongepowered.org/repository/maven-public")
+    maven("https://maven.terraformersmc.com/")
 }
 
 tasks {
-    jar {
-        from(rootProject.file("LICENSE")) {
-            into("/")
-        }
-
-        manifest {
-            attributes(
-                "Specification-Title"   to project.name,
-                "Specification-Version" to project.version,
-                "Implementation-Title"  to tasks.jar.get().archiveVersion,
-                "Implementation-Title"  to project.name,
-            )
-        }
-
-        archiveClassifier.set("mc${minecraftVersion}")
-    }
-
     processResources {
-        val props = mapOf(
-            "version"                       to project.version,
-            "name"                          to modName,
-            "id"                            to modId,
-            "minecraft_version_fabric"      to minecraftVersion.replace("rc-", "rc."),
-            "minecraft_version_neoforge"    to minecraftVersion,
-            "fabric_loader_version"         to versionCatalogs.named("libs").findVersion("fabric-loader").get().toString(),
-            "fabric_api_version"            to versionCatalogs.named("libs").findVersion("fabric-api").get().toString(),
-            "neoforge_version"              to versionCatalogs.named("libs").findVersion("neoforge-loader").get().toString(),
-            "mod_menu_version"              to versionCatalogs.named("libs").findVersion("mod-menu").get().toString(),
-            "yacl_version_fabric"           to versionCatalogs.named("libs").findVersion("yacl-fabric").get().toString(),
-            "yacl_version_neoforge"         to versionCatalogs.named("libs").findVersion("yacl-neoforge").get().toString(),
-        )
+        val expandProps = mapOf(
+            "stonecutterVersion" to stonecutterBuild.current.version,
 
-        filesMatching(listOf("META-INF/mods.toml", "META-INF/neoforge.mods.toml")) {
-             expand(props)
+            "javaVersion" to commonMod.propOrNull("java.version"),
+
+            "modId" to commonMod.id,
+            "modName" to commonMod.name,
+            "modVersion" to commonMod.version,
+            "modGroup" to commonMod.group,
+            "modDescription" to commonMod.description,
+            "modAuthors" to commonMod.authors,
+            "modLicense" to commonMod.license,
+            "modWebsite" to commonMod.website,
+            "modSource" to commonMod.source,
+            "modIssues" to commonMod.issues,
+
+            "minecraftVersion" to commonMod.minecraft,
+
+            "fabricLoaderVersion" to commonMod.depOrNull("fabric-loader"),
+            "fabricApiVersion" to commonMod.depOrNull("fabric-api"),
+
+            "neoforgeVersion" to commonMod.depOrNull("neoforge"),
+
+            "yaclVersion" to commonMod.depOrNull("yacl"),
+            "modMenuVersion" to commonMod.depOrNull("modmenu"),
+        ).filterValues { it?.isNotEmpty() == true }.mapValues { (_, v) -> v!! }
+
+        filesMatching(listOf(
+            "fabric.mod.json",
+            "META-INF/mods.toml",
+            "META-INF/neoforge.mods.toml",
+        )) {
+            expand(expandProps)
         }
 
-        filesMatching(listOf("pack.mcmeta", "fabric.mod.json", "*.mixins.json")) {
-            expand(props)
-        }
-
-        inputs.properties(props)
+        inputs.properties(expandProps)
     }
+}
+
+tasks.named("processResources") {
+    dependsOn(":common:${commonMod.minecraft}:stonecutterGenerate")
 }
